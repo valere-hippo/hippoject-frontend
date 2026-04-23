@@ -7,8 +7,15 @@
     <div class="toolbar">
       <span>Searchable</span>
       <span>Filterable</span>
-      <span>Labels ready</span>
+      <span>Saved views</span>
     </div>
+  </div>
+
+  <div class="quick-filters">
+    <button type="button" (click)="applyQuickFilter('active')">Active work</button>
+    <button type="button" (click)="applyQuickFilter('review')">Needs review</button>
+    <button type="button" (click)="applyQuickFilter('critical-bugs')">Bug focus</button>
+    <button type="button" (click)="applyQuickFilter('epics')">Epics</button>
   </div>
 
   <div class="filters">
@@ -30,6 +37,25 @@
     <button type="button" class="ghost" (click)="clearFilters()">Reset</button>
   </div>
 
+  <div class="saved-filters">
+    <div class="saved-filters__form">
+      <input type="text" [(ngModel)]="savedFilterName" placeholder="Save current filter as..." maxlength="120" />
+      <button type="button" (click)="saveCurrentFilter()" [disabled]="isSavingFilter">
+        {{ isSavingFilter ? 'Saving…' : 'Save filter' }}
+      </button>
+    </div>
+
+    @if (savedFilters.length) {
+      <div class="saved-filters__list">
+        @for (filter of savedFilters; track filter.id) {
+          <button type="button" class="saved-filter-chip" (click)="applySavedFilter(filter)">
+            {{ filter.name }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
   <div class="table">
     <div class="table__head">
       <span>Key</span>
@@ -45,13 +71,14 @@
         <strong>{{ issue.issueKey }}</strong>
         <div class="title-cell">
           <span>{{ issue.title }}</span>
-          @if (issue.labels.length) {
-            <div class="labels">
-              @for (label of issue.labels; track label) {
-                <small>{{ label }}</small>
-              }
-            </div>
-          }
+          <div class="labels">
+            @if (issue.epicKey) {
+              <small>{{ issue.epicKey }}</small>
+            }
+            @for (label of issue.labels; track label) {
+              <small>{{ label }}</small>
+            }
+          </div>
         </div>
         <span class="type">{{ issue.issueType }}</span>
         <span class="status">{{ issue.status }}</span>

@@ -5,10 +5,12 @@ import { ApiService } from './api.service';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 import {
   CreateCommentRequest,
+  CreateSavedIssueFilterRequest,
   IssueFilters,
   CreateIssueRequest,
   Issue,
   IssueComment,
+  SavedIssueFilter,
   UpdateIssueRequest
 } from '../../shared/models/issue.model';
 import {
@@ -108,6 +110,14 @@ export class WorkspaceService {
 
     const query = params.toString();
     return this.api.get<Issue[]>(query ? `issues?${query}` : 'issues');
+  }
+
+  getSavedIssueFilters(): Observable<SavedIssueFilter[]> {
+    return this.api.get<SavedIssueFilter[]>('filters');
+  }
+
+  createSavedIssueFilter(request: CreateSavedIssueFilterRequest): Observable<SavedIssueFilter> {
+    return this.api.post<SavedIssueFilter>('filters', request);
   }
 
   getComments(projectId: number, issueId: number): Observable<IssueComment[]> {

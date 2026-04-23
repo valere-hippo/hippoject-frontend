@@ -54,6 +54,26 @@ export interface IssueFilters {
   label?: string;
 }
 
+export interface SavedIssueFilter {
+  id: number;
+  name: string;
+  query: string | null;
+  projectId: number | null;
+  status: IssueStatus | null;
+  issueType: IssueType | null;
+  label: string | null;
+  createdAt: string;
+}
+
+export interface CreateSavedIssueFilterRequest {
+  name: string;
+  query?: string;
+  projectId?: number | null;
+  status?: IssueStatus | null;
+  issueType?: IssueType | null;
+  label?: string;
+}
+
 export interface CreateCommentRequest {
   body: string;
 }
