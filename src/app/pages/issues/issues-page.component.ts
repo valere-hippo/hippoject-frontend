@@ -40,6 +40,7 @@ export class IssuesPageComponent {
   protected savedFilters: SavedIssueFilter[] = [];
   protected savedFilterName = '';
   protected isSavingFilter = false;
+  protected deletingFilterId: number | null = null;
 
   constructor() {
     this.loadIssues();
@@ -109,6 +110,19 @@ export class IssuesPageComponent {
       },
       error: () => {
         this.isSavingFilter = false;
+      }
+    });
+  }
+
+  protected deleteSavedFilter(filterId: number): void {
+    this.deletingFilterId = filterId;
+    this.workspaceService.deleteSavedIssueFilter(filterId).subscribe({
+      next: () => {
+        this.deletingFilterId = null;
+        this.loadSavedFilters();
+      },
+      error: () => {
+        this.deletingFilterId = null;
       }
     });
   }

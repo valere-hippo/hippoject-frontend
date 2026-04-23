@@ -55,9 +55,14 @@
     @if (savedFilters.length) {
       <div class="saved-filters__list">
         @for (filter of savedFilters; track filter.id) {
-          <button type="button" class="saved-filter-chip" (click)="applySavedFilter(filter)">
-            {{ filter.name }}
-          </button>
+          <div class="saved-filter-row">
+            <button type="button" class="saved-filter-chip" (click)="applySavedFilter(filter)">
+              {{ filter.name }}
+            </button>
+            <button type="button" class="remove-chip" (click)="deleteSavedFilter(filter.id)" [disabled]="deletingFilterId === filter.id">
+              {{ deletingFilterId === filter.id ? '…' : '×' }}
+            </button>
+          </div>
         }
       </div>
     }

@@ -147,7 +147,14 @@
               <strong>{{ member.displayName }}</strong>
               <p>{{ member.userId }}</p>
             </div>
-            <span class="status">{{ member.role }}</span>
+            <div class="issue-row__meta">
+              <span class="status">{{ member.role }}</span>
+              @if (vm.permissions.canManageMembers) {
+                <button type="button" class="remove-button" (click)="removeMember(vm.project.id, member.id)" [disabled]="removingMemberId === member.id">
+                  {{ removingMemberId === member.id ? 'Removing…' : 'Remove' }}
+                </button>
+              }
+            </div>
           </div>
         }
       </div>

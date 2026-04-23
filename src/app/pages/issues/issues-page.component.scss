@@ -13,7 +13,8 @@
 .filters,
 .quick-filters,
 .saved-filters__form,
-.saved-filters__list {
+.saved-filters__list,
+.saved-filter-row {
   display: grid;
   gap: 1rem;
 }
@@ -61,6 +62,11 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, max-content));
 }
 
+.saved-filter-row {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
 .filters input,
 .filters select,
 .filters button,
@@ -77,6 +83,16 @@
   background: var(--accent);
   color: white;
   border: 0;
+}
+
+.remove-chip {
+  border-radius: 999px;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  background: #fff5f5;
+  color: var(--accent-dark);
+  border: 1px solid rgba(173, 88, 88, 0.22);
 }
 
 .filters button.ghost {

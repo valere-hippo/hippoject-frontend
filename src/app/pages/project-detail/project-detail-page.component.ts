@@ -54,6 +54,7 @@ export class ProjectDetailPageComponent {
   protected isSavingIssue = false;
   protected isSavingProject = false;
   protected isSavingMember = false;
+  protected removingMemberId: number | null = null;
 
   private readonly projectId$ = this.route.paramMap.pipe(map((params) => Number(params.get('projectId'))));
 
@@ -141,6 +142,19 @@ export class ProjectDetailPageComponent {
       },
       error: () => {
         this.isSavingMember = false;
+      }
+    });
+  }
+
+  protected removeMember(projectId: number, memberId: number): void {
+    this.removingMemberId = memberId;
+    this.workspaceService.removeProjectMember(projectId, memberId).subscribe({
+      next: () => {
+        this.removingMemberId = null;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.removingMemberId = null;
       }
     });
   }

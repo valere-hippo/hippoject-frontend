@@ -74,6 +74,10 @@ export class WorkspaceService {
     return this.api.post<ProjectMember>(`projects/${projectId}/members`, request);
   }
 
+  removeProjectMember(projectId: number, memberId: number): Observable<void> {
+    return this.api.delete<void>(`projects/${projectId}/members/${memberId}`);
+  }
+
   getProjectActivity(projectId: number): Observable<ProjectActivityItem[]> {
     return this.api.get<ProjectActivityItem[]>(`projects/${projectId}/activity`);
   }
@@ -131,6 +135,10 @@ export class WorkspaceService {
 
   createSavedIssueFilter(request: CreateSavedIssueFilterRequest): Observable<SavedIssueFilter> {
     return this.api.post<SavedIssueFilter>('filters', request);
+  }
+
+  deleteSavedIssueFilter(filterId: number): Observable<void> {
+    return this.api.delete<void>(`filters/${filterId}`);
   }
 
   getNotifications(): Observable<NotificationItem[]> {
