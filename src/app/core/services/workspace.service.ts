@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 
 import { ApiService } from './api.service';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
+import { DirectoryProject } from '../../shared/models/directory.model';
 import {
   CreateCommentRequest,
   CreateSavedIssueFilterRequest,
@@ -43,6 +44,10 @@ export class WorkspaceService {
 
   getProjects(): Observable<Project[]> {
     return this.api.get<Project[]>('projects');
+  }
+
+  getDirectory(): Observable<DirectoryProject[]> {
+    return this.api.get<DirectoryProject[]>('directory');
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {

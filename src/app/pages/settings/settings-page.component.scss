@@ -16,6 +16,33 @@
   grid-column: 1 / -1;
 }
 
+.directory-grid,
+.member-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.directory-grid {
+  margin-top: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.directory-card {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.member-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: #fff5f5;
+}
+
 .eyebrow {
   margin: 0;
   text-transform: uppercase;
@@ -26,7 +53,9 @@
 
 h3,
 p,
-ul {
+strong,
+span,
+small {
   margin: 0;
 }
 
@@ -35,18 +64,24 @@ h3 {
 }
 
 p,
-ul {
+span,
+small {
   color: #475569;
   line-height: 1.6;
 }
 
-ul {
-  padding-left: 1rem;
-  margin-top: 0.8rem;
+small {
+  color: var(--accent-dark);
 }
 
-@media (max-width: 720px) {
-  .settings-grid {
+@media (max-width: 900px) {
+  .settings-grid,
+  .directory-grid {
     grid-template-columns: 1fr;
+  }
+
+  .member-chip {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

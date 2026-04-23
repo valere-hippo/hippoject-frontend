@@ -121,7 +121,12 @@
         </label>
         <label class="full-width">
           <span>Assignee</span>
-          <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
+          <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
+            <option value="">Unassigned</option>
+            @for (member of vm.members; track member.id) {
+              <option [value]="member.userId">{{ member.displayName }} · {{ member.role }}</option>
+            }
+          </select>
         </label>
         <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Create issue' }}</button>
       </form>
