@@ -33,28 +33,37 @@
       <span>Members</span>
       <strong>{{ vm.members.length }}</strong>
     </article>
+    <article class="page-card stat-card">
+      <span>Your role</span>
+      <strong>{{ vm.permissions.role }}</strong>
+    </article>
   </section>
 
   <section class="detail-grid two-columns">
     <article class="page-card">
       <p class="eyebrow">Project settings</p>
       <h3>Edit project</h3>
-      <form class="issue-form" (ngSubmit)="updateProject(vm.project.id)">
-        <label>
-          <span>Name</span>
-          <input [(ngModel)]="projectForm.name" name="projectName" required maxlength="120" />
-        </label>
-        <label class="full-width">
-          <span>Description</span>
-          <textarea [(ngModel)]="projectForm.description" name="projectDescription" required maxlength="500"></textarea>
-        </label>
-        <button type="submit" [disabled]="isSavingProject">{{ isSavingProject ? 'Saving…' : 'Save project' }}</button>
-      </form>
+      @if (vm.permissions.canEditProject) {
+        <form class="issue-form" (ngSubmit)="updateProject(vm.project.id)">
+          <label>
+            <span>Name</span>
+            <input [(ngModel)]="projectForm.name" name="projectName" required maxlength="120" />
+          </label>
+          <label class="full-width">
+            <span>Description</span>
+            <textarea [(ngModel)]="projectForm.description" name="projectDescription" required maxlength="500"></textarea>
+          </label>
+          <button type="submit" [disabled]="isSavingProject">{{ isSavingProject ? 'Saving…' : 'Save project' }}</button>
+        </form>
+      } @else {
+        <p>You currently have read-only access to project settings.</p>
+      }
     </article>
 
     <article class="page-card">
       <p class="eyebrow">Create issue</p>
       <h3>Add a ticket</h3>
+      @if (vm.permissions.canCreateIssues) {
       <form class="issue-form" (ngSubmit)="createIssue(vm.project.id)">
         <label>
           <span>Title</span>
@@ -116,6 +125,9 @@
         </label>
         <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Create issue' }}</button>
       </form>
+      } @else {
+        <p>You can view project issues here, but creating new ones is currently restricted for your role.</p>
+      }
     </article>
   </section>
 
@@ -139,6 +151,7 @@
     <article class="page-card">
       <p class="eyebrow">Access</p>
       <h3>Add member</h3>
+      @if (vm.permissions.canManageMembers) {
       <form class="issue-form" (ngSubmit)="addMember(vm.project.id)">
         <label>
           <span>User id</span>
@@ -158,6 +171,9 @@
         </label>
         <button type="submit" [disabled]="isSavingMember">{{ isSavingMember ? 'Saving…' : 'Add member' }}</button>
       </form>
+      } @else {
+        <p>Only project admins can add or change project members.</p>
+      }
     </article>
   </section>
 

@@ -22,6 +22,10 @@
         <strong>{{ vm.stats.completed }}</strong>
         <span>Completed</span>
       </div>
+      <div class="summary">
+        <strong>{{ vm.permissions.role }}</strong>
+        <span>Your role</span>
+      </div>
     </div>
   </section>
 
@@ -30,6 +34,7 @@
       <p class="eyebrow">Sprint planning</p>
       <h3>Create sprint</h3>
     </div>
+    @if (vm.permissions.canManageSprints) {
     <form class="sprint-form" (ngSubmit)="createSprint(vm.projectId)">
       <label>
         <span>Name</span>
@@ -53,6 +58,9 @@
       </label>
       <button type="submit" [disabled]="isSavingSprint">{{ isSavingSprint ? 'Saving…' : 'Create sprint' }}</button>
     </form>
+    } @else {
+      <p>You can view sprint planning here, but only project managers or admins can change sprint setup.</p>
+    }
   </section>
 
   <section class="stack sprint-stack">
@@ -71,14 +79,16 @@
             <span>Closed {{ sprint.completedAt | date: 'short' }}</span>
           }
           <span>{{ sprint.issueCount }} issues</span>
-          <div class="actions">
-            <button type="button" class="ghost" [disabled]="sprint.status === 'ACTIVE' || sprintActionId === sprint.id" (click)="startSprint(vm.projectId, sprint.id)">
-              {{ sprintActionId === sprint.id ? 'Saving…' : 'Start' }}
-            </button>
-            <button type="button" [disabled]="sprint.status === 'COMPLETED' || sprintActionId === sprint.id" (click)="completeSprint(vm.projectId, sprint.id)">
-              {{ sprintActionId === sprint.id ? 'Saving…' : 'Complete' }}
-            </button>
-          </div>
+          @if (vm.permissions.canManageSprints) {
+            <div class="actions">
+              <button type="button" class="ghost" [disabled]="sprint.status === 'ACTIVE' || sprintActionId === sprint.id" (click)="startSprint(vm.projectId, sprint.id)">
+                {{ sprintActionId === sprint.id ? 'Saving…' : 'Start' }}
+              </button>
+              <button type="button" [disabled]="sprint.status === 'COMPLETED' || sprintActionId === sprint.id" (click)="completeSprint(vm.projectId, sprint.id)">
+                {{ sprintActionId === sprint.id ? 'Saving…' : 'Complete' }}
+              </button>
+            </div>
+          }
         </div>
       </article>
     }
@@ -96,7 +106,7 @@
         <div class="meta backlog-meta">
           <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
           <span>{{ issue.status }}</span>
-          <select [ngModel]="issue.sprintId" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
+          <select [ngModel]="issue.sprintId" [disabled]="!vm.permissions.canManageSprints" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
             <option [ngValue]="null">Backlog</option>
             @for (sprint of vm.sprints; track sprint.id) {
               <option [ngValue]="sprint.id">{{ sprint.name }}</option>

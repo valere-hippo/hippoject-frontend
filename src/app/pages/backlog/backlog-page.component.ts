@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue } from '../../shared/models/issue.model';
 import { CreateSprintRequest } from '../../shared/models/sprint.model';
+import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 
 @Component({
   selector: 'app-backlog-page',
@@ -15,6 +17,7 @@ import { CreateSprintRequest } from '../../shared/models/sprint.model';
   styleUrl: './backlog-page.component.scss'
 })
 export class BacklogPageComponent {
+  private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
@@ -38,11 +41,17 @@ export class BacklogPageComponent {
       combineLatest({
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
-        sprints: this.workspaceService.getSprints(projectId)
+        sprints: this.workspaceService.getSprints(projectId),
+        members: this.workspaceService.getProjectMembers(projectId)
       }).pipe(
         map((data) => ({
           ...data,
           projectId,
+          permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
+            workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
+            projectAdmin: this.auth.hasAnyRole('project-admin'),
+            projectManager: this.auth.hasAnyRole('project-manager')
+          }),
           stats: {
             active: data.sprints.filter((sprint) => sprint.status === 'ACTIVE').length,
             planned: data.sprints.filter((sprint) => sprint.status === 'PLANNED').length,

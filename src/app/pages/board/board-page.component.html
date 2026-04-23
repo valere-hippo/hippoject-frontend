@@ -8,6 +8,7 @@
     <div class="filters">
       <span>{{ vm.issues.length }} issues</span>
       <span>{{ vm.project.key }}</span>
+      <span>{{ vm.permissions.role }}</span>
     </div>
   </section>
 
@@ -32,13 +33,15 @@
                   <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
                   <span>{{ issue.updatedAt | date: 'short' }}</span>
                 </footer>
-                <div class="board-actions">
-                  @for (target of columns; track target.key) {
-                    <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
-                      {{ target.label }}
-                    </button>
-                  }
-                </div>
+                @if (vm.permissions.canMoveBoard) {
+                  <div class="board-actions">
+                    @for (target of columns; track target.key) {
+                      <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
+                        {{ target.label }}
+                      </button>
+                    }
+                  </div>
+                }
               </div>
             }
           }

@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
 import { CreateProjectMemberRequest, ProjectRole, UpdateProjectRequest } from '../../shared/models/project.model';
+import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -16,6 +18,7 @@ import { CreateProjectMemberRequest, ProjectRole, UpdateProjectRequest } from '.
 })
 export class ProjectDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly refresh$ = new Subject<void>();
 
@@ -65,7 +68,17 @@ export class ProjectDetailPageComponent {
         sprints: this.workspaceService.getSprints(projectId),
         members: this.workspaceService.getProjectMembers(projectId),
         activity: this.workspaceService.getProjectActivity(projectId)
-      }).pipe(map((data) => ({ ...data, epics: data.issues.filter((issue) => issue.issueType === 'EPIC') })))
+      }).pipe(
+        map((data) => ({
+          ...data,
+          epics: data.issues.filter((issue) => issue.issueType === 'EPIC'),
+          permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
+            workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
+            projectAdmin: this.auth.hasAnyRole('project-admin'),
+            projectManager: this.auth.hasAnyRole('project-manager')
+          })
+        }))
+      )
     ),
     tap(({ project }) => {
       this.projectForm.name = project.name;

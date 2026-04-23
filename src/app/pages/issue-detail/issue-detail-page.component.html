@@ -32,6 +32,10 @@
       <span>Updated</span>
       <strong>{{ vm.issue.updatedAt | date: 'medium' }}</strong>
     </article>
+    <article class="page-card stat-card">
+      <span>Your role</span>
+      <strong>{{ vm.permissions.role }}</strong>
+    </article>
     @if (vm.issue.issueType === 'EPIC') {
       <article class="page-card stat-card">
         <span>Epic progress</span>
@@ -44,6 +48,7 @@
     <article class="page-card">
       <p class="eyebrow">Edit issue</p>
       <h3>Details</h3>
+      @if (vm.permissions.canEditIssues) {
       <form class="issue-form" (ngSubmit)="updateIssue(vm.projectId, vm.issue.id)">
         <label>
           <span>Title</span>
@@ -105,11 +110,15 @@
         </label>
         <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Save issue' }}</button>
       </form>
+      } @else {
+        <p>You currently have read-only access to this issue.</p>
+      }
     </article>
 
     <article class="page-card">
       <p class="eyebrow">Add comment</p>
       <h3>Conversation</h3>
+      @if (vm.permissions.canEditIssues) {
       <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
         <label class="full-width">
           <span>Comment</span>
@@ -117,6 +126,9 @@
         </label>
         <button type="submit" [disabled]="isSavingComment">{{ isSavingComment ? 'Saving…' : 'Post comment' }}</button>
       </form>
+      } @else {
+        <p>Comments are restricted for your current project role.</p>
+      }
     </article>
   </section>
 

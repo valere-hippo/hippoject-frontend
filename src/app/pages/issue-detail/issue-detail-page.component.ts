@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
+import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 
 @Component({
   selector: 'app-issue-detail-page',
@@ -14,6 +16,7 @@ import { IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../..
   styleUrl: './issue-detail-page.component.scss'
 })
 export class IssueDetailPageComponent {
+  private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
@@ -53,12 +56,18 @@ export class IssueDetailPageComponent {
         issue: this.workspaceService.getIssue(params.projectId, params.issueId),
         comments: this.workspaceService.getComments(params.projectId, params.issueId),
         sprints: this.workspaceService.getSprints(params.projectId),
-        projectIssues: this.workspaceService.getProjectIssues(params.projectId)
+        projectIssues: this.workspaceService.getProjectIssues(params.projectId),
+        members: this.workspaceService.getProjectMembers(params.projectId)
       }).pipe(
         map((data) => ({
           ...data,
           epicChildren: data.projectIssues.filter((candidate) => candidate.epicId === data.issue.id),
           epics: data.projectIssues.filter((candidate) => candidate.issueType === 'EPIC' && candidate.id !== params.issueId),
+          permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
+            workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
+            projectAdmin: this.auth.hasAnyRole('project-admin'),
+            projectManager: this.auth.hasAnyRole('project-manager')
+          }),
           projectId: params.projectId,
           issueId: params.issueId
         }))

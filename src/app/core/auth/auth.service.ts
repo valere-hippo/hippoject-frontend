@@ -18,6 +18,7 @@ export class AuthService {
 
   readonly ready = signal(false);
   readonly authenticated = signal(!this.enabled);
+  readonly userId = signal('local-dev');
   readonly displayName = signal('Valere');
   readonly roleLabel = signal('Administrator');
   readonly initials = signal('VA');
@@ -89,6 +90,7 @@ export class AuthService {
               ? 'Reporter'
               : 'User';
 
+    this.userId.set(String(parsed['preferred_username'] ?? parsed['sub'] ?? 'local-dev'));
     this.displayName.set(`${firstName} ${lastName}`.trim());
     this.roleLabel.set(role);
     this.initials.set(`${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase());
