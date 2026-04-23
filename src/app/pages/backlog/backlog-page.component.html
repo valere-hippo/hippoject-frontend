@@ -1,0 +1,31 @@
+<section class="page-card header-card">
+  <div>
+    <p class="eyebrow">Prioritization</p>
+    <h3>Backlog planning shell</h3>
+    <p>Use this surface for ranking, intake notes, and sprint-ready scope once APIs are live.</p>
+  </div>
+  <div class="summary">
+    <strong>Ready for grooming</strong>
+    <span>Mock data now, sortable backlog later</span>
+  </div>
+</section>
+
+@if (issues$ | async; as issues) {
+  <section class="stack">
+    @for (issue of issues; track issue.id) {
+      <article class="page-card issue-row">
+        <div>
+          <p class="eyebrow">{{ issue.key }}</p>
+          <h4>{{ issue.title }}</h4>
+          <p>{{ issue.summary }}</p>
+        </div>
+
+        <div class="meta">
+          <span class="priority {{ issue.priority }}">{{ issue.priority }}</span>
+          <span>{{ issue.estimate }} pts</span>
+          <span>{{ issue.updatedAt }}</span>
+        </div>
+      </article>
+    }
+  </section>
+}

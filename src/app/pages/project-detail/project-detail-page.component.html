@@ -1,0 +1,57 @@
+@if (vm$ | async; as vm) {
+  <section class="hero page-card">
+    <div>
+      <p class="eyebrow">{{ vm.project?.key }} project</p>
+      <h3>{{ vm.project?.name }}</h3>
+      <p>{{ vm.project?.description }}</p>
+    </div>
+
+    <div class="hero__actions">
+      <a [routerLink]="['/projects', vm.project?.id, 'board']">Open board</a>
+      <a [routerLink]="['/projects', vm.project?.id, 'backlog']">View backlog</a>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="page-card stat-card">
+      <span>Lead</span>
+      <strong>{{ vm.project?.lead }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Target date</span>
+      <strong>{{ vm.project?.targetDate }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Open issues</span>
+      <strong>{{ vm.issues.length }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Active sprint</span>
+      <strong>{{ vm.sprint?.name ?? 'Backlog shaping' }}</strong>
+    </article>
+  </section>
+
+  <section class="detail-grid two-columns">
+    <article class="page-card">
+      <p class="eyebrow">Delivery brief</p>
+      <h3>What to connect next</h3>
+      <ul>
+        <li>Wire project-level insights from the dashboard aggregation endpoint.</li>
+        <li>Attach issue counts, throughput, and risk signals to the project summary.</li>
+        <li>Swap target date and owner details to live project metadata once available.</li>
+      </ul>
+    </article>
+
+    <article class="page-card">
+      <p class="eyebrow">Recent work</p>
+      <div class="issue-list">
+        @for (issue of vm.issues; track issue.id) {
+          <div>
+            <strong>{{ issue.key }}</strong>
+            <p>{{ issue.title }}</p>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+}

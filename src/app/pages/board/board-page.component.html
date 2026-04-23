@@ -1,0 +1,41 @@
+<section class="page-card board-header">
+  <div>
+    <p class="eyebrow">Kanban view</p>
+    <h3>Board placeholder with real route context</h3>
+    <p>Designed for drag-and-drop and live issue updates when backend endpoints arrive.</p>
+  </div>
+  <div class="filters">
+    <span>Assignee: Any</span>
+    <span>Sprint: Current</span>
+    <span>Labels: All</span>
+  </div>
+</section>
+
+@if (issues$ | async; as issues) {
+  <section class="board-grid">
+    @for (column of columns; track column.key) {
+      <article class="column">
+        <header>
+          <strong>{{ column.label }}</strong>
+          <span>{{ issues.filter((issue) => issue.status === column.key).length }}</span>
+        </header>
+
+        <div class="cards">
+          @for (issue of issues; track issue.id) {
+            @if (issue.status === column.key) {
+              <div class="issue-card">
+                <p class="eyebrow">{{ issue.key }}</p>
+                <h4>{{ issue.title }}</h4>
+                <p>{{ issue.summary }}</p>
+                <footer>
+                  <span class="priority {{ issue.priority }}">{{ issue.priority }}</span>
+                  <span>{{ issue.updatedAt }}</span>
+                </footer>
+              </div>
+            }
+          }
+        </div>
+      </article>
+    }
+  </section>
+}

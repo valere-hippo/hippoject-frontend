@@ -1,0 +1,47 @@
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+
+import { currentUser } from '../core/data/mock-data';
+
+@Component({
+  selector: 'app-shell',
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  templateUrl: './app-shell.component.html',
+  styleUrl: './app-shell.component.scss'
+})
+export class AppShellComponent {
+  private readonly router = inject(Router);
+
+  protected readonly user = currentUser;
+  protected readonly navItems = [
+    { label: 'Dashboard', icon: '◫', route: '/dashboard' },
+    { label: 'Projects', icon: '◪', route: '/projects' },
+    { label: 'Issues', icon: '◎', route: '/issues' },
+    { label: 'Settings', icon: '⚙', route: '/settings' }
+  ];
+
+  protected readonly quickLinks = [
+    { label: 'Atlas Board', route: '/projects/atlas/board' },
+    { label: 'Atlas Backlog', route: '/projects/atlas/backlog' },
+    { label: 'Pulse Project', route: '/projects/pulse' }
+  ];
+
+  protected currentUrl = this.router.url;
+  protected readonly pageTitle = computed(() => {
+    if (this.currentUrl.includes('/board')) return 'Board';
+    if (this.currentUrl.includes('/backlog')) return 'Backlog';
+    if (this.currentUrl.includes('/issues')) return 'Issues';
+    if (this.currentUrl.includes('/settings')) return 'Settings';
+    if (this.currentUrl === '/projects') return 'Projects';
+    if (this.currentUrl.includes('/projects/')) return 'Project Overview';
+    return 'Dashboard';
+  });
+
+  constructor() {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.currentUrl = this.router.url;
+    });
+  }
+}

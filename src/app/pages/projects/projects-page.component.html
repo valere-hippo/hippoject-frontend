@@ -1,0 +1,48 @@
+<section class="page-card intro">
+  <div>
+    <p class="eyebrow">Project portfolio</p>
+    <h3>Track product initiatives with room for real delivery data.</h3>
+  </div>
+  <button type="button">New project</button>
+</section>
+
+<section class="project-grid">
+  @for (project of projects$ | async; track project.id) {
+    <article class="page-card project-card">
+      <div class="project-card__header">
+        <div>
+          <p class="eyebrow">{{ project.key }}</p>
+          <h3>{{ project.name }}</h3>
+        </div>
+        <span class="health {{ project.health }}">{{ project.health }}</span>
+      </div>
+
+      <p class="description">{{ project.description }}</p>
+
+      <dl>
+        <div>
+          <dt>Lead</dt>
+          <dd>{{ project.lead }}</dd>
+        </div>
+        <div>
+          <dt>Active sprint</dt>
+          <dd>{{ project.activeSprint }}</dd>
+        </div>
+        <div>
+          <dt>Team size</dt>
+          <dd>{{ project.teamSize }} teammates</dd>
+        </div>
+        <div>
+          <dt>Progress</dt>
+          <dd>{{ project.progress }}%</dd>
+        </div>
+      </dl>
+
+      <div class="actions">
+        <a [routerLink]="['/projects', project.id]">Overview</a>
+        <a [routerLink]="['/projects', project.id, 'board']">Board</a>
+        <a [routerLink]="['/projects', project.id, 'backlog']">Backlog</a>
+      </div>
+    </article>
+  }
+</section>

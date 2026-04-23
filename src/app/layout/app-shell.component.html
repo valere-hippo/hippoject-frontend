@@ -1,0 +1,65 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark">H</div>
+      <div>
+        <p class="eyebrow">Hippoject</p>
+        <h1>Delivery OS</h1>
+      </div>
+    </div>
+
+    <nav class="nav-section">
+      <p class="section-label">Workspace</p>
+      @for (item of navItems; track item.route) {
+        <a
+          class="nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.route !== '/projects' }"
+        >
+          <span class="nav-link__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="nav-section quick-links">
+      <p class="section-label">Pinned</p>
+      @for (link of quickLinks; track link.route) {
+        <a class="mini-link" [routerLink]="link.route">{{ link.label }}</a>
+      }
+    </div>
+
+    <div class="sidebar-card">
+      <p class="section-label">Sprint focus</p>
+      <h3>Planning experience</h3>
+      <p>Shell and placeholders are set up so real API data can slot in cleanly.</p>
+      <span>Backend handoff ready</span>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Product workspace</p>
+        <h2>{{ pageTitle() }}</h2>
+      </div>
+
+      <div class="topbar__actions">
+        <div class="search-pill">Search issues, projects, or people</div>
+        <button type="button" class="ghost-button">Create issue</button>
+        <div class="profile-chip">
+          <div class="avatar">{{ user.initials }}</div>
+          <div>
+            <strong>{{ user.name }}</strong>
+            <span>{{ user.role }}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
