@@ -17,6 +17,8 @@ export interface Issue {
   description: string;
   status: IssueStatus;
   priority: IssuePriority;
+  sprintId: number | null;
+  sprintName: string | null;
   assigneeId: string | null;
   reporterId: string;
   createdAt: string;
@@ -29,6 +31,7 @@ export interface CreateIssueRequest {
   description: string;
   priority: IssuePriority;
   status?: IssueStatus;
+  sprintId?: number | null;
   assigneeId?: string | null;
 }
 

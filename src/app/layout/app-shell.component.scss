@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   background:
-    radial-gradient(circle at top left, rgba(78, 112, 255, 0.18), transparent 24%),
+    radial-gradient(circle at top left, rgba(173, 88, 88, 0.2), transparent 24%),
     linear-gradient(180deg, #0f172a 0%, #111827 16%, #f3f6fb 16%, #f7f9fc 100%);
 }
 
@@ -42,7 +42,7 @@
   display: grid;
   place-items: center;
   font-weight: 700;
-  background: linear-gradient(135deg, #7c9cff, #56e0c7);
+  background: linear-gradient(135deg, #ad5858, #d79b9b);
   color: #081120;
 }
 
@@ -78,7 +78,7 @@
 
   &:hover,
   &.is-active {
-    background: rgba(124, 156, 255, 0.14);
+    background: rgba(173, 88, 88, 0.18);
     color: #fff;
   }
 }
@@ -86,7 +86,7 @@
 .nav-link__icon {
   width: 1.5rem;
   text-align: center;
-  color: #8fb4ff;
+  color: #e4b2b2;
 }
 
 .quick-links {
@@ -105,8 +105,8 @@
   margin-top: auto;
   padding: 1.1rem;
   border-radius: 1.25rem;
-  background: linear-gradient(180deg, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.7));
-  border: 1px solid rgba(96, 165, 250, 0.25);
+  background: linear-gradient(180deg, rgba(173, 88, 88, 0.28), rgba(15, 23, 42, 0.7));
+  border: 1px solid rgba(215, 155, 155, 0.3);
 
   h3,
   p,
@@ -120,14 +120,14 @@
   }
 
   p {
-    color: #dbeafe;
+    color: #fdecec;
     line-height: 1.5;
   }
 
   span {
     display: inline-block;
     margin-top: 0.85rem;
-    color: #93c5fd;
+    color: #f0bcbc;
     font-size: 0.9rem;
   }
 }

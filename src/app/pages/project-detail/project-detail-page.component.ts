@@ -27,6 +27,7 @@ export class ProjectDetailPageComponent {
     description: '',
     priority: 'MEDIUM',
     status: 'TODO',
+    sprintId: null,
     assigneeId: ''
   };
 
@@ -47,7 +48,8 @@ export class ProjectDetailPageComponent {
     switchMap(({ projectId }) =>
       combineLatest({
         project: this.workspaceService.getProject(projectId),
-        issues: this.workspaceService.getProjectIssues(projectId)
+        issues: this.workspaceService.getProjectIssues(projectId),
+        sprints: this.workspaceService.getSprints(projectId)
       })
     ),
     tap(({ project }) => {
@@ -64,6 +66,7 @@ export class ProjectDetailPageComponent {
         this.issueForm.description = '';
         this.issueForm.priority = 'MEDIUM';
         this.issueForm.status = 'TODO';
+        this.issueForm.sprintId = null;
         this.issueForm.assigneeId = '';
         this.isSavingIssue = false;
         this.refresh$.next();

@@ -26,6 +26,7 @@ export class IssueDetailPageComponent {
     description: '',
     priority: 'MEDIUM',
     status: 'TODO',
+    sprintId: null,
     assigneeId: ''
   };
 
@@ -45,7 +46,8 @@ export class IssueDetailPageComponent {
     switchMap(({ params }) =>
       combineLatest({
         issue: this.workspaceService.getIssue(params.projectId, params.issueId),
-        comments: this.workspaceService.getComments(params.projectId, params.issueId)
+        comments: this.workspaceService.getComments(params.projectId, params.issueId),
+        sprints: this.workspaceService.getSprints(params.projectId)
       }).pipe(map((data) => ({ ...data, projectId: params.projectId, issueId: params.issueId })))
     ),
     tap(({ issue }) => {
@@ -53,6 +55,7 @@ export class IssueDetailPageComponent {
       this.issueForm.description = issue.description;
       this.issueForm.priority = issue.priority;
       this.issueForm.status = issue.status;
+      this.issueForm.sprintId = issue.sprintId;
       this.issueForm.assigneeId = issue.assigneeId ?? '';
     })
   );

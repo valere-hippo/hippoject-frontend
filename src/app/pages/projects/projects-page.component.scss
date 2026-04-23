@@ -57,7 +57,7 @@ button,
 
 button {
   border: 0;
-  background: #0f172a;
+  background: var(--accent);
   color: #fff;
   padding: 0.85rem 1rem;
 }
@@ -128,8 +128,8 @@ dl div {
 
 .actions a {
   text-decoration: none;
-  color: #1d4ed8;
-  background: #eff6ff;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
   padding: 0.55rem 0.85rem;
 }
 

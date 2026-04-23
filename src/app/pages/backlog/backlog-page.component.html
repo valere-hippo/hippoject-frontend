@@ -1,18 +1,65 @@
-<section class="page-card header-card">
-  <div>
-    <p class="eyebrow">Prioritization</p>
-    <h3>Project backlog</h3>
-    <p>Review the current issue set for this project and move into planning from here.</p>
-  </div>
-  <div class="summary">
-    <strong>API-backed</strong>
-    <span>Real issue data</span>
-  </div>
-</section>
+@if (vm$ | async; as vm) {
+  <section class="page-card header-card">
+    <div>
+      <p class="eyebrow">Prioritization</p>
+      <h3>{{ vm.project.name }} backlog</h3>
+      <p>Create sprints and assign issues into them from one place.</p>
+    </div>
+    <div class="summary">
+      <strong>{{ vm.sprints.length }} sprints</strong>
+      <span>{{ vm.issues.length }} issues</span>
+    </div>
+  </section>
 
-@if (issues$ | async; as issues) {
+  <section class="page-card sprint-form-card">
+    <div>
+      <p class="eyebrow">Sprint planning</p>
+      <h3>Create sprint</h3>
+    </div>
+    <form class="sprint-form" (ngSubmit)="createSprint(vm.projectId)">
+      <label>
+        <span>Name</span>
+        <input [(ngModel)]="sprintForm.name" name="name" required maxlength="120" />
+      </label>
+      <label>
+        <span>Start</span>
+        <input [(ngModel)]="sprintForm.startsAt" name="startsAt" type="date" required />
+      </label>
+      <label>
+        <span>End</span>
+        <input [(ngModel)]="sprintForm.endsAt" name="endsAt" type="date" required />
+      </label>
+      <label class="full-width">
+        <span>Goal</span>
+        <textarea [(ngModel)]="sprintForm.goal" name="goal" required maxlength="1000"></textarea>
+      </label>
+      <label class="checkbox">
+        <input [(ngModel)]="sprintForm.active" name="active" type="checkbox" />
+        <span>Mark as active sprint</span>
+      </label>
+      <button type="submit" [disabled]="isSavingSprint">{{ isSavingSprint ? 'Saving…' : 'Create sprint' }}</button>
+    </form>
+  </section>
+
+  <section class="stack sprint-stack">
+    @for (sprint of vm.sprints; track sprint.id) {
+      <article class="page-card sprint-card">
+        <div>
+          <p class="eyebrow">{{ sprint.active ? 'Active sprint' : 'Sprint' }}</p>
+          <h4>{{ sprint.name }}</h4>
+          <p>{{ sprint.goal }}</p>
+        </div>
+        <div class="meta">
+          <span>{{ sprint.startsAt | date: 'mediumDate' }}</span>
+          <span>{{ sprint.endsAt | date: 'mediumDate' }}</span>
+          <span>{{ sprint.issueCount }} issues</span>
+        </div>
+      </article>
+    }
+  </section>
+
   <section class="stack">
-    @for (issue of issues; track issue.id) {
+    @for (issue of vm.issues; track issue.id) {
       <article class="page-card issue-row">
         <div>
           <p class="eyebrow">{{ issue.issueKey }}</p>
@@ -20,10 +67,15 @@
           <p>{{ issue.description }}</p>
         </div>
 
-        <div class="meta">
+        <div class="meta backlog-meta">
           <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
           <span>{{ issue.status }}</span>
-          <span>{{ issue.updatedAt | date: 'short' }}</span>
+          <select [ngModel]="issue.sprintId" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
+            <option [ngValue]="null">Backlog</option>
+            @for (sprint of vm.sprints; track sprint.id) {
+              <option [ngValue]="sprint.id">{{ sprint.name }}</option>
+            }
+          </select>
         </div>
       </article>
     }

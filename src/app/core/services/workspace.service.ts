@@ -10,6 +10,7 @@ import {
   UpdateIssueRequest
 } from '../../shared/models/issue.model';
 import { CreateProjectRequest, Project, UpdateProjectRequest } from '../../shared/models/project.model';
+import { CreateSprintRequest, Sprint } from '../../shared/models/sprint.model';
 import { User } from '../../shared/models/user.model';
 
 @Injectable({
@@ -46,6 +47,14 @@ export class WorkspaceService {
 
   getProjectIssues(projectId: number): Observable<Issue[]> {
     return this.api.get<Issue[]>(`projects/${projectId}/issues`);
+  }
+
+  getSprints(projectId: number): Observable<Sprint[]> {
+    return this.api.get<Sprint[]>(`projects/${projectId}/sprints`);
+  }
+
+  createSprint(projectId: number, request: CreateSprintRequest): Observable<Sprint> {
+    return this.api.post<Sprint>(`projects/${projectId}/sprints`, request);
   }
 
   createIssue(projectId: number, request: CreateIssueRequest): Observable<Issue> {

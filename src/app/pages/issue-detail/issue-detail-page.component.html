@@ -59,6 +59,15 @@
             }
           </select>
         </label>
+        <label>
+          <span>Sprint</span>
+          <select [(ngModel)]="issueForm.sprintId" name="sprintId">
+            <option [ngValue]="null">Backlog</option>
+            @for (sprint of vm.sprints; track sprint.id) {
+              <option [ngValue]="sprint.id">{{ sprint.name }}</option>
+            }
+          </select>
+        </label>
         <label class="full-width">
           <span>Assignee</span>
           <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />

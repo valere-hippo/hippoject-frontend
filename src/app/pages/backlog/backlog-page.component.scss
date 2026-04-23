@@ -1,12 +1,13 @@
 .page-card {
   background: rgba(255, 255, 255, 0.94);
   border-radius: 1.5rem;
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border: 1px solid rgba(173, 88, 88, 0.16);
   box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
 }
 
 .header-card,
-.issue-row {
+.issue-row,
+.sprint-card {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -14,9 +15,52 @@
   align-items: center;
 }
 
+.sprint-form-card {
+  margin-top: 1rem;
+  padding: 1.35rem 1.4rem;
+}
+
+.sprint-form {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.sprint-form label,
+.sprint-form .full-width,
+.checkbox {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.sprint-form .full-width,
+.checkbox {
+  grid-column: 1 / -1;
+}
+
+.sprint-form input,
+.sprint-form textarea,
+.backlog-meta select {
+  width: 100%;
+  border: 1px solid #d8b8b8;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  font: inherit;
+}
+
+.sprint-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
 .stack {
   display: grid;
   gap: 1rem;
+  margin-top: 1rem;
+}
+
+.sprint-stack {
   margin-top: 1rem;
 }
 
@@ -28,7 +72,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: #7c5b5b;
 }
 
 h3,
@@ -39,19 +83,21 @@ strong {
 }
 
 .header-card h3,
-.issue-row h4 {
+.issue-row h4,
+.sprint-card h4 {
   margin: 0.35rem 0 0.45rem;
 }
 
 .header-card p,
-.issue-row p {
-  color: #475569;
+.issue-row p,
+.sprint-card p {
+  color: #5e4a4a;
 }
 
 .summary {
   padding: 1rem;
   border-radius: 1rem;
-  background: #eff6ff;
+  background: #f7eded;
 }
 
 .summary strong,
@@ -67,10 +113,14 @@ strong {
   justify-content: flex-end;
 }
 
+.backlog-meta {
+  min-width: 280px;
+}
+
 .priority {
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
-  background: #f8fafc;
+  background: #f7eded;
 }
 
 .priority.critical {
@@ -78,25 +128,36 @@ strong {
 }
 
 .priority.high {
-  color: #b45309;
+  color: #ad5858;
 }
 
 .priority.medium {
-  color: #1d4ed8;
+  color: #8f6d6d;
 }
 
 .priority.low {
-  color: #047857;
+  color: #6c8c6c;
+}
+
+@media (max-width: 900px) {
+  .sprint-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
   .header-card,
-  .issue-row {
+  .issue-row,
+  .sprint-card {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .meta {
     justify-content: flex-start;
+  }
+
+  .backlog-meta {
+    min-width: 100%;
   }
 }

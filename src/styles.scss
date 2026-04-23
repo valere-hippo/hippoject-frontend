@@ -1,3 +1,10 @@
+:root {
+  --accent: #ad5858;
+  --accent-soft: #f7eded;
+  --accent-soft-strong: #edd4d4;
+  --accent-dark: #6f3737;
+}
+
 html,
 body {
   margin: 0;
@@ -14,4 +21,9 @@ body {
 button,
 a {
   font: inherit;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
 }

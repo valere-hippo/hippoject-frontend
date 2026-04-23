@@ -76,6 +76,15 @@
             }
           </select>
         </label>
+        <label>
+          <span>Sprint</span>
+          <select [(ngModel)]="issueForm.sprintId" name="sprintId">
+            <option [ngValue]="null">Backlog</option>
+            @for (sprint of vm.sprints; track sprint.id) {
+              <option [ngValue]="sprint.id">{{ sprint.name }}</option>
+            }
+          </select>
+        </label>
         <label class="full-width">
           <span>Assignee</span>
           <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
@@ -94,11 +103,12 @@
             <strong>{{ issue.issueKey }}</strong>
             <p>{{ issue.title }}</p>
           </div>
-          <div class="issue-row__meta">
-            <span class="status">{{ issue.status }}</span>
-            <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-          </div>
-        </a>
+            <div class="issue-row__meta">
+              <span class="status">{{ issue.sprintName || 'Backlog' }}</span>
+              <span class="status">{{ issue.status }}</span>
+              <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+            </div>
+          </a>
       }
     </div>
   </section>

@@ -43,6 +43,7 @@ export class BoardPageComponent {
         description: issue.description,
         priority: issue.priority,
         status,
+        sprintId: issue.sprintId,
         assigneeId: issue.assigneeId ?? ''
       })
       .subscribe(() => this.refresh$.next());

@@ -124,7 +124,7 @@ strong {
 .priority {
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
-  background: #eff6ff;
+  background: var(--accent-soft);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -135,11 +135,11 @@ strong {
 }
 
 .priority.high {
-  color: #b45309;
+  color: var(--accent);
 }
 
 .priority.medium {
-  color: #1d4ed8;
+  color: #8f6d6d;
 }
 
 .priority.low {
