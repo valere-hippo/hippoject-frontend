@@ -32,6 +32,7 @@ export class BacklogPageComponent {
 
   protected isSavingSprint = false;
   protected sprintActionId: number | null = null;
+  protected deletingSprintId: number | null = null;
 
   protected readonly vm$ = combineLatest({
     projectId: this.route.paramMap.pipe(map((params) => Number(params.get('projectId')))),
@@ -102,6 +103,19 @@ export class BacklogPageComponent {
       },
       error: () => {
         this.sprintActionId = null;
+      }
+    });
+  }
+
+  protected deleteSprint(projectId: number, sprintId: number): void {
+    this.deletingSprintId = sprintId;
+    this.workspaceService.deleteSprint(projectId, sprintId).subscribe({
+      next: () => {
+        this.deletingSprintId = null;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.deletingSprintId = null;
       }
     });
   }

@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
+import { Subject, combineLatest, map, startWith, switchMap, timer } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
@@ -19,6 +19,7 @@ export class BoardPageComponent {
   private readonly workspaceService = inject(WorkspaceService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
+  protected draggedIssueId: number | null = null;
 
   protected readonly columns: { key: IssueStatus; label: string }[] = [
     { key: 'TODO', label: 'To do' },
@@ -29,7 +30,7 @@ export class BoardPageComponent {
 
   protected readonly vm$ = combineLatest({
     projectId: this.route.paramMap.pipe(map((params) => Number(params.get('projectId')))),
-    _: this.refresh$.pipe(startWith(void 0))
+    _: combineLatest([this.refresh$.pipe(startWith(void 0)), timer(0, 15000)])
   }).pipe(
     switchMap(({ projectId }) =>
       combineLatest({
@@ -81,5 +82,21 @@ export class BoardPageComponent {
         assigneeId: issue.assigneeId ?? ''
       })
       .subscribe(() => this.refresh$.next());
+  }
+
+  protected startDrag(issueId: number): void {
+    this.draggedIssueId = issueId;
+  }
+
+  protected clearDrag(): void {
+    this.draggedIssueId = null;
+  }
+
+  protected dropOnColumn(projectId: number, issues: Issue[], status: IssueStatus): void {
+    const issue = issues.find((candidate) => candidate.id === this.draggedIssueId);
+    if (issue && issue.status !== status) {
+      this.moveIssue(projectId, issue, status);
+    }
+    this.clearDrag();
   }
 }

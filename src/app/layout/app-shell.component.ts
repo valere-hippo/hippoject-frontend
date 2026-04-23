@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -13,10 +13,11 @@ import { NotificationItem } from '../shared/models/notification.model';
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss'
 })
-export class AppShellComponent {
+export class AppShellComponent implements OnDestroy {
   private readonly router = inject(Router);
   protected readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly notificationsTimer = window.setInterval(() => this.loadNotifications(), 15000);
 
   protected readonly navItems = [
     { label: 'Dashboard', icon: '◫', route: '/dashboard' },
@@ -58,7 +59,12 @@ export class AppShellComponent {
   }
 
   protected logout(): void {
+    window.clearInterval(this.notificationsTimer);
     void this.auth.logout();
+  }
+
+  ngOnDestroy(): void {
+    window.clearInterval(this.notificationsTimer);
   }
 
   private loadNotifications(): void {

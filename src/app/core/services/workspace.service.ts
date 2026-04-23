@@ -102,6 +102,10 @@ export class WorkspaceService {
     return this.api.put<Sprint>(`projects/${projectId}/sprints/${sprintId}/complete`, {});
   }
 
+  deleteSprint(projectId: number, sprintId: number): Observable<void> {
+    return this.api.delete<void>(`projects/${projectId}/sprints/${sprintId}`);
+  }
+
   createIssue(projectId: number, request: CreateIssueRequest): Observable<Issue> {
     return this.api.post<Issue>(`projects/${projectId}/issues`, request);
   }
@@ -112,6 +116,10 @@ export class WorkspaceService {
 
   updateIssue(projectId: number, issueId: number, request: UpdateIssueRequest): Observable<Issue> {
     return this.api.put<Issue>(`projects/${projectId}/issues/${issueId}`, request);
+  }
+
+  deleteIssue(projectId: number, issueId: number): Observable<void> {
+    return this.api.delete<void>(`projects/${projectId}/issues/${issueId}`);
   }
 
   getIssues(filters: IssueFilters = {}): Observable<Issue[]> {

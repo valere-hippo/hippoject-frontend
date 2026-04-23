@@ -96,6 +96,14 @@ strong {
   font: inherit;
 }
 
+.danger-button {
+  border: 1px solid rgba(185, 28, 28, 0.18);
+  border-radius: 1rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 0.85rem 1rem;
+}
+
 .issue-form textarea {
   min-height: 120px;
   resize: vertical;

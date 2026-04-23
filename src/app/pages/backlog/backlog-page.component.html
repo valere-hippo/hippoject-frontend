@@ -87,6 +87,9 @@
               <button type="button" [disabled]="sprint.status === 'COMPLETED' || sprintActionId === sprint.id" (click)="completeSprint(vm.projectId, sprint.id)">
                 {{ sprintActionId === sprint.id ? 'Saving…' : 'Complete' }}
               </button>
+              <button type="button" class="ghost" [disabled]="deletingSprintId === sprint.id" (click)="deleteSprint(vm.projectId, sprint.id)">
+                {{ deletingSprintId === sprint.id ? 'Removing…' : 'Remove' }}
+              </button>
             </div>
           }
         </div>

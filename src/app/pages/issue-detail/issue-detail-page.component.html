@@ -114,6 +114,9 @@
           </select>
         </label>
         <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Save issue' }}</button>
+        <button type="button" class="danger-button" [disabled]="isDeletingIssue" (click)="deleteIssue(vm.projectId, vm.issue.id)">
+          {{ isDeletingIssue ? 'Removing…' : 'Delete issue' }}
+        </button>
       </form>
       } @else {
         <p>You currently have read-only access to this issue.</p>

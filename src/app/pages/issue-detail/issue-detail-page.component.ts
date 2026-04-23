@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
@@ -17,6 +17,7 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 })
 export class IssueDetailPageComponent {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
@@ -41,6 +42,7 @@ export class IssueDetailPageComponent {
   protected commentBody = '';
   protected isSavingComment = false;
   protected isSavingIssue = false;
+  protected isDeletingIssue = false;
 
   protected readonly vm$ = combineLatest({
     params: this.route.paramMap.pipe(
@@ -116,6 +118,19 @@ export class IssueDetailPageComponent {
       },
       error: () => {
         this.isSavingIssue = false;
+      }
+    });
+  }
+
+  protected deleteIssue(projectId: number, issueId: number): void {
+    this.isDeletingIssue = true;
+    this.workspaceService.deleteIssue(projectId, issueId).subscribe({
+      next: () => {
+        this.isDeletingIssue = false;
+        void this.router.navigate(['/projects', projectId]);
+      },
+      error: () => {
+        this.isDeletingIssue = false;
       }
     });
   }
