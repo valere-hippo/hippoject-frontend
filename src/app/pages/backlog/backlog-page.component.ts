@@ -70,6 +70,7 @@ export class BacklogPageComponent {
         status: issue.status,
         labels: issue.labels,
         sprintId,
+        epicId: issue.epicId,
         assigneeId: issue.assigneeId ?? ''
       })
       .subscribe(() => this.refresh$.next());

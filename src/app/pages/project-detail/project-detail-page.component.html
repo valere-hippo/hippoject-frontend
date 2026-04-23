@@ -93,6 +93,15 @@
             }
           </select>
         </label>
+        <label>
+          <span>Epic</span>
+          <select [(ngModel)]="issueForm.epicId" name="epicId">
+            <option [ngValue]="null">No epic</option>
+            @for (epic of vm.epics; track epic.id) {
+              <option [ngValue]="epic.id">{{ epic.issueKey }} · {{ epic.title }}</option>
+            }
+          </select>
+        </label>
         <label class="full-width">
           <span>Labels</span>
           <input [(ngModel)]="issueLabelsText" name="issueLabelsText" maxlength="200" placeholder="frontend, auth, sprint" />
@@ -116,6 +125,9 @@
             <p>{{ issue.title }}</p>
           </div>
             <div class="issue-row__meta">
+              @if (issue.epicKey) {
+                <span class="status">{{ issue.epicKey }}</span>
+              }
               <span class="status">{{ issue.issueType }}</span>
               <span class="status">{{ issue.sprintName || 'Backlog' }}</span>
               <span class="status">{{ issue.status }}</span>

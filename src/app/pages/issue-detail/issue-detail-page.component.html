@@ -6,6 +6,9 @@
       <p>{{ vm.issue.description }}</p>
     </div>
     <div class="hero__actions">
+      @if (vm.issue.epicKey) {
+        <span class="status">{{ vm.issue.epicKey }}</span>
+      }
       <span class="status">{{ vm.issue.issueType }}</span>
       <span class="status">{{ vm.issue.status }}</span>
       <span class="priority {{ vm.issue.priority.toLowerCase() }}">{{ vm.issue.priority }}</span>
@@ -74,6 +77,15 @@
             <option [ngValue]="null">Backlog</option>
             @for (sprint of vm.sprints; track sprint.id) {
               <option [ngValue]="sprint.id">{{ sprint.name }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Epic</span>
+          <select [(ngModel)]="issueForm.epicId" name="epicId">
+            <option [ngValue]="null">No epic</option>
+            @for (epic of vm.epics; track epic.id) {
+              <option [ngValue]="epic.id">{{ epic.issueKey }} · {{ epic.title }}</option>
             }
           </select>
         </label>

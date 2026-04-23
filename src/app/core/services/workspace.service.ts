@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { ApiService } from './api.service';
+import { DashboardSummary } from '../../shared/models/dashboard.model';
 import {
   CreateCommentRequest,
   IssueFilters,
@@ -32,6 +33,10 @@ export class WorkspaceService {
 
   getProjects(): Observable<Project[]> {
     return this.api.get<Project[]>('projects');
+  }
+
+  getDashboardSummary(): Observable<DashboardSummary> {
+    return this.api.get<DashboardSummary>('dashboard/summary');
   }
 
   createProject(request: CreateProjectRequest): Observable<Project> {

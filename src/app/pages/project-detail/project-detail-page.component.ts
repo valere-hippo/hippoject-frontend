@@ -31,6 +31,7 @@ export class ProjectDetailPageComponent {
     status: 'TODO',
     labels: [],
     sprintId: null,
+    epicId: null,
     assigneeId: ''
   };
   protected issueLabelsText = '';
@@ -54,7 +55,7 @@ export class ProjectDetailPageComponent {
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
         sprints: this.workspaceService.getSprints(projectId)
-      })
+      }).pipe(map((data) => ({ ...data, epics: data.issues.filter((issue) => issue.issueType === 'EPIC') })))
     ),
     tap(({ project }) => {
       this.projectForm.name = project.name;
@@ -73,6 +74,7 @@ export class ProjectDetailPageComponent {
         this.issueForm.status = 'TODO';
         this.issueForm.labels = [];
         this.issueForm.sprintId = null;
+        this.issueForm.epicId = null;
         this.issueForm.assigneeId = '';
         this.issueLabelsText = '';
         this.isSavingIssue = false;

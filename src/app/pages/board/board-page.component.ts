@@ -46,6 +46,7 @@ export class BoardPageComponent {
         status,
         labels: issue.labels,
         sprintId: issue.sprintId,
+        epicId: issue.epicId,
         assigneeId: issue.assigneeId ?? ''
       })
       .subscribe(() => this.refresh$.next());

@@ -30,6 +30,7 @@ export class IssueDetailPageComponent {
     status: 'TODO',
     labels: [],
     sprintId: null,
+    epicId: null,
     assigneeId: ''
   };
   protected issueLabelsText = '';
@@ -51,8 +52,16 @@ export class IssueDetailPageComponent {
       combineLatest({
         issue: this.workspaceService.getIssue(params.projectId, params.issueId),
         comments: this.workspaceService.getComments(params.projectId, params.issueId),
-        sprints: this.workspaceService.getSprints(params.projectId)
-      }).pipe(map((data) => ({ ...data, projectId: params.projectId, issueId: params.issueId })))
+        sprints: this.workspaceService.getSprints(params.projectId),
+        projectIssues: this.workspaceService.getProjectIssues(params.projectId)
+      }).pipe(
+        map((data) => ({
+          ...data,
+          epics: data.projectIssues.filter((candidate) => candidate.issueType === 'EPIC' && candidate.id !== params.issueId),
+          projectId: params.projectId,
+          issueId: params.issueId
+        }))
+      )
     ),
     tap(({ issue }) => {
       this.issueForm.title = issue.title;
@@ -62,6 +71,7 @@ export class IssueDetailPageComponent {
       this.issueForm.status = issue.status;
       this.issueForm.labels = issue.labels;
       this.issueForm.sprintId = issue.sprintId;
+      this.issueForm.epicId = issue.epicId;
       this.issueForm.assigneeId = issue.assigneeId ?? '';
       this.issueLabelsText = issue.labels.join(', ');
     })

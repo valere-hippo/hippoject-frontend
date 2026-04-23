@@ -21,6 +21,9 @@ export interface Issue {
   priority: IssuePriority;
   sprintId: number | null;
   sprintName: string | null;
+  epicId: number | null;
+  epicKey: string | null;
+  epicTitle: string | null;
   labels: string[];
   assigneeId: string | null;
   reporterId: string;
@@ -36,6 +39,7 @@ export interface CreateIssueRequest {
   priority: IssuePriority;
   status?: IssueStatus;
   sprintId?: number | null;
+  epicId?: number | null;
   labels?: string[];
   assigneeId?: string | null;
 }

@@ -13,21 +13,16 @@ import { WorkspaceService } from '../../core/services/workspace.service';
 export class DashboardPageComponent {
   private readonly workspaceService = inject(WorkspaceService);
 
-  protected readonly projects$ = this.workspaceService.getProjects();
-  protected readonly issues$ = this.workspaceService.getIssues();
   protected readonly vm$ = combineLatest({
-    projects: this.projects$,
-    issues: this.issues$
+    projects: this.workspaceService.getProjects(),
+    issues: this.workspaceService.getIssues(),
+    summary: this.workspaceService.getDashboardSummary()
   }).pipe(
-    map(({ projects, issues }) => ({
+    map(({ projects, issues, summary }) => ({
       projects,
+      summary,
       recentIssues: issues.slice(0, 6),
-      stats: {
-        projects: projects.length,
-        open: issues.filter((issue) => issue.status !== 'DONE').length,
-        inFlight: issues.filter((issue) => issue.status === 'IN_PROGRESS' || issue.status === 'IN_REVIEW').length,
-        critical: issues.filter((issue) => issue.priority === 'CRITICAL').length
-      }
+      epicLinked: issues.filter((issue) => issue.epicId != null).length
     }))
   );
 }

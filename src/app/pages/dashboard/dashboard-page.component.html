@@ -2,33 +2,33 @@
   <section class="hero-grid">
     <div class="hero card">
       <p class="eyebrow">Workspace snapshot</p>
-      <h3>Hippoject is now wired for real backend data.</h3>
-      <p class="body-copy">Projects, issues, and comments can flow through the first real vertical slice now.</p>
+      <h3>Hippoject now tracks delivery structure, not just raw tickets.</h3>
+      <p class="body-copy">Epics, sprints, and real KPI summaries are starting to make the workspace feel like a real planning product.</p>
 
       <div class="metrics-row">
         <article>
-          <strong>{{ vm.stats.projects }}</strong>
+          <strong>{{ vm.summary.projects }}</strong>
           <span>Projects</span>
         </article>
         <article>
-          <strong>{{ vm.stats.open }}</strong>
+          <strong>{{ vm.summary.openIssues }}</strong>
           <span>Open issues</span>
         </article>
         <article>
-          <strong>{{ vm.stats.inFlight }}</strong>
+          <strong>{{ vm.summary.inFlightIssues }}</strong>
           <span>In flight</span>
         </article>
         <article>
-          <strong>{{ vm.stats.critical }}</strong>
+          <strong>{{ vm.summary.criticalIssues }}</strong>
           <span>Critical</span>
         </article>
       </div>
     </div>
 
     <div class="card spotlight">
-      <p class="eyebrow">Current slice</p>
-      <h3>Project and issue management</h3>
-      <p>Create projects, add issues, inspect issue detail, and leave comments through the API-backed flow.</p>
+      <p class="eyebrow">Planning depth</p>
+      <h3>{{ vm.summary.epics }} epics and {{ vm.summary.activeSprints }} active sprints</h3>
+      <p>{{ vm.epicLinked }} issues are already attached to an epic, which gives the board a real delivery narrative.</p>
     </div>
   </section>
 
@@ -62,7 +62,12 @@
       <h3>Latest updates</h3>
       <ul class="checklist">
         @for (issue of vm.recentIssues; track issue.id) {
-          <li>{{ issue.issueKey }} · {{ issue.title }} · {{ issue.status }}</li>
+          <li>
+            {{ issue.issueKey }} · {{ issue.title }} · {{ issue.status }}
+            @if (issue.epicKey) {
+              <span> · {{ issue.epicKey }}</span>
+            }
+          </li>
         }
       </ul>
     </div>
