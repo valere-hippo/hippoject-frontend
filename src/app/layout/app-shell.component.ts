@@ -1,21 +1,20 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { WorkspaceService } from '../core/services/workspace.service';
+import { AuthService } from '../core/auth/auth.service';
 
 @Component({
   selector: 'app-shell',
-  imports: [AsyncPipe, CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss'
 })
 export class AppShellComponent {
   private readonly router = inject(Router);
-  private readonly workspaceService = inject(WorkspaceService);
+  protected readonly auth = inject(AuthService);
 
-  protected readonly user$ = this.workspaceService.getCurrentUser();
   protected readonly navItems = [
     { label: 'Dashboard', icon: '◫', route: '/dashboard' },
     { label: 'Projects', icon: '◪', route: '/projects' },
@@ -41,5 +40,9 @@ export class AppShellComponent {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.currentUrl = this.router.url;
     });
+  }
+
+  protected logout(): void {
+    void this.auth.logout();
   }
 }
