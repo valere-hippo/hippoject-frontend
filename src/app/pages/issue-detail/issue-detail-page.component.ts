@@ -48,7 +48,8 @@ export class IssueDetailPageComponent {
 
   constructor() {
     this.realtimeService.events$.subscribe((event) => {
-      if (event.type === 'project-updated' && !this.lastDeletedIssue) {
+      const payload = event.payload as { projectId?: number } | null;
+      if (event.type === 'project-updated' && !this.lastDeletedIssue && payload?.projectId === Number(this.route.snapshot.paramMap.get('projectId'))) {
         this.refresh$.next();
       }
     });

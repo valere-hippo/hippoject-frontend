@@ -44,13 +44,14 @@ export class AppShellComponent implements OnDestroy {
   });
 
   constructor() {
-    this.realtimeService.connect();
+    void this.realtimeService.connect();
     this.loadNotifications();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.currentUrl = this.router.url;
     });
     this.realtimeService.events$.subscribe((event) => {
-      if (event.type === 'notifications-updated') {
+      const payload = event.payload as { recipientId?: string } | null;
+      if (event.type === 'notifications-updated' && (!payload?.recipientId || payload.recipientId === this.auth.userId())) {
         this.loadNotifications();
       }
     });

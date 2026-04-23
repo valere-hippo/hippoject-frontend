@@ -28,7 +28,8 @@ export class BoardPageComponent {
 
   constructor() {
     this.realtimeService.events$.subscribe((event) => {
-      if (event.type === 'project-updated') {
+      const payload = event.payload as { projectId?: number } | null;
+      if (event.type === 'project-updated' && payload?.projectId === Number(this.route.snapshot.paramMap.get('projectId'))) {
         this.refresh$.next();
       }
     });
