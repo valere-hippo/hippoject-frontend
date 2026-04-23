@@ -9,6 +9,11 @@
     <div class="hero__actions">
       <a [routerLink]="['/projects', vm.project.id, 'board']">Open board</a>
       <a [routerLink]="['/projects', vm.project.id, 'backlog']">View backlog</a>
+      @if (vm.permissions.canEditProject) {
+        <button type="button" class="danger-button" (click)="archiveProject(vm.project.id)" [disabled]="isArchivingProject">
+          {{ isArchivingProject ? 'Archiving…' : 'Archive project' }}
+        </button>
+      }
     </div>
   </section>
 

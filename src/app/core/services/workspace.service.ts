@@ -42,8 +42,8 @@ export class WorkspaceService {
     });
   }
 
-  getProjects(): Observable<Project[]> {
-    return this.api.get<Project[]>('projects');
+  getProjects(includeArchived = false): Observable<Project[]> {
+    return this.api.get<Project[]>('projects', { includeArchived });
   }
 
   getDirectory(): Observable<DirectoryProject[]> {
@@ -64,6 +64,14 @@ export class WorkspaceService {
 
   updateProject(projectId: number, request: UpdateProjectRequest): Observable<Project> {
     return this.api.put<Project>(`projects/${projectId}`, request);
+  }
+
+  archiveProject(projectId: number): Observable<Project> {
+    return this.api.delete<Project>(`projects/${projectId}`);
+  }
+
+  restoreProject(projectId: number): Observable<Project> {
+    return this.api.put<Project>(`projects/${projectId}/restore`, {});
   }
 
   getProjectMembers(projectId: number): Observable<ProjectMember[]> {

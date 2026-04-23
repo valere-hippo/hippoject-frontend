@@ -5,6 +5,7 @@ export interface Project {
   description: string;
   ownerId: string;
   createdAt: string;
+  deletedAt: string | null;
   issueCount: number;
   memberCount: number;
 }

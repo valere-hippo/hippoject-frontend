@@ -4,6 +4,10 @@
     <h3>Create the first real projects in Hippoject.</h3>
     <p>The project list below is now backed by the Spring Boot API.</p>
   </div>
+  <label class="archive-toggle">
+    <input type="checkbox" [(ngModel)]="includeArchived" (ngModelChange)="toggleArchived()" />
+    <span>Show archived</span>
+  </label>
 </section>
 
 <section class="page-card form-card">
@@ -33,7 +37,7 @@
 
 <section class="project-grid">
   @for (project of projects$ | async; track project.id) {
-    <article class="page-card project-card">
+    <article class="page-card project-card" [class.project-card--archived]="!!project.deletedAt">
       <div class="project-card__header">
         <div>
           <p class="eyebrow">{{ project.key }}</p>
@@ -63,6 +67,15 @@
         <a [routerLink]="['/projects', project.id]">Overview</a>
         <a [routerLink]="['/projects', project.id, 'board']">Board</a>
         <a [routerLink]="['/projects', project.id, 'backlog']">Backlog</a>
+        @if (!project.deletedAt) {
+          <button type="button" (click)="archiveProject(project.id)" [disabled]="archivingProjectId === project.id">
+            {{ archivingProjectId === project.id ? 'Archiving…' : 'Archive' }}
+          </button>
+        } @else {
+          <button type="button" (click)="restoreProject(project.id)" [disabled]="restoringProjectId === project.id">
+            {{ restoringProjectId === project.id ? 'Restoring…' : 'Restore' }}
+          </button>
+        }
       </div>
     </article>
   }

@@ -1,7 +1,7 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
@@ -18,6 +18,7 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 })
 export class ProjectDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly refresh$ = new Subject<void>();
@@ -55,6 +56,7 @@ export class ProjectDetailPageComponent {
   protected isSavingIssue = false;
   protected isSavingProject = false;
   protected isSavingMember = false;
+  protected isArchivingProject = false;
   protected removingMemberId: number | null = null;
 
   private readonly projectId$ = this.route.paramMap.pipe(map((params) => Number(params.get('projectId'))));
@@ -160,6 +162,22 @@ export class ProjectDetailPageComponent {
       },
       error: () => {
         this.removingMemberId = null;
+      }
+    });
+  }
+
+  protected archiveProject(projectId: number): void {
+    if (!window.confirm('Projekt wirklich archivieren?')) {
+      return;
+    }
+    this.isArchivingProject = true;
+    this.workspaceService.archiveProject(projectId).subscribe({
+      next: () => {
+        this.isArchivingProject = false;
+        void this.router.navigate(['/projects']);
+      },
+      error: () => {
+        this.isArchivingProject = false;
       }
     });
   }

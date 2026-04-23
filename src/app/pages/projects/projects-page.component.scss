@@ -18,6 +18,12 @@
   padding: 1.4rem;
 }
 
+.archive-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .project-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -91,6 +97,10 @@ dd {
   gap: 1rem;
 }
 
+.project-card--archived {
+  opacity: 0.72;
+}
+
 .project-card__header,
 dl,
 .actions {
@@ -131,6 +141,11 @@ dl div {
   color: var(--accent-dark);
   background: var(--accent-soft);
   padding: 0.55rem 0.85rem;
+}
+
+.actions button {
+  background: #fff5f5;
+  color: var(--accent-dark);
 }
 
 @media (max-width: 720px) {
