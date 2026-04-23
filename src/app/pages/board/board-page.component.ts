@@ -40,6 +40,7 @@ export class BoardPageComponent {
         map((data) => ({
           ...data,
           projectId,
+          swimlanes: this.buildSwimlanes(data.issues),
           permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
             workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
             projectAdmin: this.auth.hasAnyRole('project-admin'),
@@ -49,6 +50,22 @@ export class BoardPageComponent {
       )
     )
   );
+
+  private buildSwimlanes(issues: Issue[]) {
+    const epicLanes = issues
+      .filter((issue) => issue.issueType === 'EPIC')
+      .map((epic) => ({
+        key: `epic-${epic.id}`,
+        title: `${epic.issueKey} · ${epic.title}`,
+        issues: issues.filter((candidate) => candidate.id === epic.id || candidate.epicId === epic.id)
+      }));
+
+    const standaloneIssues = issues.filter((issue) => issue.issueType !== 'EPIC' && issue.epicId == null);
+
+    return standaloneIssues.length
+      ? [...epicLanes, { key: 'ungrouped', title: 'Ungrouped work', issues: standaloneIssues }]
+      : epicLanes;
+  }
 
   protected moveIssue(projectId: number, issue: Issue, status: IssueStatus): void {
     this.workspaceService

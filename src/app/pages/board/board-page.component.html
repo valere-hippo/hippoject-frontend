@@ -20,32 +20,39 @@
           <span>{{ vm.issues.filter((issue) => issue.status === column.key).length }}</span>
         </header>
 
-        <div class="cards">
-          @for (issue of vm.issues; track issue.id) {
-            @if (issue.status === column.key) {
-              <div class="issue-card">
-                <a class="issue-card__link" [routerLink]="['/projects', vm.projectId, 'issues', issue.id]">
-                  <p class="eyebrow">{{ issue.issueKey }}</p>
-                  <h4>{{ issue.title }}</h4>
-                  <p>{{ issue.description }}</p>
-                </a>
-                <footer>
-                  <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-                  <span>{{ issue.updatedAt | date: 'short' }}</span>
-                </footer>
-                @if (vm.permissions.canMoveBoard) {
-                  <div class="board-actions">
-                    @for (target of columns; track target.key) {
-                      <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
-                        {{ target.label }}
-                      </button>
-                    }
-                  </div>
+        @for (lane of vm.swimlanes; track lane.key) {
+          @if (lane.issues.filter((issue) => issue.status === column.key).length) {
+            <section class="swimlane">
+              <div class="swimlane__header">{{ lane.title }}</div>
+              <div class="cards">
+                @for (issue of lane.issues; track issue.id) {
+                  @if (issue.status === column.key) {
+                    <div class="issue-card">
+                      <a class="issue-card__link" [routerLink]="['/projects', vm.projectId, 'issues', issue.id]">
+                        <p class="eyebrow">{{ issue.issueKey }}</p>
+                        <h4>{{ issue.title }}</h4>
+                        <p>{{ issue.description }}</p>
+                      </a>
+                      <footer>
+                        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+                        <span>{{ issue.updatedAt | date: 'short' }}</span>
+                      </footer>
+                      @if (vm.permissions.canMoveBoard) {
+                        <div class="board-actions">
+                          @for (target of columns; track target.key) {
+                            <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
+                              {{ target.label }}
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
                 }
               </div>
-            }
+            </section>
           }
-        </div>
+        }
       </article>
     }
   </section>
