@@ -19,7 +19,6 @@ export class AppShellComponent implements OnDestroy {
   protected readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly realtimeService = inject(RealtimeService);
-  private readonly notificationsTimer = window.setInterval(() => this.loadNotifications(), 15000);
 
   protected readonly navItems = [
     { label: 'Dashboard', icon: '◫', route: '/dashboard' },
@@ -68,12 +67,10 @@ export class AppShellComponent implements OnDestroy {
   }
 
   protected logout(): void {
-    window.clearInterval(this.notificationsTimer);
     void this.auth.logout();
   }
 
   ngOnDestroy(): void {
-    window.clearInterval(this.notificationsTimer);
     this.realtimeService.disconnect();
   }
 

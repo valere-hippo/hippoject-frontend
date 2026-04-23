@@ -2,7 +2,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Subject, combineLatest, map, startWith, switchMap, timer } from 'rxjs';
+import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { RealtimeService } from '../../core/services/realtime.service';
@@ -44,7 +44,7 @@ export class BoardPageComponent {
 
   protected readonly vm$ = combineLatest({
     projectId: this.route.paramMap.pipe(map((params) => Number(params.get('projectId')))),
-    _: combineLatest([this.refresh$.pipe(startWith(void 0)), timer(0, 15000)])
+    _: this.refresh$.pipe(startWith(void 0))
   }).pipe(
     switchMap(({ projectId }) =>
       combineLatest({
