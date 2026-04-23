@@ -1,59 +1,60 @@
-# HippojectFrontend
+# Hippoject Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+Angular frontend for Hippoject.
 
-## Development server
+## Current scope
 
-To start a local development server, run:
+The UI currently includes:
 
-```bash
-ng serve
-```
+- dashboard KPIs
+- projects overview and project detail pages
+- board with desktop drag-and-drop and touch-friendlier quick move controls
+- backlog and sprint lifecycle flows
+- issue navigator with saved filters and archived issue view
+- issue detail editing, comments, epic progress, and restore flow
+- notification inbox
+- team directory and assignee pickers
+- Keycloak login flow
+- realtime refresh over WebSocket
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Local development
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Install dependencies:
 
 ```bash
-ng build
+npm install --include=dev
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Run the dev server:
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Build:
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Environment
 
-## Additional Resources
+The app expects `src/environments/environment.ts` and `environment.prod.ts` values for:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `apiBaseUrl`
+- Keycloak `url`
+- Keycloak `realm`
+- Keycloak `clientId`
+
+Current local defaults are aligned to:
+
+- frontend: `http://localhost:4200`
+- backend API: `http://localhost:8080/api`
+- Keycloak: `http://localhost:8081`
+- backend realtime socket: `/ws/realtime`
+
+## Notes
+
+- The shell connects to realtime updates over WebSocket.
+- If auth is enabled, the frontend attaches a fresh Keycloak token to the realtime socket handshake.
+- Angular production builds were used throughout this project as the main frontend sanity check.
