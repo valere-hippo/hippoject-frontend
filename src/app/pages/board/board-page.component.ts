@@ -1,5 +1,6 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, timer } from 'rxjs';
 
@@ -11,7 +12,7 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 
 @Component({
   selector: 'app-board-page',
-  imports: [AsyncPipe, DatePipe, RouterLink],
+  imports: [AsyncPipe, DatePipe, FormsModule, RouterLink],
   templateUrl: './board-page.component.html',
   styleUrl: './board-page.component.scss'
 })
@@ -23,6 +24,7 @@ export class BoardPageComponent {
   private readonly refresh$ = new Subject<void>();
   protected draggedIssueId: number | null = null;
   protected dragOverColumn: IssueStatus | null = null;
+  protected readonly selectedStatusByIssueId: Record<number, IssueStatus> = {};
 
   constructor() {
     this.realtimeService.events$.subscribe((event) => {
@@ -97,6 +99,21 @@ export class BoardPageComponent {
 
   protected startDrag(issueId: number): void {
     this.draggedIssueId = issueId;
+  }
+
+  protected selectedStatus(issue: Issue): IssueStatus {
+    return this.selectedStatusByIssueId[issue.id] ?? issue.status;
+  }
+
+  protected setSelectedStatus(issueId: number, status: IssueStatus): void {
+    this.selectedStatusByIssueId[issueId] = status;
+  }
+
+  protected moveIssueToSelected(projectId: number, issue: Issue): void {
+    const status = this.selectedStatus(issue);
+    if (status !== issue.status) {
+      this.moveIssue(projectId, issue, status);
+    }
   }
 
   protected setDragOverColumn(status: IssueStatus | null): void {

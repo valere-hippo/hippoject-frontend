@@ -38,12 +38,20 @@
                         <span>{{ issue.updatedAt | date: 'short' }}</span>
                       </footer>
                       @if (vm.permissions.canMoveBoard) {
-                        <div class="board-actions">
+                        <div class="board-actions board-actions--desktop">
                           @for (target of columns; track target.key) {
                             <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
                               {{ target.label }}
                             </button>
                           }
+                        </div>
+                        <div class="board-actions-mobile">
+                          <select [ngModel]="selectedStatus(issue)" (ngModelChange)="setSelectedStatus(issue.id, $event)">
+                            @for (target of columns; track target.key) {
+                              <option [ngValue]="target.key">{{ target.label }}</option>
+                            }
+                          </select>
+                          <button type="button" [disabled]="selectedStatus(issue) === issue.status" (click)="moveIssueToSelected(vm.projectId, issue)">Move</button>
                         </div>
                       }
                     </div>
