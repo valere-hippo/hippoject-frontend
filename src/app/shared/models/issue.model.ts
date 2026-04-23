@@ -53,6 +53,8 @@ export interface IssueFilters {
   projectId?: number;
   status?: IssueStatus | '';
   issueType?: IssueType | '';
+  priority?: IssuePriority | '';
+  assigneeId?: string;
   label?: string;
 }
 
@@ -63,6 +65,8 @@ export interface SavedIssueFilter {
   projectId: number | null;
   status: IssueStatus | null;
   issueType: IssueType | null;
+  priority: IssuePriority | null;
+  assigneeId: string | null;
   label: string | null;
   createdAt: string;
 }
@@ -73,6 +77,8 @@ export interface CreateSavedIssueFilterRequest {
   projectId?: number | null;
   status?: IssueStatus | null;
   issueType?: IssueType | null;
+  priority?: IssuePriority | null;
+  assigneeId?: string;
   label?: string;
 }
 

@@ -32,6 +32,13 @@
         <option [value]="type">{{ type || 'All types' }}</option>
       }
     </select>
+    <select [(ngModel)]="filters.priority">
+      <option value="">All priorities</option>
+      @for (priority of priorityOptions; track priority) {
+        <option [value]="priority">{{ priority || 'All priorities' }}</option>
+      }
+    </select>
+    <input type="text" [(ngModel)]="filters.assigneeId" placeholder="Filter by assignee" />
     <input type="text" [(ngModel)]="filters.label" placeholder="Filter by label" />
     <button type="button" (click)="applyFilters()">Apply</button>
     <button type="button" class="ghost" (click)="clearFilters()">Reset</button>

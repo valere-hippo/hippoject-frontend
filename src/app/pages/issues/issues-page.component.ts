@@ -8,6 +8,7 @@ import {
   CreateSavedIssueFilterRequest,
   Issue,
   IssueFilters,
+  IssuePriority,
   IssueStatus,
   IssueType,
   SavedIssueFilter
@@ -23,12 +24,15 @@ export class IssuesPageComponent {
   private readonly workspaceService = inject(WorkspaceService);
 
   protected readonly statusOptions: Array<IssueStatus | ''> = ['', 'TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
+  protected readonly priorityOptions: Array<IssuePriority | ''> = ['', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly typeOptions: Array<IssueType | ''> = ['', 'STORY', 'TASK', 'BUG', 'EPIC'];
 
   protected filters: IssueFilters = {
     query: '',
     status: '',
     issueType: '',
+    priority: '',
+    assigneeId: '',
     label: ''
   };
 
@@ -47,22 +51,22 @@ export class IssuesPageComponent {
   }
 
   protected clearFilters(): void {
-    this.filters = { query: '', status: '', issueType: '', label: '' };
+    this.filters = { query: '', status: '', issueType: '', priority: '', assigneeId: '', label: '' };
     this.loadIssues();
   }
 
   protected applyQuickFilter(kind: 'active' | 'critical-bugs' | 'epics' | 'review') {
     if (kind === 'active') {
-      this.filters = { query: '', status: 'IN_PROGRESS', issueType: '', label: '' };
+      this.filters = { query: '', status: 'IN_PROGRESS', issueType: '', priority: '', assigneeId: '', label: '' };
     }
     if (kind === 'critical-bugs') {
-      this.filters = { query: 'critical', status: '', issueType: 'BUG', label: '' };
+      this.filters = { query: '', status: '', issueType: 'BUG', priority: 'CRITICAL', assigneeId: '', label: '' };
     }
     if (kind === 'epics') {
-      this.filters = { query: '', status: '', issueType: 'EPIC', label: '' };
+      this.filters = { query: '', status: '', issueType: 'EPIC', priority: '', assigneeId: '', label: '' };
     }
     if (kind === 'review') {
-      this.filters = { query: '', status: 'IN_REVIEW', issueType: '', label: '' };
+      this.filters = { query: '', status: 'IN_REVIEW', issueType: '', priority: '', assigneeId: '', label: '' };
     }
     this.loadIssues();
   }
@@ -73,6 +77,8 @@ export class IssuesPageComponent {
       projectId: filter.projectId ?? undefined,
       status: filter.status ?? '',
       issueType: filter.issueType ?? '',
+      priority: filter.priority ?? '',
+      assigneeId: filter.assigneeId ?? '',
       label: filter.label ?? ''
     };
     this.loadIssues();
@@ -89,6 +95,8 @@ export class IssuesPageComponent {
       projectId: this.filters.projectId ?? null,
       status: this.filters.status || null,
       issueType: this.filters.issueType || null,
+      priority: this.filters.priority || null,
+      assigneeId: this.filters.assigneeId?.trim() || undefined,
       label: this.filters.label?.trim() || undefined
     };
 

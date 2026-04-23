@@ -111,6 +111,8 @@ export class WorkspaceService {
     if (filters.projectId != null) params.set('projectId', String(filters.projectId));
     if (filters.status) params.set('status', filters.status);
     if (filters.issueType) params.set('issueType', filters.issueType);
+    if (filters.priority) params.set('priority', filters.priority);
+    if (filters.assigneeId?.trim()) params.set('assigneeId', filters.assigneeId.trim());
     if (filters.label?.trim()) params.set('label', filters.label.trim());
 
     const query = params.toString();
