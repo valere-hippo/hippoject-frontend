@@ -28,6 +28,7 @@ export class BacklogPageComponent {
   };
 
   protected isSavingSprint = false;
+  protected sprintActionId: number | null = null;
 
   protected readonly vm$ = combineLatest({
     projectId: this.route.paramMap.pipe(map((params) => Number(params.get('projectId')))),
@@ -38,7 +39,17 @@ export class BacklogPageComponent {
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
         sprints: this.workspaceService.getSprints(projectId)
-      }).pipe(map((data) => ({ ...data, projectId })))
+      }).pipe(
+        map((data) => ({
+          ...data,
+          projectId,
+          stats: {
+            active: data.sprints.filter((sprint) => sprint.status === 'ACTIVE').length,
+            planned: data.sprints.filter((sprint) => sprint.status === 'PLANNED').length,
+            completed: data.sprints.filter((sprint) => sprint.status === 'COMPLETED').length
+          }
+        }))
+      )
     )
   );
 
@@ -56,6 +67,32 @@ export class BacklogPageComponent {
       },
       error: () => {
         this.isSavingSprint = false;
+      }
+    });
+  }
+
+  protected startSprint(projectId: number, sprintId: number): void {
+    this.sprintActionId = sprintId;
+    this.workspaceService.startSprint(projectId, sprintId).subscribe({
+      next: () => {
+        this.sprintActionId = null;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.sprintActionId = null;
+      }
+    });
+  }
+
+  protected completeSprint(projectId: number, sprintId: number): void {
+    this.sprintActionId = sprintId;
+    this.workspaceService.completeSprint(projectId, sprintId).subscribe({
+      next: () => {
+        this.sprintActionId = null;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.sprintActionId = null;
       }
     });
   }

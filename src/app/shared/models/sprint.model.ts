@@ -1,3 +1,5 @@
+export type SprintStatus = 'PLANNED' | 'ACTIVE' | 'COMPLETED';
+
 export interface Sprint {
   id: number;
   projectId: number;
@@ -5,7 +7,9 @@ export interface Sprint {
   goal: string;
   startsAt: string;
   endsAt: string;
+  status: SprintStatus;
   active: boolean;
+  completedAt: string | null;
   createdAt: string;
   issueCount: number;
 }

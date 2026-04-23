@@ -63,6 +63,14 @@ export class WorkspaceService {
     return this.api.post<Sprint>(`projects/${projectId}/sprints`, request);
   }
 
+  startSprint(projectId: number, sprintId: number): Observable<Sprint> {
+    return this.api.put<Sprint>(`projects/${projectId}/sprints/${sprintId}/start`, {});
+  }
+
+  completeSprint(projectId: number, sprintId: number): Observable<Sprint> {
+    return this.api.put<Sprint>(`projects/${projectId}/sprints/${sprintId}/complete`, {});
+  }
+
   createIssue(projectId: number, request: CreateIssueRequest): Observable<Issue> {
     return this.api.post<Issue>(`projects/${projectId}/issues`, request);
   }

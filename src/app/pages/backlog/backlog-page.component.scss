@@ -41,7 +41,8 @@
 
 .sprint-form input,
 .sprint-form textarea,
-.backlog-meta select {
+.backlog-meta select,
+.actions button {
   width: 100%;
   border: 1px solid #d8b8b8;
   border-radius: 1rem;
@@ -67,7 +68,8 @@
 .eyebrow,
 .meta,
 .priority,
-.summary span {
+.summary span,
+.status {
   margin: 0;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -94,6 +96,13 @@ strong {
   color: #5e4a4a;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-width: min(440px, 100%);
+}
+
 .summary {
   padding: 1rem;
   border-radius: 1rem;
@@ -113,14 +122,45 @@ strong {
   justify-content: flex-end;
 }
 
+.sprint-meta {
+  max-width: 560px;
+}
+
 .backlog-meta {
   min-width: 280px;
 }
 
-.priority {
+.priority,
+.status {
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
   background: #f7eded;
+}
+
+.status.active {
+  color: #ad5858;
+}
+
+.status.completed {
+  color: #6c8c6c;
+}
+
+.actions {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.actions button {
+  background: #ad5858;
+  color: white;
+  border: 0;
+  width: auto;
+}
+
+.actions button.ghost {
+  background: #fff5f5;
+  color: #7c4c4c;
+  border: 1px solid rgba(173, 88, 88, 0.25);
 }
 
 .priority.critical {
@@ -140,7 +180,8 @@ strong {
 }
 
 @media (max-width: 900px) {
-  .sprint-form {
+  .sprint-form,
+  .summary-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -157,7 +198,14 @@ strong {
     justify-content: flex-start;
   }
 
-  .backlog-meta {
+  .backlog-meta,
+  .sprint-meta {
     min-width: 100%;
+    max-width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+    display: grid;
   }
 }

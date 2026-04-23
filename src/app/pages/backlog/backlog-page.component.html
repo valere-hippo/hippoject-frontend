@@ -3,11 +3,25 @@
     <div>
       <p class="eyebrow">Prioritization</p>
       <h3>{{ vm.project.name }} backlog</h3>
-      <p>Create sprints and assign issues into them from one place.</p>
+      <p>Create sprints, start them deliberately, close them cleanly, and assign issues from one place.</p>
     </div>
-    <div class="summary">
-      <strong>{{ vm.sprints.length }} sprints</strong>
-      <span>{{ vm.issues.length }} issues</span>
+    <div class="summary-grid">
+      <div class="summary">
+        <strong>{{ vm.sprints.length }}</strong>
+        <span>Total sprints</span>
+      </div>
+      <div class="summary">
+        <strong>{{ vm.stats.active }}</strong>
+        <span>Active</span>
+      </div>
+      <div class="summary">
+        <strong>{{ vm.stats.planned }}</strong>
+        <span>Planned</span>
+      </div>
+      <div class="summary">
+        <strong>{{ vm.stats.completed }}</strong>
+        <span>Completed</span>
+      </div>
     </div>
   </section>
 
@@ -45,14 +59,26 @@
     @for (sprint of vm.sprints; track sprint.id) {
       <article class="page-card sprint-card">
         <div>
-          <p class="eyebrow">{{ sprint.active ? 'Active sprint' : 'Sprint' }}</p>
+          <p class="eyebrow">Sprint lifecycle</p>
           <h4>{{ sprint.name }}</h4>
           <p>{{ sprint.goal }}</p>
         </div>
-        <div class="meta">
+        <div class="meta sprint-meta">
+          <span class="status {{ sprint.status.toLowerCase() }}">{{ sprint.status }}</span>
           <span>{{ sprint.startsAt | date: 'mediumDate' }}</span>
           <span>{{ sprint.endsAt | date: 'mediumDate' }}</span>
+          @if (sprint.completedAt) {
+            <span>Closed {{ sprint.completedAt | date: 'short' }}</span>
+          }
           <span>{{ sprint.issueCount }} issues</span>
+          <div class="actions">
+            <button type="button" class="ghost" [disabled]="sprint.status === 'ACTIVE' || sprintActionId === sprint.id" (click)="startSprint(vm.projectId, sprint.id)">
+              {{ sprintActionId === sprint.id ? 'Saving…' : 'Start' }}
+            </button>
+            <button type="button" [disabled]="sprint.status === 'COMPLETED' || sprintActionId === sprint.id" (click)="completeSprint(vm.projectId, sprint.id)">
+              {{ sprintActionId === sprint.id ? 'Saving…' : 'Complete' }}
+            </button>
+          </div>
         </div>
       </article>
     }
