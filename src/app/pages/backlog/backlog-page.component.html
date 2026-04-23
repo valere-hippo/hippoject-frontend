@@ -7,7 +7,7 @@
     </div>
     <div class="summary-grid">
       <div class="summary">
-        <strong>{{ vm.sprints.length }}</strong>
+        <strong>{{ vm.activeSprints.length }}</strong>
         <span>Total sprints</span>
       </div>
       <div class="summary">
@@ -73,7 +73,7 @@
   }
 
   <section class="stack sprint-stack">
-    @for (sprint of vm.sprints; track sprint.id) {
+    @for (sprint of vm.activeSprints; track sprint.id) {
       <article class="page-card sprint-card">
         <div>
           <p class="eyebrow">Sprint lifecycle</p>
@@ -120,7 +120,7 @@
           <span>{{ issue.status }}</span>
           <select [ngModel]="issue.sprintId" [disabled]="!vm.permissions.canManageSprints" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
             <option [ngValue]="null">Backlog</option>
-            @for (sprint of vm.sprints; track sprint.id) {
+            @for (sprint of vm.activeSprints; track sprint.id) {
               <option [ngValue]="sprint.id">{{ sprint.name }}</option>
             }
           </select>
@@ -128,4 +128,37 @@
       </article>
     }
   </section>
+
+  @if (vm.archivedSprints.length) {
+    <section class="stack sprint-stack">
+      <article class="page-card sprint-card">
+        <div>
+          <p class="eyebrow">Archive</p>
+          <h4>Archived sprints</h4>
+          <p>Restore recently archived planning cycles if needed.</p>
+        </div>
+      </article>
+
+      @for (sprint of vm.archivedSprints; track sprint.id) {
+        <article class="page-card sprint-card">
+          <div>
+            <p class="eyebrow">Archived</p>
+            <h4>{{ sprint.name }}</h4>
+            <p>{{ sprint.goal }}</p>
+          </div>
+          <div class="meta sprint-meta">
+            @if (sprint.deletedAt) {
+              <span>Archived {{ sprint.deletedAt | date: 'short' }}</span>
+            }
+            <span>{{ sprint.issueCount }} issues</span>
+            @if (vm.permissions.canManageSprints) {
+              <div class="actions">
+                <button type="button" (click)="restoreSprint(vm.projectId, sprint.id)">Restore</button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </section>
+  }
 }

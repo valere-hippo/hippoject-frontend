@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import {
   CreateSavedIssueFilterRequest,
@@ -21,6 +22,7 @@ import {
   styleUrl: './issues-page.component.scss'
 })
 export class IssuesPageComponent {
+  private readonly realtimeService = inject(RealtimeService);
   private readonly workspaceService = inject(WorkspaceService);
 
   protected readonly statusOptions: Array<IssueStatus | ''> = ['', 'TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
@@ -39,12 +41,19 @@ export class IssuesPageComponent {
   protected issues: Issue[] = [];
   protected savedFilters: SavedIssueFilter[] = [];
   protected savedFilterName = '';
+  protected includeArchived = false;
   protected isSavingFilter = false;
   protected deletingFilterId: number | null = null;
+  protected restoringIssueId: number | null = null;
 
   constructor() {
     this.loadIssues();
     this.loadSavedFilters();
+    this.realtimeService.events$.subscribe((event) => {
+      if (event.type === 'project-updated') {
+        this.loadIssues();
+      }
+    });
   }
 
   protected applyFilters(): void {
@@ -53,6 +62,10 @@ export class IssuesPageComponent {
 
   protected clearFilters(): void {
     this.filters = { query: '', status: '', issueType: '', priority: '', assigneeId: '', label: '' };
+    this.loadIssues();
+  }
+
+  protected toggleArchived(): void {
     this.loadIssues();
   }
 
@@ -130,8 +143,21 @@ export class IssuesPageComponent {
     });
   }
 
+  protected restoreIssue(issue: Issue): void {
+    this.restoringIssueId = issue.id;
+    this.workspaceService.restoreIssue(issue.projectId, issue.id).subscribe({
+      next: () => {
+        this.restoringIssueId = null;
+        this.loadIssues();
+      },
+      error: () => {
+        this.restoringIssueId = null;
+      }
+    });
+  }
+
   private loadIssues(): void {
-    this.workspaceService.getIssues(this.filters).subscribe((issues) => {
+    this.workspaceService.getIssues({ ...this.filters, includeArchived: this.includeArchived }).subscribe((issues) => {
       this.issues = issues;
     });
   }

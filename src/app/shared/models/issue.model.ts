@@ -57,6 +57,7 @@ export interface IssueFilters {
   priority?: IssuePriority | '';
   assigneeId?: string;
   label?: string;
+  includeArchived?: boolean;
 }
 
 export interface SavedIssueFilter {

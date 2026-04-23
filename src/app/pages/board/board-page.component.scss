@@ -96,6 +96,7 @@ span {
   border-radius: 1.1rem;
   background: #f8fafc;
   cursor: grab;
+  touch-action: pan-y;
 }
 
 .issue-card--dragging {
@@ -125,13 +126,15 @@ span {
 
 .board-actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.45rem;
   margin-top: 0.8rem;
 }
 
 .board-actions button {
   border: 0;
-  padding: 0.55rem 0.7rem;
+  min-height: 2.7rem;
+  padding: 0.65rem 0.75rem;
   border-radius: 0.8rem;
   background: #e2e8f0;
   color: #0f172a;

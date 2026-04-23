@@ -40,6 +40,10 @@
     </select>
     <input type="text" [(ngModel)]="filters.assigneeId" placeholder="Filter by assignee" />
     <input type="text" [(ngModel)]="filters.label" placeholder="Filter by label" />
+    <label class="toggle-inline">
+      <input type="checkbox" [(ngModel)]="includeArchived" (ngModelChange)="toggleArchived()" />
+      <span>Show archived</span>
+    </label>
     <button type="button" (click)="applyFilters()">Apply</button>
     <button type="button" class="ghost" (click)="clearFilters()">Reset</button>
   </div>
@@ -79,9 +83,9 @@
     </div>
 
     @for (issue of issues; track issue.id) {
-      <a class="table__row" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
+      <div class="table__row" [class.table__row--archived]="!!issue.deletedAt">
         <strong>{{ issue.issueKey }}</strong>
-        <div class="title-cell">
+        <a class="title-cell" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
           <span>{{ issue.title }}</span>
           <div class="labels">
             @if (issue.epicKey) {
@@ -91,12 +95,19 @@
               <small>{{ label }}</small>
             }
           </div>
-        </div>
+        </a>
         <span class="type">{{ issue.issueType }}</span>
         <span class="status">{{ issue.status }}</span>
         <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-        <span>{{ issue.updatedAt | date: 'short' }}</span>
-      </a>
+        <div>
+          <span>{{ issue.updatedAt | date: 'short' }}</span>
+          @if (issue.deletedAt) {
+            <button type="button" class="ghost" (click)="restoreIssue(issue)" [disabled]="restoringIssueId === issue.id">
+              {{ restoringIssueId === issue.id ? 'Restoring…' : 'Restore' }}
+            </button>
+          }
+        </div>
+      </div>
     }
   </div>
 </section>

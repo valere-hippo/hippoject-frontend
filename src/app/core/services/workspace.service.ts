@@ -82,12 +82,12 @@ export class WorkspaceService {
     return this.api.get<ProjectActivityItem[]>(`projects/${projectId}/activity`);
   }
 
-  getProjectIssues(projectId: number): Observable<Issue[]> {
-    return this.api.get<Issue[]>(`projects/${projectId}/issues`);
+  getProjectIssues(projectId: number, includeArchived = false): Observable<Issue[]> {
+    return this.api.get<Issue[]>(`projects/${projectId}/issues`, { includeArchived });
   }
 
-  getSprints(projectId: number): Observable<Sprint[]> {
-    return this.api.get<Sprint[]>(`projects/${projectId}/sprints`);
+  getSprints(projectId: number, includeArchived = false): Observable<Sprint[]> {
+    return this.api.get<Sprint[]>(`projects/${projectId}/sprints`, { includeArchived });
   }
 
   createSprint(projectId: number, request: CreateSprintRequest): Observable<Sprint> {
@@ -140,6 +140,7 @@ export class WorkspaceService {
     if (filters.priority) params.set('priority', filters.priority);
     if (filters.assigneeId?.trim()) params.set('assigneeId', filters.assigneeId.trim());
     if (filters.label?.trim()) params.set('label', filters.label.trim());
+    if (filters.includeArchived) params.set('includeArchived', 'true');
 
     const query = params.toString();
     return this.api.get<Issue[]>(query ? `issues?${query}` : 'issues');

@@ -53,11 +53,13 @@ export class BacklogPageComponent {
       combineLatest({
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
-        sprints: this.workspaceService.getSprints(projectId),
+        sprints: this.workspaceService.getSprints(projectId, true),
         members: this.workspaceService.getProjectMembers(projectId)
       }).pipe(
         map((data) => ({
           ...data,
+          activeSprints: data.sprints.filter((sprint) => !sprint.deletedAt),
+          archivedSprints: data.sprints.filter((sprint) => !!sprint.deletedAt),
           projectId,
           permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
             workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
@@ -65,9 +67,9 @@ export class BacklogPageComponent {
             projectManager: this.auth.hasAnyRole('project-manager')
           }),
           stats: {
-            active: data.sprints.filter((sprint) => sprint.status === 'ACTIVE').length,
-            planned: data.sprints.filter((sprint) => sprint.status === 'PLANNED').length,
-            completed: data.sprints.filter((sprint) => sprint.status === 'COMPLETED').length
+            active: data.sprints.filter((sprint) => !sprint.deletedAt && sprint.status === 'ACTIVE').length,
+            planned: data.sprints.filter((sprint) => !sprint.deletedAt && sprint.status === 'PLANNED').length,
+            completed: data.sprints.filter((sprint) => !sprint.deletedAt && sprint.status === 'COMPLETED').length
           }
         }))
       )
@@ -135,11 +137,12 @@ export class BacklogPageComponent {
     });
   }
 
-  protected restoreSprint(projectId: number): void {
-    if (!this.lastDeletedSprint) {
+  protected restoreSprint(projectId: number, sprintId?: number): void {
+    const targetSprintId = sprintId ?? this.lastDeletedSprint?.id;
+    if (!targetSprintId) {
       return;
     }
-    this.workspaceService.restoreSprint(projectId, this.lastDeletedSprint.id).subscribe(() => {
+    this.workspaceService.restoreSprint(projectId, targetSprintId).subscribe(() => {
       this.lastDeletedSprint = null;
       this.refresh$.next();
     });
