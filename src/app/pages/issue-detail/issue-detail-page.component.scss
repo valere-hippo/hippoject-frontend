@@ -107,6 +107,23 @@ strong {
   margin-top: 0.9rem;
 }
 
+.progress-bar {
+  margin-top: 1rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: #f3e2e2;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.progress-copy {
+  margin-top: 0.75rem;
+}
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;

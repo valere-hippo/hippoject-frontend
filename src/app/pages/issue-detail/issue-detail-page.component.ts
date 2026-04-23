@@ -57,6 +57,7 @@ export class IssueDetailPageComponent {
       }).pipe(
         map((data) => ({
           ...data,
+          epicChildren: data.projectIssues.filter((candidate) => candidate.epicId === data.issue.id),
           epics: data.projectIssues.filter((candidate) => candidate.issueType === 'EPIC' && candidate.id !== params.issueId),
           projectId: params.projectId,
           issueId: params.issueId

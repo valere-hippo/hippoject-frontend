@@ -32,6 +32,12 @@
       <span>Updated</span>
       <strong>{{ vm.issue.updatedAt | date: 'medium' }}</strong>
     </article>
+    @if (vm.issue.issueType === 'EPIC') {
+      <article class="page-card stat-card">
+        <span>Epic progress</span>
+        <strong>{{ vm.issue.epicProgressDone }} / {{ vm.issue.epicProgressTotal }}</strong>
+      </article>
+    }
   </section>
 
   <section class="detail-grid two-columns">
@@ -113,6 +119,29 @@
       </form>
     </article>
   </section>
+
+  @if (vm.issue.issueType === 'EPIC') {
+    <section class="page-card">
+      <p class="eyebrow">Epic progress</p>
+      <h3>Child issues</h3>
+      <div class="progress-bar">
+        <div class="progress-bar__fill" [style.width.%]="vm.issue.epicProgressTotal ? (vm.issue.epicProgressDone / vm.issue.epicProgressTotal) * 100 : 0"></div>
+      </div>
+      <p class="progress-copy">{{ vm.issue.epicProgressDone }} of {{ vm.issue.epicProgressTotal }} linked issues are done.</p>
+
+      <div class="issue-list">
+        @for (child of vm.epicChildren; track child.id) {
+          <div class="issue-row comment-row">
+            <div>
+              <strong>{{ child.issueKey }} · {{ child.title }}</strong>
+              <p>{{ child.status }} · {{ child.priority }}</p>
+            </div>
+            <span>{{ child.sprintName || 'Backlog' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
 
   <section class="page-card">
     <p class="eyebrow">Activity</p>

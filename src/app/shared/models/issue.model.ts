@@ -25,6 +25,8 @@ export interface Issue {
   epicKey: string | null;
   epicTitle: string | null;
   labels: string[];
+  epicProgressTotal: number;
+  epicProgressDone: number;
   assigneeId: string | null;
   reporterId: string;
   createdAt: string;

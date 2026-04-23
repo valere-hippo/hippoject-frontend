@@ -169,6 +169,9 @@
           <div>
             <strong>{{ issue.issueKey }}</strong>
             <p>{{ issue.title }}</p>
+            @if (issue.issueType === 'EPIC') {
+              <p>{{ issue.epicProgressDone }} / {{ issue.epicProgressTotal }} child issues done</p>
+            }
           </div>
             <div class="issue-row__meta">
               @if (issue.epicKey) {
