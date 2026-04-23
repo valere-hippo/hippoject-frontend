@@ -13,6 +13,7 @@ import {
   SavedIssueFilter,
   UpdateIssueRequest
 } from '../../shared/models/issue.model';
+import { NotificationItem } from '../../shared/models/notification.model';
 import {
   CreateProjectMemberRequest,
   ProjectActivityItem,
@@ -125,6 +126,14 @@ export class WorkspaceService {
 
   createSavedIssueFilter(request: CreateSavedIssueFilterRequest): Observable<SavedIssueFilter> {
     return this.api.post<SavedIssueFilter>('filters', request);
+  }
+
+  getNotifications(): Observable<NotificationItem[]> {
+    return this.api.get<NotificationItem[]>('notifications');
+  }
+
+  markNotificationRead(notificationId: number): Observable<NotificationItem> {
+    return this.api.put<NotificationItem>(`notifications/${notificationId}/read`, {});
   }
 
   getComments(projectId: number, issueId: number): Observable<IssueComment[]> {

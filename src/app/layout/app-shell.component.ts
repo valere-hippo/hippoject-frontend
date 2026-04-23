@@ -4,6 +4,8 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
+import { WorkspaceService } from '../core/services/workspace.service';
+import { NotificationItem } from '../shared/models/notification.model';
 
 @Component({
   selector: 'app-shell',
@@ -14,6 +16,7 @@ import { AuthService } from '../core/auth/auth.service';
 export class AppShellComponent {
   private readonly router = inject(Router);
   protected readonly auth = inject(AuthService);
+  private readonly workspaceService = inject(WorkspaceService);
 
   protected readonly navItems = [
     { label: 'Dashboard', icon: '◫', route: '/dashboard' },
@@ -25,6 +28,7 @@ export class AppShellComponent {
   protected readonly quickLinks = [{ label: 'Projects', route: '/projects' }, { label: 'Issue navigator', route: '/issues' }];
 
   protected currentUrl = this.router.url;
+  protected notifications: NotificationItem[] = [];
   protected readonly pageTitle = computed(() => {
     if (this.currentUrl.includes('/board')) return 'Board';
     if (this.currentUrl.includes('/backlog')) return 'Backlog';
@@ -37,12 +41,29 @@ export class AppShellComponent {
   });
 
   constructor() {
+    this.loadNotifications();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.currentUrl = this.router.url;
     });
   }
 
+  protected unreadNotifications(): number {
+    return this.notifications.filter((notification) => !notification.read).length;
+  }
+
+  protected markNotificationRead(notificationId: number): void {
+    this.workspaceService.markNotificationRead(notificationId).subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
   protected logout(): void {
     void this.auth.logout();
+  }
+
+  private loadNotifications(): void {
+    this.workspaceService.getNotifications().subscribe((notifications) => {
+      this.notifications = notifications;
+    });
   }
 }

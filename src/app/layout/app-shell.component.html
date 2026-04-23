@@ -47,6 +47,15 @@
 
       <div class="topbar__actions">
         <div class="search-pill">Search issues, projects, or people</div>
+        <div class="notifications-panel">
+          <div class="notification-badge">{{ unreadNotifications() }} unread</div>
+          @for (notification of notifications.slice(0, 4); track notification.id) {
+            <button type="button" class="notification-item" [class.is-read]="notification.read" (click)="markNotificationRead(notification.id)">
+              <strong>{{ notification.type }}</strong>
+              <span>{{ notification.message }}</span>
+            </button>
+          }
+        </div>
         <button type="button" class="ghost-button" (click)="logout()">Logout</button>
         <div class="profile-chip">
           <div class="avatar">{{ auth.initials() }}</div>

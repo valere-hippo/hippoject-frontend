@@ -162,10 +162,11 @@
 
 .search-pill,
 .ghost-button,
-.profile-chip {
+.profile-chip,
+.notifications-panel {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
+  border-radius: 1.2rem;
 }
 
 .search-pill {
@@ -178,6 +179,33 @@
   padding: 0.85rem 1.1rem;
   color: #fff;
   cursor: pointer;
+}
+
+.notifications-panel {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.7rem;
+  min-width: min(20rem, 90vw);
+}
+
+.notification-badge {
+  font-size: 0.8rem;
+  color: #fdecec;
+}
+
+.notification-item {
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.9rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.notification-item.is-read {
+  opacity: 0.7;
 }
 
 .profile-chip {
