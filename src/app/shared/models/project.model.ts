@@ -1,12 +1,15 @@
 export interface Project {
-  id: string;
+  id: number;
   key: string;
   name: string;
-  lead: string;
   description: string;
-  progress: number;
-  health: 'on-track' | 'at-risk' | 'blocked';
-  teamSize: number;
-  activeSprint: string;
-  targetDate: string;
+  ownerId: string;
+  createdAt: string;
+  issueCount: number;
+}
+
+export interface CreateProjectRequest {
+  key: string;
+  name: string;
+  description: string;
 }

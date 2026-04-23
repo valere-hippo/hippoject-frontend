@@ -1,0 +1,61 @@
+@if (vm$ | async; as vm) {
+  <section class="hero page-card">
+    <div>
+      <p class="eyebrow">{{ vm.issue.issueKey }}</p>
+      <h3>{{ vm.issue.title }}</h3>
+      <p>{{ vm.issue.description }}</p>
+    </div>
+    <div class="hero__actions">
+      <span class="status">{{ vm.issue.status }}</span>
+      <span class="priority {{ vm.issue.priority.toLowerCase() }}">{{ vm.issue.priority }}</span>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="page-card stat-card">
+      <span>Reporter</span>
+      <strong>{{ vm.issue.reporterId }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Assignee</span>
+      <strong>{{ vm.issue.assigneeId || 'Unassigned' }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Created</span>
+      <strong>{{ vm.issue.createdAt | date: 'medium' }}</strong>
+    </article>
+    <article class="page-card stat-card">
+      <span>Updated</span>
+      <strong>{{ vm.issue.updatedAt | date: 'medium' }}</strong>
+    </article>
+  </section>
+
+  <section class="detail-grid two-columns">
+    <article class="page-card">
+      <p class="eyebrow">Add comment</p>
+      <h3>Conversation</h3>
+      <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
+        <label class="full-width">
+          <span>Comment</span>
+          <textarea [(ngModel)]="commentBody" name="commentBody" required maxlength="2000"></textarea>
+        </label>
+        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Post comment' }}</button>
+      </form>
+    </article>
+
+    <article class="page-card">
+      <p class="eyebrow">Activity</p>
+      <div class="issue-list">
+        @for (comment of vm.comments; track comment.id) {
+          <div class="issue-row comment-row">
+            <div>
+              <strong>{{ comment.authorId }}</strong>
+              <p>{{ comment.body }}</p>
+            </div>
+            <span>{{ comment.createdAt | date: 'short' }}</span>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+}

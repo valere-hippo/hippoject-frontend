@@ -1,12 +1,12 @@
 <section class="page-card header-card">
   <div>
     <p class="eyebrow">Prioritization</p>
-    <h3>Backlog planning shell</h3>
-    <p>Use this surface for ranking, intake notes, and sprint-ready scope once APIs are live.</p>
+    <h3>Project backlog</h3>
+    <p>Review the current issue set for this project and move into planning from here.</p>
   </div>
   <div class="summary">
-    <strong>Ready for grooming</strong>
-    <span>Mock data now, sortable backlog later</span>
+    <strong>API-backed</strong>
+    <span>Real issue data</span>
   </div>
 </section>
 
@@ -15,15 +15,15 @@
     @for (issue of issues; track issue.id) {
       <article class="page-card issue-row">
         <div>
-          <p class="eyebrow">{{ issue.key }}</p>
+          <p class="eyebrow">{{ issue.issueKey }}</p>
           <h4>{{ issue.title }}</h4>
-          <p>{{ issue.summary }}</p>
+          <p>{{ issue.description }}</p>
         </div>
 
         <div class="meta">
-          <span class="priority {{ issue.priority }}">{{ issue.priority }}</span>
-          <span>{{ issue.estimate }} pts</span>
-          <span>{{ issue.updatedAt }}</span>
+          <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+          <span>{{ issue.status }}</span>
+          <span>{{ issue.updatedAt | date: 'short' }}</span>
         </div>
       </article>
     }

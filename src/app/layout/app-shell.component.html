@@ -48,13 +48,15 @@
       <div class="topbar__actions">
         <div class="search-pill">Search issues, projects, or people</div>
         <button type="button" class="ghost-button">Create issue</button>
-        <div class="profile-chip">
-          <div class="avatar">{{ user.initials }}</div>
-          <div>
-            <strong>{{ user.name }}</strong>
-            <span>{{ user.role }}</span>
+        @if (user$ | async; as user) {
+          <div class="profile-chip">
+            <div class="avatar">{{ user.initials }}</div>
+            <div>
+              <strong>{{ user.name }}</strong>
+              <span>{{ user.role }}</span>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </header>
 

@@ -1,74 +1,70 @@
-<section class="hero-grid">
-  <div class="hero card">
-    <p class="eyebrow">Portfolio snapshot</p>
-    <h3>Keep delivery health visible without waiting on backend wiring.</h3>
-    <p class="body-copy">
-      This shell is structured for real data, but already gives Hippoject a polished command center feel.
-    </p>
+@if (vm$ | async; as vm) {
+  <section class="hero-grid">
+    <div class="hero card">
+      <p class="eyebrow">Workspace snapshot</p>
+      <h3>Hippoject is now wired for real backend data.</h3>
+      <p class="body-copy">Projects, issues, and comments can flow through the first real vertical slice now.</p>
 
-    @if (stats$ | async; as stats) {
       <div class="metrics-row">
         <article>
-          <strong>{{ stats.open }}</strong>
-          <span>Open items</span>
+          <strong>{{ vm.stats.projects }}</strong>
+          <span>Projects</span>
         </article>
         <article>
-          <strong>{{ stats.shipping }}</strong>
-          <span>In motion</span>
+          <strong>{{ vm.stats.open }}</strong>
+          <span>Open issues</span>
         </article>
         <article>
-          <strong>{{ stats.critical }}</strong>
-          <span>Critical focus</span>
+          <strong>{{ vm.stats.inFlight }}</strong>
+          <span>In flight</span>
         </article>
-      </div>
-    }
-  </div>
-
-  <div class="card spotlight">
-    <p class="eyebrow">Current sprint</p>
-    @if (currentSprint$ | async; as sprint) {
-      <h3>{{ sprint.name }}</h3>
-      <p>{{ sprint.goal }}</p>
-      <div class="progress">
-        <span [style.width.%]="(sprint.completedPoints / sprint.capacity) * 100"></span>
-      </div>
-      <small>{{ sprint.completedPoints }}/{{ sprint.capacity }} points complete</small>
-    }
-  </div>
-</section>
-
-<section class="grid two-up">
-  <div class="card">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Projects</p>
-        <h3>Delivery health</h3>
+        <article>
+          <strong>{{ vm.stats.critical }}</strong>
+          <span>Critical</span>
+        </article>
       </div>
     </div>
 
-    <div class="project-list">
-      @for (project of projects$ | async; track project.id) {
-        <article>
-          <div>
-            <strong>{{ project.name }}</strong>
-            <p>{{ project.description }}</p>
-          </div>
-          <div class="meta">
-            <span class="pill">{{ project.activeSprint }}</span>
-            <span class="health {{ project.health }}">{{ project.health }}</span>
-          </div>
-        </article>
-      }
+    <div class="card spotlight">
+      <p class="eyebrow">Current slice</p>
+      <h3>Project and issue management</h3>
+      <p>Create projects, add issues, inspect issue detail, and leave comments through the API-backed flow.</p>
     </div>
-  </div>
+  </section>
 
-  <div class="card">
-    <p class="eyebrow">Backend integration notes</p>
-    <h3>Ready seams</h3>
-    <ul class="checklist">
-      <li>Route model supports project-specific board and backlog pages.</li>
-      <li>Shared interfaces cover projects, issues, sprints, and users.</li>
-      <li>Workspace service can swap mock observables for API calls with minimal churn.</li>
-    </ul>
-  </div>
-</section>
+  <section class="grid two-up">
+    <div class="card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Projects</p>
+          <h3>Current workspace</h3>
+        </div>
+      </div>
+
+      <div class="project-list">
+        @for (project of vm.projects; track project.id) {
+          <article>
+            <div>
+              <strong>{{ project.key }} · {{ project.name }}</strong>
+              <p>{{ project.description }}</p>
+            </div>
+            <div class="meta">
+              <span class="pill">{{ project.issueCount }} issues</span>
+              <span class="pill">{{ project.ownerId }}</span>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Recent issues</p>
+      <h3>Latest updates</h3>
+      <ul class="checklist">
+        @for (issue of vm.recentIssues; track issue.id) {
+          <li>{{ issue.issueKey }} · {{ issue.title }} · {{ issue.status }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+}

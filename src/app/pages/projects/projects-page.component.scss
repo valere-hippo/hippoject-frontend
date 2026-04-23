@@ -13,6 +13,42 @@
   align-items: center;
 }
 
+.form-card {
+  margin-top: 1rem;
+  padding: 1.4rem;
+}
+
+.project-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.project-form label,
+.project-form .full-width {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.project-form .full-width {
+  grid-column: 1 / -1;
+}
+
+.project-form input,
+.project-form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  font: inherit;
+}
+
+.project-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
 button,
 .actions a,
 .health {
@@ -103,5 +139,9 @@ dl div {
   .actions {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .project-form {
+    grid-template-columns: 1fr;
   }
 }

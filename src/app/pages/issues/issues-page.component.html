@@ -5,9 +5,9 @@
       <h3>Issue navigator</h3>
     </div>
     <div class="toolbar">
-      <span>Status</span>
-      <span>Priority</span>
-      <span>Assignee</span>
+      <span>API-backed</span>
+      <span>Project aware</span>
+      <span>Comments ready</span>
     </div>
   </div>
 
@@ -21,13 +21,13 @@
     </div>
 
     @for (issue of issues$ | async; track issue.id) {
-      <article class="table__row">
-        <strong>{{ issue.key }}</strong>
+      <a class="table__row" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
+        <strong>{{ issue.issueKey }}</strong>
         <span>{{ issue.title }}</span>
         <span class="status">{{ issue.status }}</span>
-        <span class="priority {{ issue.priority }}">{{ issue.priority }}</span>
-        <span>{{ issue.updatedAt }}</span>
-      </article>
+        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+        <span>{{ issue.updatedAt | date: 'short' }}</span>
+      </a>
     }
   </div>
 </section>

@@ -1,55 +1,87 @@
 @if (vm$ | async; as vm) {
   <section class="hero page-card">
     <div>
-      <p class="eyebrow">{{ vm.project?.key }} project</p>
-      <h3>{{ vm.project?.name }}</h3>
-      <p>{{ vm.project?.description }}</p>
+      <p class="eyebrow">{{ vm.project.key }} project</p>
+      <h3>{{ vm.project.name }}</h3>
+      <p>{{ vm.project.description }}</p>
     </div>
 
     <div class="hero__actions">
-      <a [routerLink]="['/projects', vm.project?.id, 'board']">Open board</a>
-      <a [routerLink]="['/projects', vm.project?.id, 'backlog']">View backlog</a>
+      <a [routerLink]="['/projects', vm.project.id, 'board']">Open board</a>
+      <a [routerLink]="['/projects', vm.project.id, 'backlog']">View backlog</a>
     </div>
   </section>
 
   <section class="detail-grid">
     <article class="page-card stat-card">
-      <span>Lead</span>
-      <strong>{{ vm.project?.lead }}</strong>
+      <span>Owner</span>
+      <strong>{{ vm.project.ownerId }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Target date</span>
-      <strong>{{ vm.project?.targetDate }}</strong>
+      <span>Created</span>
+      <strong>{{ vm.project.createdAt | date: 'mediumDate' }}</strong>
     </article>
     <article class="page-card stat-card">
       <span>Open issues</span>
       <strong>{{ vm.issues.length }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Active sprint</span>
-      <strong>{{ vm.sprint?.name ?? 'Backlog shaping' }}</strong>
+      <span>Project key</span>
+      <strong>{{ vm.project.key }}</strong>
     </article>
   </section>
 
   <section class="detail-grid two-columns">
     <article class="page-card">
-      <p class="eyebrow">Delivery brief</p>
-      <h3>What to connect next</h3>
-      <ul>
-        <li>Wire project-level insights from the dashboard aggregation endpoint.</li>
-        <li>Attach issue counts, throughput, and risk signals to the project summary.</li>
-        <li>Swap target date and owner details to live project metadata once available.</li>
-      </ul>
+      <p class="eyebrow">Create issue</p>
+      <h3>Add a ticket</h3>
+      <form class="issue-form" (ngSubmit)="createIssue(vm.project.id)">
+        <label>
+          <span>Title</span>
+          <input [(ngModel)]="form.title" name="title" required maxlength="140" />
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea [(ngModel)]="form.description" name="description" required maxlength="2000"></textarea>
+        </label>
+        <label>
+          <span>Priority</span>
+          <select [(ngModel)]="form.priority" name="priority">
+            @for (priority of priorities; track priority) {
+              <option [value]="priority">{{ priority }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select [(ngModel)]="form.status" name="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+        <label class="full-width">
+          <span>Assignee</span>
+          <input [(ngModel)]="form.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
+        </label>
+        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Create issue' }}</button>
+      </form>
     </article>
 
     <article class="page-card">
       <p class="eyebrow">Recent work</p>
       <div class="issue-list">
         @for (issue of vm.issues; track issue.id) {
-          <div>
-            <strong>{{ issue.key }}</strong>
-            <p>{{ issue.title }}</p>
-          </div>
+          <a class="issue-row" [routerLink]="['/projects', vm.project.id, 'issues', issue.id]">
+            <div>
+              <strong>{{ issue.issueKey }}</strong>
+              <p>{{ issue.title }}</p>
+            </div>
+            <div class="issue-row__meta">
+              <span class="status">{{ issue.status }}</span>
+              <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+            </div>
+          </a>
         }
       </div>
     </article>

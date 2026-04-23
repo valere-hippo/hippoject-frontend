@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
 
@@ -15,12 +15,19 @@ export class DashboardPageComponent {
 
   protected readonly projects$ = this.workspaceService.getProjects();
   protected readonly issues$ = this.workspaceService.getIssues();
-  protected readonly currentSprint$ = this.workspaceService.getProjectSprint('atlas');
-  protected readonly stats$ = this.workspaceService.getIssues().pipe(
-    map((issues) => ({
-      open: issues.filter((issue) => issue.status !== 'done').length,
-      shipping: issues.filter((issue) => issue.status === 'in-progress' || issue.status === 'in-review').length,
-      critical: issues.filter((issue) => issue.priority === 'critical').length
+  protected readonly vm$ = combineLatest({
+    projects: this.projects$,
+    issues: this.issues$
+  }).pipe(
+    map(({ projects, issues }) => ({
+      projects,
+      recentIssues: issues.slice(0, 6),
+      stats: {
+        projects: projects.length,
+        open: issues.filter((issue) => issue.status !== 'DONE').length,
+        inFlight: issues.filter((issue) => issue.status === 'IN_PROGRESS' || issue.status === 'IN_REVIEW').length,
+        critical: issues.filter((issue) => issue.priority === 'CRITICAL').length
+      }
     }))
   );
 }

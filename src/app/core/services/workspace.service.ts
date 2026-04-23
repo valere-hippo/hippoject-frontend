@@ -1,41 +1,70 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-import { currentUser, issues, projects, sprints, users } from '../data/mock-data';
-import { Issue } from '../../shared/models/issue.model';
-import { Project } from '../../shared/models/project.model';
-import { Sprint } from '../../shared/models/sprint.model';
+import { ApiService } from './api.service';
+import {
+  CreateCommentRequest,
+  CreateIssueRequest,
+  Issue,
+  IssueComment,
+  UpdateIssueRequest
+} from '../../shared/models/issue.model';
+import { CreateProjectRequest, Project } from '../../shared/models/project.model';
 import { User } from '../../shared/models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
+  constructor(private readonly api: ApiService) {}
+
   getCurrentUser(): Observable<User> {
-    return of(currentUser);
+    return of({
+      id: 'local-dev',
+      name: 'Valere',
+      email: 'v.youbi@hipposideros.de',
+      role: 'Administrator',
+      initials: 'VA'
+    });
   }
 
   getProjects(): Observable<Project[]> {
-    return of(projects);
+    return this.api.get<Project[]>('projects');
   }
 
-  getProject(projectId: string): Observable<Project | undefined> {
-    return of(projects.find((project) => project.id === projectId));
+  createProject(request: CreateProjectRequest): Observable<Project> {
+    return this.api.post<Project>('projects', request);
   }
 
-  getProjectIssues(projectId: string): Observable<Issue[]> {
-    return of(issues.filter((issue) => issue.projectId === projectId));
+  getProject(projectId: number): Observable<Project> {
+    return this.api.get<Project>(`projects/${projectId}`);
+  }
+
+  getProjectIssues(projectId: number): Observable<Issue[]> {
+    return this.api.get<Issue[]>(`projects/${projectId}/issues`);
+  }
+
+  createIssue(projectId: number, request: CreateIssueRequest): Observable<Issue> {
+    return this.api.post<Issue>(`projects/${projectId}/issues`, request);
+  }
+
+  getIssue(projectId: number, issueId: number): Observable<Issue> {
+    return this.api.get<Issue>(`projects/${projectId}/issues/${issueId}`);
+  }
+
+  updateIssue(projectId: number, issueId: number, request: UpdateIssueRequest): Observable<Issue> {
+    return this.api.put<Issue>(`projects/${projectId}/issues/${issueId}`, request);
   }
 
   getIssues(): Observable<Issue[]> {
-    return of(issues);
+    return this.api.get<Issue[]>('issues');
   }
 
-  getProjectSprint(projectId: string): Observable<Sprint | undefined> {
-    return of(sprints.find((sprint) => sprint.projectId === projectId));
+  getComments(projectId: number, issueId: number): Observable<IssueComment[]> {
+    return this.api.get<IssueComment[]>(`projects/${projectId}/issues/${issueId}/comments`);
   }
 
-  getUsers(): Observable<User[]> {
-    return of(users);
+  createComment(projectId: number, issueId: number, request: CreateCommentRequest): Observable<IssueComment> {
+    return this.api.post<IssueComment>(`projects/${projectId}/issues/${issueId}/comments`, request);
   }
 }

@@ -1,20 +1,21 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { currentUser } from '../core/data/mock-data';
+import { WorkspaceService } from '../core/services/workspace.service';
 
 @Component({
   selector: 'app-shell',
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [AsyncPipe, CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss'
 })
 export class AppShellComponent {
   private readonly router = inject(Router);
+  private readonly workspaceService = inject(WorkspaceService);
 
-  protected readonly user = currentUser;
+  protected readonly user$ = this.workspaceService.getCurrentUser();
   protected readonly navItems = [
     { label: 'Dashboard', icon: '◫', route: '/dashboard' },
     { label: 'Projects', icon: '◪', route: '/projects' },
@@ -22,16 +23,13 @@ export class AppShellComponent {
     { label: 'Settings', icon: '⚙', route: '/settings' }
   ];
 
-  protected readonly quickLinks = [
-    { label: 'Atlas Board', route: '/projects/atlas/board' },
-    { label: 'Atlas Backlog', route: '/projects/atlas/backlog' },
-    { label: 'Pulse Project', route: '/projects/pulse' }
-  ];
+  protected readonly quickLinks = [{ label: 'Projects', route: '/projects' }, { label: 'Issue navigator', route: '/issues' }];
 
   protected currentUrl = this.router.url;
   protected readonly pageTitle = computed(() => {
     if (this.currentUrl.includes('/board')) return 'Board';
     if (this.currentUrl.includes('/backlog')) return 'Backlog';
+    if (this.currentUrl.includes('/issues/')) return 'Issue Detail';
     if (this.currentUrl.includes('/issues')) return 'Issues';
     if (this.currentUrl.includes('/settings')) return 'Settings';
     if (this.currentUrl === '/projects') return 'Projects';

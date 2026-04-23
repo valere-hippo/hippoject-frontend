@@ -88,6 +88,81 @@ ul {
   margin-top: 0.9rem;
 }
 
+.issue-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.issue-form label,
+.issue-form .full-width {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.issue-form .full-width {
+  grid-column: 1 / -1;
+}
+
+.issue-form input,
+.issue-form textarea,
+.issue-form select {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  font: inherit;
+}
+
+.issue-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.issue-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #f8fafc;
+  text-decoration: none;
+  color: inherit;
+}
+
+.issue-row__meta {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.status,
+.priority {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #eff6ff;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.priority.critical {
+  color: #b91c1c;
+}
+
+.priority.high {
+  color: #b45309;
+}
+
+.priority.medium {
+  color: #1d4ed8;
+}
+
+.priority.low {
+  color: #047857;
+}
+
 @media (max-width: 900px) {
   .hero,
   .detail-grid,
@@ -97,5 +172,13 @@ ul {
 
   .hero__actions {
     flex-wrap: wrap;
+  }
+
+  .issue-form {
+    grid-template-columns: 1fr;
+  }
+
+  .issue-row {
+    flex-direction: column;
   }
 }

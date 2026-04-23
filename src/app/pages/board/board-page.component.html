@@ -1,13 +1,12 @@
 <section class="page-card board-header">
   <div>
     <p class="eyebrow">Kanban view</p>
-    <h3>Board placeholder with real route context</h3>
-    <p>Designed for drag-and-drop and live issue updates when backend endpoints arrive.</p>
+    <h3>Board</h3>
+    <p>Live project issues grouped by workflow status.</p>
   </div>
   <div class="filters">
-    <span>Assignee: Any</span>
-    <span>Sprint: Current</span>
-    <span>Labels: All</span>
+    <span>Status columns</span>
+    <span>API-backed</span>
   </div>
 </section>
 
@@ -24,12 +23,12 @@
           @for (issue of issues; track issue.id) {
             @if (issue.status === column.key) {
               <div class="issue-card">
-                <p class="eyebrow">{{ issue.key }}</p>
+                <p class="eyebrow">{{ issue.issueKey }}</p>
                 <h4>{{ issue.title }}</h4>
-                <p>{{ issue.summary }}</p>
+                <p>{{ issue.description }}</p>
                 <footer>
-                  <span class="priority {{ issue.priority }}">{{ issue.priority }}</span>
-                  <span>{{ issue.updatedAt }}</span>
+                  <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+                  <span>{{ issue.updatedAt | date: 'short' }}</span>
                 </footer>
               </div>
             }
