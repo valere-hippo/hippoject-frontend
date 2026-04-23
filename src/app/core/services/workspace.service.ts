@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { ApiService } from './api.service';
 import {
   CreateCommentRequest,
+  IssueFilters,
   CreateIssueRequest,
   Issue,
   IssueComment,
@@ -69,8 +70,17 @@ export class WorkspaceService {
     return this.api.put<Issue>(`projects/${projectId}/issues/${issueId}`, request);
   }
 
-  getIssues(): Observable<Issue[]> {
-    return this.api.get<Issue[]>('issues');
+  getIssues(filters: IssueFilters = {}): Observable<Issue[]> {
+    const params = new URLSearchParams();
+
+    if (filters.query?.trim()) params.set('query', filters.query.trim());
+    if (filters.projectId != null) params.set('projectId', String(filters.projectId));
+    if (filters.status) params.set('status', filters.status);
+    if (filters.issueType) params.set('issueType', filters.issueType);
+    if (filters.label?.trim()) params.set('label', filters.label.trim());
+
+    const query = params.toString();
+    return this.api.get<Issue[]>(query ? `issues?${query}` : 'issues');
   }
 
   getComments(projectId: number, issueId: number): Observable<IssueComment[]> {

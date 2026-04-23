@@ -41,8 +41,10 @@ export class BoardPageComponent {
       .updateIssue(projectId, issue.id, {
         title: issue.title,
         description: issue.description,
+        issueType: issue.issueType,
         priority: issue.priority,
         status,
+        labels: issue.labels,
         sprintId: issue.sprintId,
         assigneeId: issue.assigneeId ?? ''
       })

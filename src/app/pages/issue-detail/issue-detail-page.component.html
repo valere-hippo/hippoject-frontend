@@ -6,6 +6,7 @@
       <p>{{ vm.issue.description }}</p>
     </div>
     <div class="hero__actions">
+      <span class="status">{{ vm.issue.issueType }}</span>
       <span class="status">{{ vm.issue.status }}</span>
       <span class="priority {{ vm.issue.priority.toLowerCase() }}">{{ vm.issue.priority }}</span>
     </div>
@@ -44,6 +45,14 @@
           <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
         </label>
         <label>
+          <span>Type</span>
+          <select [(ngModel)]="issueForm.issueType" name="issueType">
+            @for (type of issueTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </label>
+        <label>
           <span>Status</span>
           <select [(ngModel)]="issueForm.status" name="status">
             @for (status of statuses; track status) {
@@ -69,6 +78,10 @@
           </select>
         </label>
         <label class="full-width">
+          <span>Labels</span>
+          <input [(ngModel)]="issueLabelsText" name="issueLabelsText" maxlength="200" placeholder="frontend, auth, sprint" />
+        </label>
+        <label class="full-width">
           <span>Assignee</span>
           <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
         </label>
@@ -91,6 +104,13 @@
 
   <section class="page-card">
     <p class="eyebrow">Activity</p>
+    @if (vm.issue.labels.length) {
+      <div class="tag-list">
+        @for (label of vm.issue.labels; track label) {
+          <span>{{ label }}</span>
+        }
+      </div>
+    }
     <div class="issue-list">
       @for (comment of vm.comments; track comment.id) {
         <div class="issue-row comment-row">

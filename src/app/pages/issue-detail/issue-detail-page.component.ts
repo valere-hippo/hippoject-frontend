@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
-import { IssuePriority, IssueStatus, UpdateIssueRequest } from '../../shared/models/issue.model';
+import { IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
 
 @Component({
   selector: 'app-issue-detail-page',
@@ -20,15 +20,19 @@ export class IssueDetailPageComponent {
 
   protected readonly priorities: IssuePriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
+  protected readonly issueTypes: IssueType[] = ['STORY', 'TASK', 'BUG', 'EPIC'];
 
   protected readonly issueForm: UpdateIssueRequest = {
     title: '',
     description: '',
+    issueType: 'TASK',
     priority: 'MEDIUM',
     status: 'TODO',
+    labels: [],
     sprintId: null,
     assigneeId: ''
   };
+  protected issueLabelsText = '';
 
   protected commentBody = '';
   protected isSavingComment = false;
@@ -53,10 +57,13 @@ export class IssueDetailPageComponent {
     tap(({ issue }) => {
       this.issueForm.title = issue.title;
       this.issueForm.description = issue.description;
+      this.issueForm.issueType = issue.issueType;
       this.issueForm.priority = issue.priority;
       this.issueForm.status = issue.status;
+      this.issueForm.labels = issue.labels;
       this.issueForm.sprintId = issue.sprintId;
       this.issueForm.assigneeId = issue.assigneeId ?? '';
+      this.issueLabelsText = issue.labels.join(', ');
     })
   );
 
@@ -80,7 +87,9 @@ export class IssueDetailPageComponent {
 
   protected updateIssue(projectId: number, issueId: number): void {
     this.isSavingIssue = true;
-    this.workspaceService.updateIssue(projectId, issueId, this.issueForm).subscribe({
+    this.workspaceService
+      .updateIssue(projectId, issueId, { ...this.issueForm, labels: this.parseLabels(this.issueLabelsText) })
+      .subscribe({
       next: () => {
         this.isSavingIssue = false;
         this.refresh$.next();
@@ -89,5 +98,12 @@ export class IssueDetailPageComponent {
         this.isSavingIssue = false;
       }
     });
+  }
+
+  private parseLabels(value: string): string[] {
+    return value
+      .split(',')
+      .map((label) => label.trim())
+      .filter(Boolean);
   }
 }

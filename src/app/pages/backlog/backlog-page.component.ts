@@ -65,8 +65,10 @@ export class BacklogPageComponent {
       .updateIssue(projectId, issue.id, {
         title: issue.title,
         description: issue.description,
+        issueType: issue.issueType,
         priority: issue.priority,
         status: issue.status,
+        labels: issue.labels,
         sprintId,
         assigneeId: issue.assigneeId ?? ''
       })

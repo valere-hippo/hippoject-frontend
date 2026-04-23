@@ -61,6 +61,14 @@
           <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
         </label>
         <label>
+          <span>Type</span>
+          <select [(ngModel)]="issueForm.issueType" name="issueType">
+            @for (type of issueTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </label>
+        <label>
           <span>Priority</span>
           <select [(ngModel)]="issueForm.priority" name="priority">
             @for (priority of priorities; track priority) {
@@ -86,6 +94,10 @@
           </select>
         </label>
         <label class="full-width">
+          <span>Labels</span>
+          <input [(ngModel)]="issueLabelsText" name="issueLabelsText" maxlength="200" placeholder="frontend, auth, sprint" />
+        </label>
+        <label class="full-width">
           <span>Assignee</span>
           <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
         </label>
@@ -104,6 +116,7 @@
             <p>{{ issue.title }}</p>
           </div>
             <div class="issue-row__meta">
+              <span class="status">{{ issue.issueType }}</span>
               <span class="status">{{ issue.sprintName || 'Backlog' }}</span>
               <span class="status">{{ issue.status }}</span>
               <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>

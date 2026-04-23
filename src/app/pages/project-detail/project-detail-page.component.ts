@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
-import { CreateIssueRequest, IssuePriority, IssueStatus } from '../../shared/models/issue.model';
+import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
 import { UpdateProjectRequest } from '../../shared/models/project.model';
 
 @Component({
@@ -21,15 +21,19 @@ export class ProjectDetailPageComponent {
 
   protected readonly priorities: IssuePriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
+  protected readonly issueTypes: IssueType[] = ['STORY', 'TASK', 'BUG', 'EPIC'];
 
   protected readonly issueForm: CreateIssueRequest = {
     title: '',
     description: '',
+    issueType: 'TASK',
     priority: 'MEDIUM',
     status: 'TODO',
+    labels: [],
     sprintId: null,
     assigneeId: ''
   };
+  protected issueLabelsText = '';
 
   protected readonly projectForm: UpdateProjectRequest = {
     name: '',
@@ -60,14 +64,17 @@ export class ProjectDetailPageComponent {
 
   protected createIssue(projectId: number): void {
     this.isSavingIssue = true;
-    this.workspaceService.createIssue(projectId, this.issueForm).subscribe({
+    this.workspaceService.createIssue(projectId, { ...this.issueForm, labels: this.parseLabels(this.issueLabelsText) }).subscribe({
       next: () => {
         this.issueForm.title = '';
         this.issueForm.description = '';
+        this.issueForm.issueType = 'TASK';
         this.issueForm.priority = 'MEDIUM';
         this.issueForm.status = 'TODO';
+        this.issueForm.labels = [];
         this.issueForm.sprintId = null;
         this.issueForm.assigneeId = '';
+        this.issueLabelsText = '';
         this.isSavingIssue = false;
         this.refresh$.next();
       },
@@ -75,6 +82,13 @@ export class ProjectDetailPageComponent {
         this.isSavingIssue = false;
       }
     });
+  }
+
+  private parseLabels(value: string): string[] {
+    return value
+      .split(',')
+      .map((label) => label.trim())
+      .filter(Boolean);
   }
 
   protected updateProject(projectId: number): void {

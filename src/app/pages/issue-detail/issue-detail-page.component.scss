@@ -107,6 +107,21 @@ strong {
   margin-top: 0.9rem;
 }
 
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.tag-list span {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: #fff5f5;
+  color: var(--accent-dark);
+  font-size: 0.85rem;
+}
+
 .issue-row {
   display: flex;
   justify-content: space-between;

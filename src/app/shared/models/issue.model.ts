@@ -1,5 +1,6 @@
 export type IssueStatus = 'TODO' | 'IN_PROGRESS' | 'IN_REVIEW' | 'DONE';
 export type IssuePriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type IssueType = 'STORY' | 'TASK' | 'BUG' | 'EPIC';
 
 export interface IssueComment {
   id: number;
@@ -16,9 +17,11 @@ export interface Issue {
   title: string;
   description: string;
   status: IssueStatus;
+  issueType: IssueType;
   priority: IssuePriority;
   sprintId: number | null;
   sprintName: string | null;
+  labels: string[];
   assigneeId: string | null;
   reporterId: string;
   createdAt: string;
@@ -29,13 +32,23 @@ export interface Issue {
 export interface CreateIssueRequest {
   title: string;
   description: string;
+  issueType: IssueType;
   priority: IssuePriority;
   status?: IssueStatus;
   sprintId?: number | null;
+  labels?: string[];
   assigneeId?: string | null;
 }
 
 export interface UpdateIssueRequest extends CreateIssueRequest {}
+
+export interface IssueFilters {
+  query?: string;
+  projectId?: number;
+  status?: IssueStatus | '';
+  issueType?: IssueType | '';
+  label?: string;
+}
 
 export interface CreateCommentRequest {
   body: string;

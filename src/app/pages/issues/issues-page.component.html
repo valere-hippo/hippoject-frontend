@@ -5,25 +5,55 @@
       <h3>Issue navigator</h3>
     </div>
     <div class="toolbar">
-      <span>API-backed</span>
-      <span>Project aware</span>
-      <span>Comments ready</span>
+      <span>Searchable</span>
+      <span>Filterable</span>
+      <span>Labels ready</span>
     </div>
+  </div>
+
+  <div class="filters">
+    <input type="search" [(ngModel)]="filters.query" placeholder="Search by key, title, description, project" />
+    <select [(ngModel)]="filters.status">
+      <option value="">All statuses</option>
+      @for (status of statusOptions; track status) {
+        <option [value]="status">{{ status || 'All statuses' }}</option>
+      }
+    </select>
+    <select [(ngModel)]="filters.issueType">
+      <option value="">All types</option>
+      @for (type of typeOptions; track type) {
+        <option [value]="type">{{ type || 'All types' }}</option>
+      }
+    </select>
+    <input type="text" [(ngModel)]="filters.label" placeholder="Filter by label" />
+    <button type="button" (click)="applyFilters()">Apply</button>
+    <button type="button" class="ghost" (click)="clearFilters()">Reset</button>
   </div>
 
   <div class="table">
     <div class="table__head">
       <span>Key</span>
       <span>Title</span>
+      <span>Type</span>
       <span>Status</span>
       <span>Priority</span>
       <span>Updated</span>
     </div>
 
-    @for (issue of issues$ | async; track issue.id) {
+    @for (issue of issues; track issue.id) {
       <a class="table__row" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
         <strong>{{ issue.issueKey }}</strong>
-        <span>{{ issue.title }}</span>
+        <div class="title-cell">
+          <span>{{ issue.title }}</span>
+          @if (issue.labels.length) {
+            <div class="labels">
+              @for (label of issue.labels; track label) {
+                <small>{{ label }}</small>
+              }
+            </div>
+          }
+        </div>
+        <span class="type">{{ issue.issueType }}</span>
         <span class="status">{{ issue.status }}</span>
         <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
         <span>{{ issue.updatedAt | date: 'short' }}</span>
