@@ -9,7 +9,7 @@ import {
   IssueComment,
   UpdateIssueRequest
 } from '../../shared/models/issue.model';
-import { CreateProjectRequest, Project } from '../../shared/models/project.model';
+import { CreateProjectRequest, Project, UpdateProjectRequest } from '../../shared/models/project.model';
 import { User } from '../../shared/models/user.model';
 
 @Injectable({
@@ -38,6 +38,10 @@ export class WorkspaceService {
 
   getProject(projectId: number): Observable<Project> {
     return this.api.get<Project>(`projects/${projectId}`);
+  }
+
+  updateProject(projectId: number, request: UpdateProjectRequest): Observable<Project> {
+    return this.api.put<Project>(`projects/${projectId}`, request);
   }
 
   getProjectIssues(projectId: number): Observable<Issue[]> {

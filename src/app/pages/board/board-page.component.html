@@ -1,35 +1,44 @@
-<section class="page-card board-header">
-  <div>
-    <p class="eyebrow">Kanban view</p>
-    <h3>Board</h3>
-    <p>Live project issues grouped by workflow status.</p>
-  </div>
-  <div class="filters">
-    <span>Status columns</span>
-    <span>API-backed</span>
-  </div>
-</section>
+@if (vm$ | async; as vm) {
+  <section class="page-card board-header">
+    <div>
+      <p class="eyebrow">Kanban view</p>
+      <h3>{{ vm.project.name }} board</h3>
+      <p>Move issues between workflow states from the board itself.</p>
+    </div>
+    <div class="filters">
+      <span>{{ vm.issues.length }} issues</span>
+      <span>{{ vm.project.key }}</span>
+    </div>
+  </section>
 
-@if (issues$ | async; as issues) {
   <section class="board-grid">
     @for (column of columns; track column.key) {
       <article class="column">
         <header>
           <strong>{{ column.label }}</strong>
-          <span>{{ issues.filter((issue) => issue.status === column.key).length }}</span>
+          <span>{{ vm.issues.filter((issue) => issue.status === column.key).length }}</span>
         </header>
 
         <div class="cards">
-          @for (issue of issues; track issue.id) {
+          @for (issue of vm.issues; track issue.id) {
             @if (issue.status === column.key) {
               <div class="issue-card">
-                <p class="eyebrow">{{ issue.issueKey }}</p>
-                <h4>{{ issue.title }}</h4>
-                <p>{{ issue.description }}</p>
+                <a class="issue-card__link" [routerLink]="['/projects', vm.projectId, 'issues', issue.id]">
+                  <p class="eyebrow">{{ issue.issueKey }}</p>
+                  <h4>{{ issue.title }}</h4>
+                  <p>{{ issue.description }}</p>
+                </a>
                 <footer>
                   <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
                   <span>{{ issue.updatedAt | date: 'short' }}</span>
                 </footer>
+                <div class="board-actions">
+                  @for (target of columns; track target.key) {
+                    <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
+                      {{ target.label }}
+                    </button>
+                  }
+                </div>
               </div>
             }
           }

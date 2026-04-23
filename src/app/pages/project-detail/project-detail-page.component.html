@@ -33,20 +33,36 @@
 
   <section class="detail-grid two-columns">
     <article class="page-card">
+      <p class="eyebrow">Project settings</p>
+      <h3>Edit project</h3>
+      <form class="issue-form" (ngSubmit)="updateProject(vm.project.id)">
+        <label>
+          <span>Name</span>
+          <input [(ngModel)]="projectForm.name" name="projectName" required maxlength="120" />
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea [(ngModel)]="projectForm.description" name="projectDescription" required maxlength="500"></textarea>
+        </label>
+        <button type="submit" [disabled]="isSavingProject">{{ isSavingProject ? 'Saving…' : 'Save project' }}</button>
+      </form>
+    </article>
+
+    <article class="page-card">
       <p class="eyebrow">Create issue</p>
       <h3>Add a ticket</h3>
       <form class="issue-form" (ngSubmit)="createIssue(vm.project.id)">
         <label>
           <span>Title</span>
-          <input [(ngModel)]="form.title" name="title" required maxlength="140" />
+          <input [(ngModel)]="issueForm.title" name="title" required maxlength="140" />
         </label>
         <label class="full-width">
           <span>Description</span>
-          <textarea [(ngModel)]="form.description" name="description" required maxlength="2000"></textarea>
+          <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
         </label>
         <label>
           <span>Priority</span>
-          <select [(ngModel)]="form.priority" name="priority">
+          <select [(ngModel)]="issueForm.priority" name="priority">
             @for (priority of priorities; track priority) {
               <option [value]="priority">{{ priority }}</option>
             }
@@ -54,7 +70,7 @@
         </label>
         <label>
           <span>Status</span>
-          <select [(ngModel)]="form.status" name="status">
+          <select [(ngModel)]="issueForm.status" name="status">
             @for (status of statuses; track status) {
               <option [value]="status">{{ status }}</option>
             }
@@ -62,28 +78,28 @@
         </label>
         <label class="full-width">
           <span>Assignee</span>
-          <input [(ngModel)]="form.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
+          <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
         </label>
-        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Create issue' }}</button>
+        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Create issue' }}</button>
       </form>
     </article>
+  </section>
 
-    <article class="page-card">
-      <p class="eyebrow">Recent work</p>
-      <div class="issue-list">
-        @for (issue of vm.issues; track issue.id) {
-          <a class="issue-row" [routerLink]="['/projects', vm.project.id, 'issues', issue.id]">
-            <div>
-              <strong>{{ issue.issueKey }}</strong>
-              <p>{{ issue.title }}</p>
-            </div>
-            <div class="issue-row__meta">
-              <span class="status">{{ issue.status }}</span>
-              <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-            </div>
-          </a>
-        }
-      </div>
-    </article>
+  <section class="page-card">
+    <p class="eyebrow">Recent work</p>
+    <div class="issue-list">
+      @for (issue of vm.issues; track issue.id) {
+        <a class="issue-row" [routerLink]="['/projects', vm.project.id, 'issues', issue.id]">
+          <div>
+            <strong>{{ issue.issueKey }}</strong>
+            <p>{{ issue.title }}</p>
+          </div>
+          <div class="issue-row__meta">
+            <span class="status">{{ issue.status }}</span>
+            <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+          </div>
+        </a>
+      }
+    </div>
   </section>
 }

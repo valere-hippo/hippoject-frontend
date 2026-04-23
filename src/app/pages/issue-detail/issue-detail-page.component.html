@@ -32,6 +32,42 @@
 
   <section class="detail-grid two-columns">
     <article class="page-card">
+      <p class="eyebrow">Edit issue</p>
+      <h3>Details</h3>
+      <form class="issue-form" (ngSubmit)="updateIssue(vm.projectId, vm.issue.id)">
+        <label>
+          <span>Title</span>
+          <input [(ngModel)]="issueForm.title" name="title" required maxlength="140" />
+        </label>
+        <label class="full-width">
+          <span>Description</span>
+          <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
+        </label>
+        <label>
+          <span>Status</span>
+          <select [(ngModel)]="issueForm.status" name="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Priority</span>
+          <select [(ngModel)]="issueForm.priority" name="priority">
+            @for (priority of priorities; track priority) {
+              <option [value]="priority">{{ priority }}</option>
+            }
+          </select>
+        </label>
+        <label class="full-width">
+          <span>Assignee</span>
+          <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
+        </label>
+        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Save issue' }}</button>
+      </form>
+    </article>
+
+    <article class="page-card">
       <p class="eyebrow">Add comment</p>
       <h3>Conversation</h3>
       <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
@@ -39,23 +75,23 @@
           <span>Comment</span>
           <textarea [(ngModel)]="commentBody" name="commentBody" required maxlength="2000"></textarea>
         </label>
-        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Post comment' }}</button>
+        <button type="submit" [disabled]="isSavingComment">{{ isSavingComment ? 'Saving…' : 'Post comment' }}</button>
       </form>
     </article>
+  </section>
 
-    <article class="page-card">
-      <p class="eyebrow">Activity</p>
-      <div class="issue-list">
-        @for (comment of vm.comments; track comment.id) {
-          <div class="issue-row comment-row">
-            <div>
-              <strong>{{ comment.authorId }}</strong>
-              <p>{{ comment.body }}</p>
-            </div>
-            <span>{{ comment.createdAt | date: 'short' }}</span>
+  <section class="page-card">
+    <p class="eyebrow">Activity</p>
+    <div class="issue-list">
+      @for (comment of vm.comments; track comment.id) {
+        <div class="issue-row comment-row">
+          <div>
+            <strong>{{ comment.authorId }}</strong>
+            <p>{{ comment.body }}</p>
           </div>
-        }
-      </div>
-    </article>
+          <span>{{ comment.createdAt | date: 'short' }}</span>
+        </div>
+      }
+    </div>
   </section>
 }

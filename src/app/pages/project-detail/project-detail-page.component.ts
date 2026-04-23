@@ -2,10 +2,11 @@ import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
+import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { CreateIssueRequest, IssuePriority, IssueStatus } from '../../shared/models/issue.model';
+import { UpdateProjectRequest } from '../../shared/models/project.model';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -21,7 +22,7 @@ export class ProjectDetailPageComponent {
   protected readonly priorities: IssuePriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
 
-  protected readonly form: CreateIssueRequest = {
+  protected readonly issueForm: CreateIssueRequest = {
     title: '',
     description: '',
     priority: 'MEDIUM',
@@ -29,7 +30,13 @@ export class ProjectDetailPageComponent {
     assigneeId: ''
   };
 
-  protected isSaving = false;
+  protected readonly projectForm: UpdateProjectRequest = {
+    name: '',
+    description: ''
+  };
+
+  protected isSavingIssue = false;
+  protected isSavingProject = false;
 
   private readonly projectId$ = this.route.paramMap.pipe(map((params) => Number(params.get('projectId'))));
 
@@ -42,23 +49,40 @@ export class ProjectDetailPageComponent {
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId)
       })
-    )
+    ),
+    tap(({ project }) => {
+      this.projectForm.name = project.name;
+      this.projectForm.description = project.description;
+    })
   );
 
   protected createIssue(projectId: number): void {
-    this.isSaving = true;
-    this.workspaceService.createIssue(projectId, this.form).subscribe({
+    this.isSavingIssue = true;
+    this.workspaceService.createIssue(projectId, this.issueForm).subscribe({
       next: () => {
-        this.form.title = '';
-        this.form.description = '';
-        this.form.priority = 'MEDIUM';
-        this.form.status = 'TODO';
-        this.form.assigneeId = '';
-        this.isSaving = false;
+        this.issueForm.title = '';
+        this.issueForm.description = '';
+        this.issueForm.priority = 'MEDIUM';
+        this.issueForm.status = 'TODO';
+        this.issueForm.assigneeId = '';
+        this.isSavingIssue = false;
         this.refresh$.next();
       },
       error: () => {
-        this.isSaving = false;
+        this.isSavingIssue = false;
+      }
+    });
+  }
+
+  protected updateProject(projectId: number): void {
+    this.isSavingProject = true;
+    this.workspaceService.updateProject(projectId, this.projectForm).subscribe({
+      next: () => {
+        this.isSavingProject = false;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.isSavingProject = false;
       }
     });
   }
