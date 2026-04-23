@@ -123,6 +123,9 @@ export class IssueDetailPageComponent {
   }
 
   protected deleteIssue(projectId: number, issueId: number): void {
+    if (!window.confirm('Issue wirklich löschen?')) {
+      return;
+    }
     this.isDeletingIssue = true;
     this.workspaceService.deleteIssue(projectId, issueId).subscribe({
       next: () => {

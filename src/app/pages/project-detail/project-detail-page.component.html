@@ -146,6 +146,9 @@
             <div>
               <strong>{{ member.displayName }}</strong>
               <p>{{ member.userId }}</p>
+              @if (member.email) {
+                <p>{{ member.email }}</p>
+              }
             </div>
             <div class="issue-row__meta">
               <span class="status">{{ member.role }}</span>
@@ -172,6 +175,10 @@
         <label>
           <span>Display name</span>
           <input [(ngModel)]="memberForm.displayName" name="memberDisplayName" required maxlength="120" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input [(ngModel)]="memberForm.email" name="memberEmail" type="email" maxlength="160" placeholder="optional" />
         </label>
         <label>
           <span>Role</span>

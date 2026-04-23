@@ -48,6 +48,7 @@ export class ProjectDetailPageComponent {
   protected readonly memberForm: CreateProjectMemberRequest = {
     userId: '',
     displayName: '',
+    email: '',
     role: 'CONTRIBUTOR'
   };
 
@@ -136,6 +137,7 @@ export class ProjectDetailPageComponent {
       next: () => {
         this.memberForm.userId = '';
         this.memberForm.displayName = '';
+        this.memberForm.email = '';
         this.memberForm.role = 'CONTRIBUTOR';
         this.isSavingMember = false;
         this.refresh$.next();
@@ -147,6 +149,9 @@ export class ProjectDetailPageComponent {
   }
 
   protected removeMember(projectId: number, memberId: number): void {
+    if (!window.confirm('Mitglied wirklich entfernen?')) {
+      return;
+    }
     this.removingMemberId = memberId;
     this.workspaceService.removeProjectMember(projectId, memberId).subscribe({
       next: () => {

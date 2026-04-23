@@ -19,6 +19,9 @@
                   <div>
                     <strong>{{ member.displayName }}</strong>
                     <span>{{ member.userId }}</span>
+                    @if (member.email) {
+                      <span>{{ member.email }}</span>
+                    }
                   </div>
                   <small>{{ member.role }}</small>
                 </div>

@@ -115,6 +115,9 @@ export class IssuesPageComponent {
   }
 
   protected deleteSavedFilter(filterId: number): void {
+    if (!window.confirm('Gespeicherten Filter wirklich löschen?')) {
+      return;
+    }
     this.deletingFilterId = filterId;
     this.workspaceService.deleteSavedIssueFilter(filterId).subscribe({
       next: () => {

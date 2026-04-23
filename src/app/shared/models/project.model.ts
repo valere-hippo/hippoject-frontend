@@ -16,6 +16,7 @@ export interface ProjectMember {
   projectId: number;
   userId: string;
   displayName: string;
+  email: string | null;
   role: ProjectRole;
   addedAt: string;
 }
@@ -23,6 +24,7 @@ export interface ProjectMember {
 export interface CreateProjectMemberRequest {
   userId: string;
   displayName: string;
+  email?: string;
   role: ProjectRole;
 }
 

@@ -108,6 +108,9 @@ export class BacklogPageComponent {
   }
 
   protected deleteSprint(projectId: number, sprintId: number): void {
+    if (!window.confirm('Sprint wirklich löschen? Zugeordnete Issues landen im Backlog.')) {
+      return;
+    }
     this.deletingSprintId = sprintId;
     this.workspaceService.deleteSprint(projectId, sprintId).subscribe({
       next: () => {

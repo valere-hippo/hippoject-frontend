@@ -4,6 +4,7 @@ export interface DirectoryMember {
   id: number;
   userId: string;
   displayName: string;
+  email: string | null;
   role: ProjectRole;
 }
 
