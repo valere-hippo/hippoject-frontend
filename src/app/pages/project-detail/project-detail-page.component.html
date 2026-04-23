@@ -29,6 +29,10 @@
       <span>Project key</span>
       <strong>{{ vm.project.key }}</strong>
     </article>
+    <article class="page-card stat-card">
+      <span>Members</span>
+      <strong>{{ vm.members.length }}</strong>
+    </article>
   </section>
 
   <section class="detail-grid two-columns">
@@ -111,6 +115,48 @@
           <input [(ngModel)]="issueForm.assigneeId" name="assigneeId" maxlength="120" placeholder="optional" />
         </label>
         <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Create issue' }}</button>
+      </form>
+    </article>
+  </section>
+
+  <section class="detail-grid two-columns">
+    <article class="page-card">
+      <p class="eyebrow">Team</p>
+      <h3>Project members</h3>
+      <div class="member-list">
+        @for (member of vm.members; track member.id) {
+          <div class="member-row">
+            <div>
+              <strong>{{ member.displayName }}</strong>
+              <p>{{ member.userId }}</p>
+            </div>
+            <span class="status">{{ member.role }}</span>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="page-card">
+      <p class="eyebrow">Access</p>
+      <h3>Add member</h3>
+      <form class="issue-form" (ngSubmit)="addMember(vm.project.id)">
+        <label>
+          <span>User id</span>
+          <input [(ngModel)]="memberForm.userId" name="memberUserId" required maxlength="120" />
+        </label>
+        <label>
+          <span>Display name</span>
+          <input [(ngModel)]="memberForm.displayName" name="memberDisplayName" required maxlength="120" />
+        </label>
+        <label>
+          <span>Role</span>
+          <select [(ngModel)]="memberForm.role" name="memberRole">
+            @for (role of projectRoles; track role) {
+              <option [value]="role">{{ role }}</option>
+            }
+          </select>
+        </label>
+        <button type="submit" [disabled]="isSavingMember">{{ isSavingMember ? 'Saving…' : 'Add member' }}</button>
       </form>
     </article>
   </section>

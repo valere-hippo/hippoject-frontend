@@ -88,6 +88,22 @@ ul {
   margin-top: 0.9rem;
 }
 
+.member-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.member-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
 .issue-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -180,5 +196,10 @@ ul {
 
   .issue-row {
     flex-direction: column;
+  }
+
+  .member-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

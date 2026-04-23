@@ -11,7 +11,13 @@ import {
   IssueComment,
   UpdateIssueRequest
 } from '../../shared/models/issue.model';
-import { CreateProjectRequest, Project, UpdateProjectRequest } from '../../shared/models/project.model';
+import {
+  CreateProjectMemberRequest,
+  CreateProjectRequest,
+  Project,
+  ProjectMember,
+  UpdateProjectRequest
+} from '../../shared/models/project.model';
 import { CreateSprintRequest, Sprint } from '../../shared/models/sprint.model';
 import { User } from '../../shared/models/user.model';
 
@@ -49,6 +55,14 @@ export class WorkspaceService {
 
   updateProject(projectId: number, request: UpdateProjectRequest): Observable<Project> {
     return this.api.put<Project>(`projects/${projectId}`, request);
+  }
+
+  getProjectMembers(projectId: number): Observable<ProjectMember[]> {
+    return this.api.get<ProjectMember[]>(`projects/${projectId}/members`);
+  }
+
+  addProjectMember(projectId: number, request: CreateProjectMemberRequest): Observable<ProjectMember> {
+    return this.api.post<ProjectMember>(`projects/${projectId}/members`, request);
   }
 
   getProjectIssues(projectId: number): Observable<Issue[]> {

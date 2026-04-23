@@ -6,7 +6,7 @@ import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
-import { UpdateProjectRequest } from '../../shared/models/project.model';
+import { CreateProjectMemberRequest, ProjectRole, UpdateProjectRequest } from '../../shared/models/project.model';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -22,6 +22,7 @@ export class ProjectDetailPageComponent {
   protected readonly priorities: IssuePriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   protected readonly issueTypes: IssueType[] = ['STORY', 'TASK', 'BUG', 'EPIC'];
+  protected readonly projectRoles: ProjectRole[] = ['PROJECT_ADMIN', 'PROJECT_MANAGER', 'CONTRIBUTOR', 'VIEWER'];
 
   protected readonly issueForm: CreateIssueRequest = {
     title: '',
@@ -41,8 +42,15 @@ export class ProjectDetailPageComponent {
     description: ''
   };
 
+  protected readonly memberForm: CreateProjectMemberRequest = {
+    userId: '',
+    displayName: '',
+    role: 'CONTRIBUTOR'
+  };
+
   protected isSavingIssue = false;
   protected isSavingProject = false;
+  protected isSavingMember = false;
 
   private readonly projectId$ = this.route.paramMap.pipe(map((params) => Number(params.get('projectId'))));
 
@@ -54,7 +62,8 @@ export class ProjectDetailPageComponent {
       combineLatest({
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
-        sprints: this.workspaceService.getSprints(projectId)
+        sprints: this.workspaceService.getSprints(projectId),
+        members: this.workspaceService.getProjectMembers(projectId)
       }).pipe(map((data) => ({ ...data, epics: data.issues.filter((issue) => issue.issueType === 'EPIC') })))
     ),
     tap(({ project }) => {
@@ -102,6 +111,22 @@ export class ProjectDetailPageComponent {
       },
       error: () => {
         this.isSavingProject = false;
+      }
+    });
+  }
+
+  protected addMember(projectId: number): void {
+    this.isSavingMember = true;
+    this.workspaceService.addProjectMember(projectId, this.memberForm).subscribe({
+      next: () => {
+        this.memberForm.userId = '';
+        this.memberForm.displayName = '';
+        this.memberForm.role = 'CONTRIBUTOR';
+        this.isSavingMember = false;
+        this.refresh$.next();
+      },
+      error: () => {
+        this.isSavingMember = false;
       }
     });
   }
