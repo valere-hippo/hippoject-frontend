@@ -26,6 +26,13 @@ export interface CreateProjectMemberRequest {
   role: ProjectRole;
 }
 
+export interface ProjectActivityItem {
+  type: string;
+  title: string;
+  detail: string;
+  occurredAt: string;
+}
+
 export interface CreateProjectRequest {
   key: string;
   name: string;

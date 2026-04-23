@@ -63,7 +63,8 @@ export class ProjectDetailPageComponent {
         project: this.workspaceService.getProject(projectId),
         issues: this.workspaceService.getProjectIssues(projectId),
         sprints: this.workspaceService.getSprints(projectId),
-        members: this.workspaceService.getProjectMembers(projectId)
+        members: this.workspaceService.getProjectMembers(projectId),
+        activity: this.workspaceService.getProjectActivity(projectId)
       }).pipe(map((data) => ({ ...data, epics: data.issues.filter((issue) => issue.issueType === 'EPIC') })))
     ),
     tap(({ project }) => {

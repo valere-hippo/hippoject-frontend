@@ -15,6 +15,7 @@ import {
 } from '../../shared/models/issue.model';
 import {
   CreateProjectMemberRequest,
+  ProjectActivityItem,
   CreateProjectRequest,
   Project,
   ProjectMember,
@@ -65,6 +66,10 @@ export class WorkspaceService {
 
   addProjectMember(projectId: number, request: CreateProjectMemberRequest): Observable<ProjectMember> {
     return this.api.post<ProjectMember>(`projects/${projectId}/members`, request);
+  }
+
+  getProjectActivity(projectId: number): Observable<ProjectActivityItem[]> {
+    return this.api.get<ProjectActivityItem[]>(`projects/${projectId}/activity`);
   }
 
   getProjectIssues(projectId: number): Observable<Issue[]> {

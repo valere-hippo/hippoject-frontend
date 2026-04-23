@@ -162,6 +162,21 @@
   </section>
 
   <section class="page-card">
+    <p class="eyebrow">Activity</p>
+    <div class="member-list">
+      @for (item of vm.activity; track item.occurredAt + item.type + item.title) {
+        <div class="member-row">
+          <div>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.detail }}</p>
+          </div>
+          <span class="status">{{ item.occurredAt | date: 'short' }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="page-card">
     <p class="eyebrow">Recent work</p>
     <div class="issue-list">
       @for (issue of vm.issues; track issue.id) {
