@@ -15,6 +15,15 @@
     </div>
   </section>
 
+  @if (lastDeletedIssue) {
+    <section class="page-card">
+      <p class="eyebrow">Undo</p>
+      <h3>{{ lastDeletedIssue.issueKey }} archived</h3>
+      <p>This issue was soft-deleted and can be restored.</p>
+      <button type="button" (click)="restoreIssue(vm.projectId)">Restore issue</button>
+    </section>
+  }
+
   <section class="detail-grid">
     <article class="page-card stat-card">
       <span>Reporter</span>
@@ -48,7 +57,7 @@
     <article class="page-card">
       <p class="eyebrow">Edit issue</p>
       <h3>Details</h3>
-      @if (vm.permissions.canEditIssues) {
+      @if (vm.permissions.canEditIssues && !lastDeletedIssue) {
       <form class="issue-form" (ngSubmit)="updateIssue(vm.projectId, vm.issue.id)">
         <label>
           <span>Title</span>
@@ -126,7 +135,7 @@
     <article class="page-card">
       <p class="eyebrow">Add comment</p>
       <h3>Conversation</h3>
-      @if (vm.permissions.canEditIssues) {
+      @if (vm.permissions.canEditIssues && !lastDeletedIssue) {
       <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
         <label class="full-width">
           <span>Comment</span>

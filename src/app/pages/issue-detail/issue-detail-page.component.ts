@@ -1,12 +1,13 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
-import { IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
+import { Issue, IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 
 @Component({
@@ -17,8 +18,8 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 })
 export class IssueDetailPageComponent {
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly realtimeService = inject(RealtimeService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
 
@@ -43,6 +44,15 @@ export class IssueDetailPageComponent {
   protected isSavingComment = false;
   protected isSavingIssue = false;
   protected isDeletingIssue = false;
+  protected lastDeletedIssue: Issue | null = null;
+
+  constructor() {
+    this.realtimeService.events$.subscribe((event) => {
+      if (event.type === 'project-updated' && !this.lastDeletedIssue) {
+        this.refresh$.next();
+      }
+    });
+  }
 
   protected readonly vm$ = combineLatest({
     params: this.route.paramMap.pipe(
@@ -128,13 +138,23 @@ export class IssueDetailPageComponent {
     }
     this.isDeletingIssue = true;
     this.workspaceService.deleteIssue(projectId, issueId).subscribe({
-      next: () => {
+      next: (issue) => {
+        this.lastDeletedIssue = issue;
         this.isDeletingIssue = false;
-        void this.router.navigate(['/projects', projectId]);
       },
       error: () => {
         this.isDeletingIssue = false;
       }
+    });
+  }
+
+  protected restoreIssue(projectId: number): void {
+    if (!this.lastDeletedIssue) {
+      return;
+    }
+    this.workspaceService.restoreIssue(projectId, this.lastDeletedIssue.id).subscribe(() => {
+      this.lastDeletedIssue = null;
+      this.refresh$.next();
     });
   }
 

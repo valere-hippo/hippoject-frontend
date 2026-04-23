@@ -14,7 +14,7 @@
 
   <section class="board-grid">
     @for (column of columns; track column.key) {
-      <article class="column" (dragover)="$event.preventDefault()" (drop)="dropOnColumn(vm.projectId, vm.issues, column.key)">
+      <article class="column" [class.column--active]="dragOverColumn === column.key" (dragover)="$event.preventDefault(); setDragOverColumn(column.key)" (dragleave)="setDragOverColumn(null)" (drop)="dropOnColumn(vm.projectId, vm.issues, column.key)">
         <header>
           <strong>{{ column.label }}</strong>
           <span>{{ vm.issues.filter((issue) => issue.status === column.key).length }}</span>
@@ -27,7 +27,7 @@
               <div class="cards">
                 @for (issue of lane.issues; track issue.id) {
                   @if (issue.status === column.key) {
-                    <div class="issue-card" draggable="true" (dragstart)="startDrag(issue.id)" (dragend)="clearDrag()">
+                    <div class="issue-card" [class.issue-card--dragging]="draggedIssueId === issue.id" draggable="true" (dragstart)="startDrag(issue.id)" (dragend)="clearDrag()">
                       <a class="issue-card__link" [routerLink]="['/projects', vm.projectId, 'issues', issue.id]">
                         <p class="eyebrow">{{ issue.issueKey }}</p>
                         <h4>{{ issue.title }}</h4>

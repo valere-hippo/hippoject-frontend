@@ -63,6 +63,15 @@
     }
   </section>
 
+  @if (lastDeletedSprint) {
+    <section class="page-card">
+      <p class="eyebrow">Undo</p>
+      <h3>{{ lastDeletedSprint.name }} archived</h3>
+      <p>You can restore this sprint if that delete was accidental.</p>
+      <button type="button" (click)="restoreSprint(vm.projectId)">Restore sprint</button>
+    </section>
+  }
+
   <section class="stack sprint-stack">
     @for (sprint of vm.sprints; track sprint.id) {
       <article class="page-card sprint-card">

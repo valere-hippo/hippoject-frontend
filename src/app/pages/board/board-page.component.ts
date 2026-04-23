@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, timer } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssueStatus } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
@@ -17,9 +18,19 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 export class BoardPageComponent {
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly realtimeService = inject(RealtimeService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
   protected draggedIssueId: number | null = null;
+  protected dragOverColumn: IssueStatus | null = null;
+
+  constructor() {
+    this.realtimeService.events$.subscribe((event) => {
+      if (event.type === 'project-updated') {
+        this.refresh$.next();
+      }
+    });
+  }
 
   protected readonly columns: { key: IssueStatus; label: string }[] = [
     { key: 'TODO', label: 'To do' },
@@ -88,8 +99,13 @@ export class BoardPageComponent {
     this.draggedIssueId = issueId;
   }
 
+  protected setDragOverColumn(status: IssueStatus | null): void {
+    this.dragOverColumn = status;
+  }
+
   protected clearDrag(): void {
     this.draggedIssueId = null;
+    this.dragOverColumn = null;
   }
 
   protected dropOnColumn(projectId: number, issues: Issue[], status: IssueStatus): void {

@@ -31,6 +31,7 @@ export interface Issue {
   reporterId: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
   comments: IssueComment[];
 }
 

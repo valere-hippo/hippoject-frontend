@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue } from '../../shared/models/issue.model';
-import { CreateSprintRequest } from '../../shared/models/sprint.model';
+import { CreateSprintRequest, Sprint } from '../../shared/models/sprint.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 
 @Component({
@@ -19,6 +20,7 @@ import { resolveProjectPermissions } from '../../shared/utils/project-permission
 export class BacklogPageComponent {
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly realtimeService = inject(RealtimeService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
 
@@ -33,6 +35,15 @@ export class BacklogPageComponent {
   protected isSavingSprint = false;
   protected sprintActionId: number | null = null;
   protected deletingSprintId: number | null = null;
+  protected lastDeletedSprint: Sprint | null = null;
+
+  constructor() {
+    this.realtimeService.events$.subscribe((event) => {
+      if (event.type === 'project-updated') {
+        this.refresh$.next();
+      }
+    });
+  }
 
   protected readonly vm$ = combineLatest({
     projectId: this.route.paramMap.pipe(map((params) => Number(params.get('projectId')))),
@@ -113,13 +124,24 @@ export class BacklogPageComponent {
     }
     this.deletingSprintId = sprintId;
     this.workspaceService.deleteSprint(projectId, sprintId).subscribe({
-      next: () => {
+      next: (sprint) => {
+        this.lastDeletedSprint = sprint;
         this.deletingSprintId = null;
         this.refresh$.next();
       },
       error: () => {
         this.deletingSprintId = null;
       }
+    });
+  }
+
+  protected restoreSprint(projectId: number): void {
+    if (!this.lastDeletedSprint) {
+      return;
+    }
+    this.workspaceService.restoreSprint(projectId, this.lastDeletedSprint.id).subscribe(() => {
+      this.lastDeletedSprint = null;
+      this.refresh$.next();
     });
   }
 

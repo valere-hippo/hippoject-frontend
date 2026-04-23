@@ -102,8 +102,12 @@ export class WorkspaceService {
     return this.api.put<Sprint>(`projects/${projectId}/sprints/${sprintId}/complete`, {});
   }
 
-  deleteSprint(projectId: number, sprintId: number): Observable<void> {
-    return this.api.delete<void>(`projects/${projectId}/sprints/${sprintId}`);
+  deleteSprint(projectId: number, sprintId: number): Observable<Sprint> {
+    return this.api.delete<Sprint>(`projects/${projectId}/sprints/${sprintId}`);
+  }
+
+  restoreSprint(projectId: number, sprintId: number): Observable<Sprint> {
+    return this.api.put<Sprint>(`projects/${projectId}/sprints/${sprintId}/restore`, {});
   }
 
   createIssue(projectId: number, request: CreateIssueRequest): Observable<Issue> {
@@ -118,8 +122,12 @@ export class WorkspaceService {
     return this.api.put<Issue>(`projects/${projectId}/issues/${issueId}`, request);
   }
 
-  deleteIssue(projectId: number, issueId: number): Observable<void> {
-    return this.api.delete<void>(`projects/${projectId}/issues/${issueId}`);
+  deleteIssue(projectId: number, issueId: number): Observable<Issue> {
+    return this.api.delete<Issue>(`projects/${projectId}/issues/${issueId}`);
+  }
+
+  restoreIssue(projectId: number, issueId: number): Observable<Issue> {
+    return this.api.put<Issue>(`projects/${projectId}/issues/${issueId}/restore`, {});
   }
 
   getIssues(filters: IssueFilters = {}): Observable<Issue[]> {

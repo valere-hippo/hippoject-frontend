@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
+import { RealtimeService } from '../core/services/realtime.service';
 import { WorkspaceService } from '../core/services/workspace.service';
 import { NotificationItem } from '../shared/models/notification.model';
 
@@ -17,6 +18,7 @@ export class AppShellComponent implements OnDestroy {
   private readonly router = inject(Router);
   protected readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly realtimeService = inject(RealtimeService);
   private readonly notificationsTimer = window.setInterval(() => this.loadNotifications(), 15000);
 
   protected readonly navItems = [
@@ -42,9 +44,15 @@ export class AppShellComponent implements OnDestroy {
   });
 
   constructor() {
+    this.realtimeService.connect();
     this.loadNotifications();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.currentUrl = this.router.url;
+    });
+    this.realtimeService.events$.subscribe((event) => {
+      if (event.type === 'notifications-updated') {
+        this.loadNotifications();
+      }
     });
   }
 
@@ -65,6 +73,7 @@ export class AppShellComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     window.clearInterval(this.notificationsTimer);
+    this.realtimeService.disconnect();
   }
 
   private loadNotifications(): void {

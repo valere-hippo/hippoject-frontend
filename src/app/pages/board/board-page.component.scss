@@ -98,6 +98,17 @@ span {
   cursor: grab;
 }
 
+.issue-card--dragging {
+  opacity: 0.55;
+  transform: scale(0.98);
+}
+
+.column--active {
+  outline: 2px dashed rgba(173, 88, 88, 0.5);
+  outline-offset: 0.35rem;
+  background: rgba(173, 88, 88, 0.05);
+}
+
 .issue-card__link {
   display: block;
   color: inherit;

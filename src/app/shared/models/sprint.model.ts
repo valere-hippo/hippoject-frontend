@@ -10,6 +10,7 @@ export interface Sprint {
   status: SprintStatus;
   active: boolean;
   completedAt: string | null;
+  deletedAt: string | null;
   createdAt: string;
   issueCount: number;
 }
