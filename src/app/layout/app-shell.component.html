@@ -46,15 +46,13 @@
       </div>
 
       <div class="topbar__actions">
-        <div class="notifications-panel">
-          <div class="notification-badge">{{ unreadNotifications() }} ungelesen</div>
-          @for (notification of notifications.slice(0, 4); track notification.id) {
-            <button type="button" class="notification-item" [class.is-read]="notification.read" (click)="markNotificationRead(notification.id)">
-              <strong>{{ notificationTypeLabel(notification.type) }}</strong>
-              <span>{{ notification.message }}</span>
-            </button>
+        <button type="button" class="notification-trigger" [class.has-unread]="unreadNotifications() > 0" (click)="toggleNotifications()">
+          <span class="notification-trigger__icon">🔔</span>
+          <span>Benachrichtigungen</span>
+          @if (unreadNotifications() > 0) {
+            <span class="notification-counter">{{ unreadNotifications() }}</span>
           }
-        </div>
+        </button>
         <button type="button" class="ghost-button" (click)="logout()">Abmelden</button>
         <div class="profile-chip">
           <div class="avatar">{{ auth.initials() }}</div>
@@ -70,4 +68,37 @@
       <router-outlet />
     </main>
   </div>
+
+  @if (notificationsOpen) {
+    <div class="notification-overlay" (click)="closeNotifications()">
+      <section class="notification-dialog" (click)="$event.stopPropagation()">
+        <div class="notification-dialog__header">
+          <div>
+            <p class="eyebrow">Posteingang</p>
+            <h3>Benachrichtigungen</h3>
+          </div>
+          <div class="notification-badge notification-badge--dialog">{{ unreadNotifications() }} ungelesen</div>
+        </div>
+
+        @if (notifications.length) {
+          <div class="notification-list">
+            @for (notification of notifications; track notification.id) {
+              <button type="button" class="notification-item" [class.is-read]="notification.read" (click)="openNotification(notification)">
+                <div class="notification-item__meta">
+                  <strong>{{ notificationTypeLabel(notification.type) }}</strong>
+                  <span>{{ notification.createdAt | date: 'short' }}</span>
+                </div>
+                <p>{{ notification.message }}</p>
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="notification-empty">
+            <strong>Keine Benachrichtigungen</strong>
+            <p>Neue Hinweise erscheinen hier als Dialog.</p>
+          </div>
+        }
+      </section>
+    </div>
+  }
 </div>

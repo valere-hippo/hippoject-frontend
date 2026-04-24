@@ -165,19 +165,12 @@
   justify-content: flex-end;
 }
 
-.search-pill,
+.notification-trigger,
 .ghost-button,
-.profile-chip,
-.notifications-panel {
+.profile-chip {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.2rem;
-}
-
-.search-pill {
-  padding: 0.9rem 1.15rem;
-  min-width: min(26rem, 48vw);
-  color: #cbd5e1;
 }
 
 .ghost-button {
@@ -189,41 +182,6 @@
   &:hover {
     background: rgba(255, 255, 255, 0.14);
   }
-}
-
-.notifications-panel {
-  display: grid;
-  gap: 0.45rem;
-  padding: 0.7rem;
-  min-width: min(20rem, 90vw);
-  max-height: 20rem;
-  overflow: auto;
-}
-
-.notification-badge {
-  font-size: 0.8rem;
-  color: #fdecec;
-}
-
-.notification-item {
-  display: grid;
-  gap: 0.2rem;
-  text-align: left;
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.9rem;
-  padding: 0.7rem 0.8rem;
-  cursor: pointer;
-  transition: 160ms ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
-
-.notification-item.is-read {
-  opacity: 0.7;
 }
 
 .profile-chip {
@@ -271,9 +229,5 @@
   .topbar,
   .content {
     padding-inline: 1rem;
-  }
-
-  .search-pill {
-    min-width: 100%;
   }
 }

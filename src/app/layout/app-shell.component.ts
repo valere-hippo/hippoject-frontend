@@ -33,6 +33,7 @@ export class AppShellComponent implements OnDestroy {
 
   protected currentUrl = this.router.url;
   protected notifications: NotificationItem[] = [];
+  protected notificationsOpen = false;
   protected readonly pageTitle = computed(() => {
     if (this.currentUrl.includes('/board')) return 'Board';
     if (this.currentUrl.includes('/backlog')) return 'Backlog';
@@ -66,6 +67,20 @@ export class AppShellComponent implements OnDestroy {
     this.workspaceService.markNotificationRead(notificationId).subscribe(() => {
       this.loadNotifications();
     });
+  }
+
+  protected toggleNotifications(): void {
+    this.notificationsOpen = !this.notificationsOpen;
+  }
+
+  protected closeNotifications(): void {
+    this.notificationsOpen = false;
+  }
+
+  protected openNotification(notification: NotificationItem): void {
+    if (!notification.read) {
+      this.markNotificationRead(notification.id);
+    }
   }
 
   protected logout(): void {
