@@ -30,9 +30,10 @@ export class AuthService {
     }
 
     const authenticated = await this.keycloak.init({
-      onLoad: 'login-required',
+      onLoad: 'check-sso',
       pkceMethod: 'S256',
-      checkLoginIframe: false
+      checkLoginIframe: false,
+      silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`
     });
 
     this.authenticated.set(authenticated);
@@ -50,9 +51,9 @@ export class AuthService {
     return this.keycloak.token ?? null;
   }
 
-  async login(): Promise<void> {
+  async login(redirectUri?: string): Promise<void> {
     if (this.keycloak) {
-      await this.keycloak.login();
+      await this.keycloak.login({ redirectUri: redirectUri ?? window.location.href });
     }
   }
 

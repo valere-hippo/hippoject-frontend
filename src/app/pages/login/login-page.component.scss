@@ -1,0 +1,125 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.login-page {
+  min-height: 100dvh;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: 1.5rem;
+  background:
+    radial-gradient(circle at top left, rgba(173, 88, 88, 0.18), transparent 34%),
+    linear-gradient(180deg, #0f172a 0, #111827 38%, #eef3f9 38%, #f8fafd 100%);
+}
+
+.login-card {
+  border-radius: 1.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+}
+
+.login-card--intro {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.96);
+  align-self: end;
+}
+
+.login-card--action {
+  padding: 2rem;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  display: grid;
+  gap: 0.9rem;
+  align-content: center;
+}
+
+.login-logo {
+  width: min(100%, 21rem);
+}
+
+.login-mark {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.login-card--action .eyebrow {
+  color: #cbd5e1;
+}
+
+h1,
+h2,
+p,
+strong,
+span {
+  margin: 0;
+}
+
+h1 {
+  margin-top: 0.35rem;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+  color: #0f172a;
+}
+
+h2 {
+  font-size: 1.8rem;
+}
+
+p,
+span {
+  line-height: 1.7;
+  color: #475569;
+}
+
+.login-card--action p,
+.login-card--action span {
+  color: #e2e8f0;
+}
+
+.login-highlights {
+  margin-top: 1.4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.login-highlights div {
+  padding: 1rem 1.1rem;
+  border-radius: 1.15rem;
+  background: #f8fafc;
+  display: grid;
+  gap: 0.25rem;
+}
+
+button {
+  margin-top: 0.5rem;
+  width: fit-content;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.25rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(173, 88, 88, 0.24);
+}
+
+@media (max-width: 960px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .login-card--action,
+  .login-card--intro {
+    padding: 1.5rem;
+  }
+}

@@ -75,7 +75,8 @@ export class IssueDetailPageComponent {
         comments: this.workspaceService.getComments(params.projectId, params.issueId),
         sprints: this.workspaceService.getSprints(params.projectId),
         projectIssues: this.workspaceService.getProjectIssues(params.projectId),
-        members: this.workspaceService.getProjectMembers(params.projectId)
+        members: this.workspaceService.getProjectMembers(params.projectId),
+        availableUsers: this.workspaceService.getIdentityUsers()
       }).pipe(
         map((data) => ({
           ...data,

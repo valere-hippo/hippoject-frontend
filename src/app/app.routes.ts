@@ -7,11 +7,13 @@ import { BoardPageComponent } from './pages/board/board-page.component';
 import { DashboardPageComponent } from './pages/dashboard/dashboard-page.component';
 import { IssueDetailPageComponent } from './pages/issue-detail/issue-detail-page.component';
 import { IssuesPageComponent } from './pages/issues/issues-page.component';
+import { LoginPageComponent } from './pages/login/login-page.component';
 import { ProjectDetailPageComponent } from './pages/project-detail/project-detail-page.component';
 import { ProjectsPageComponent } from './pages/projects/projects-page.component';
 import { SettingsPageComponent } from './pages/settings/settings-page.component';
 
 export const routes: Routes = [
+  { path: 'login', component: LoginPageComponent },
   {
     path: '',
     component: AppShellComponent,

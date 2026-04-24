@@ -128,8 +128,8 @@
           <span>Zuständig</span>
           <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
             <option value="">Nicht zugewiesen</option>
-            @for (member of vm.members; track member.id) {
-              <option [value]="member.userId">{{ member.displayName }} · {{ projectRoleLabel(member.role) }}</option>
+            @for (user of vm.availableUsers; track user.id) {
+              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}</option>
             }
           </select>
         </label>
@@ -173,17 +173,22 @@
       <h3>Mitglied hinzufügen</h3>
       @if (vm.permissions.canManageMembers) {
       <form class="issue-form" (ngSubmit)="addMember(vm.project.id)">
-        <label>
-          <span>Benutzerkennung</span>
-          <input [(ngModel)]="memberForm.userId" name="memberUserId" required maxlength="120" />
+        <label class="full-width">
+          <span>Keycloak-Benutzer</span>
+          <select [(ngModel)]="selectedMemberUsername" name="memberCandidate" required (ngModelChange)="selectMemberCandidate(vm.availableUsers, $event)">
+            <option value="">Benutzer auswählen</option>
+            @for (user of vm.availableUsers; track user.id) {
+              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}{{ user.email ? ' · ' + user.email : '' }}</option>
+            }
+          </select>
         </label>
         <label>
           <span>Anzeigename</span>
-          <input [(ngModel)]="memberForm.displayName" name="memberDisplayName" required maxlength="120" />
+          <input [(ngModel)]="memberForm.displayName" name="memberDisplayName" required maxlength="120" readonly />
         </label>
         <label>
           <span>E-Mail</span>
-          <input [(ngModel)]="memberForm.email" name="memberEmail" type="email" maxlength="160" placeholder="optional" />
+          <input [(ngModel)]="memberForm.email" name="memberEmail" type="email" maxlength="160" readonly />
         </label>
         <label>
           <span>Rolle</span>
@@ -193,7 +198,7 @@
             }
           </select>
         </label>
-        <button type="submit" [disabled]="isSavingMember">{{ isSavingMember ? 'Speichert…' : 'Mitglied hinzufügen' }}</button>
+        <button type="submit" [disabled]="isSavingMember || !memberForm.userId">{{ isSavingMember ? 'Speichert…' : 'Mitglied hinzufügen' }}</button>
       </form>
       } @else {
         <p>Nur Projektadmins können Mitglieder hinzufügen oder ändern.</p>

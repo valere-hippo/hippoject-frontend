@@ -1,16 +1,73 @@
-@if (directory$ | async; as directory) {
+@if (vm$ | async; as vm) {
   <section class="settings-grid">
+    <article class="page-card wide settings-hero">
+      <div>
+        <p class="eyebrow">Arbeitsbereich-Einstellungen</p>
+        <h3>Identität, Einladungen und Teamstruktur</h3>
+        <p>Hier verwaltest du bestehende Keycloak-Benutzer, verschickst Einladungen und behältst Projektrollen im Blick.</p>
+      </div>
+    </article>
+
     <article class="page-card wide">
-      <p class="eyebrow">Arbeitsbereich-Einstellungen</p>
-      <h3>Teamverzeichnis und Zuweisungen</h3>
-      <p>Projektmitglieder sind jetzt zentral organisiert, damit Zuständigkeiten und Sichtbarkeit im ganzen Arbeitsbereich konsistent bleiben.</p>
+      <p class="eyebrow">Benutzer einladen</p>
+      <h3>Keycloak-Einladung mit Verifizierung</h3>
+      <p>Neue Benutzer erhalten eine E-Mail, um ihre Adresse zu bestätigen und ein eigenes Passwort zu setzen.</p>
+
+      @if (inviteSuccess) {
+        <div class="callout success">{{ inviteSuccess }}</div>
+      }
+
+      @if (inviteError) {
+        <div class="callout error">{{ inviteError }}</div>
+      }
+
+      <form class="settings-form" (ngSubmit)="inviteUser()">
+        <label>
+          <span>Benutzername</span>
+          <input [(ngModel)]="inviteForm.username" name="username" required maxlength="120" placeholder="z. B. m.mueller" />
+        </label>
+        <label>
+          <span>E-Mail</span>
+          <input [(ngModel)]="inviteForm.email" name="email" type="email" required maxlength="160" placeholder="max@firma.de" />
+        </label>
+        <label>
+          <span>Vorname</span>
+          <input [(ngModel)]="inviteForm.firstName" name="firstName" required maxlength="120" />
+        </label>
+        <label>
+          <span>Nachname</span>
+          <input [(ngModel)]="inviteForm.lastName" name="lastName" required maxlength="120" />
+        </label>
+        <button type="submit" [disabled]="isInviting">{{ isInviting ? 'Lädt ein…' : 'Benutzer einladen' }}</button>
+      </form>
+    </article>
+
+    <article class="page-card wide">
+      <p class="eyebrow">Keycloak</p>
+      <h3>Verfügbare Benutzer</h3>
+      <div class="user-grid">
+        @for (user of vm.users; track user.id) {
+          <div class="user-card">
+            <div>
+              <strong>{{ user.displayName }}</strong>
+              <p>{{ user.username }}</p>
+              @if (user.email) {
+                <p>{{ user.email }}</p>
+              }
+            </div>
+            <span class="status" [class.status--verified]="user.emailVerified">
+              {{ user.emailVerified ? 'E-Mail bestätigt' : 'E-Mail offen' }}
+            </span>
+          </div>
+        }
+      </div>
     </article>
 
     <article class="page-card wide">
       <p class="eyebrow">Verzeichnis</p>
       <h3>Personen nach Projekt</h3>
       <div class="directory-grid">
-        @for (project of directory; track project.projectId) {
+        @for (project of vm.directory; track project.projectId) {
           <div class="directory-card">
             <strong>{{ project.projectKey }} · {{ project.projectName }}</strong>
             <div class="member-stack">

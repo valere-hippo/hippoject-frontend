@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { ApiService } from './api.service';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 import { DirectoryProject } from '../../shared/models/directory.model';
+import { CreateIdentityUserRequest, IdentityUser } from '../../shared/models/identity.model';
 import {
   CreateCommentRequest,
   CreateSavedIssueFilterRequest,
@@ -48,6 +49,14 @@ export class WorkspaceService {
 
   getDirectory(): Observable<DirectoryProject[]> {
     return this.api.get<DirectoryProject[]>('directory');
+  }
+
+  getIdentityUsers(query?: string): Observable<IdentityUser[]> {
+    return this.api.get<IdentityUser[]>('identity/users', query?.trim() ? { query: query.trim() } : undefined);
+  }
+
+  inviteIdentityUser(request: CreateIdentityUserRequest): Observable<IdentityUser> {
+    return this.api.post<IdentityUser>('identity/users', request);
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {

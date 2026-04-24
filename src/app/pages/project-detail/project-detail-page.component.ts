@@ -6,6 +6,7 @@ import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
+import { IdentityUser } from '../../shared/models/identity.model';
 import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
 import { CreateProjectMemberRequest, ProjectRole, UpdateProjectRequest } from '../../shared/models/project.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
@@ -63,6 +64,7 @@ export class ProjectDetailPageComponent {
   protected isSavingMember = false;
   protected isArchivingProject = false;
   protected removingMemberId: number | null = null;
+  protected selectedMemberUsername = '';
 
   private readonly projectId$ = this.route.paramMap.pipe(map((params) => Number(params.get('projectId'))));
 
@@ -76,6 +78,7 @@ export class ProjectDetailPageComponent {
         issues: this.workspaceService.getProjectIssues(projectId),
         sprints: this.workspaceService.getSprints(projectId),
         members: this.workspaceService.getProjectMembers(projectId),
+        availableUsers: this.workspaceService.getIdentityUsers(),
         activity: this.workspaceService.getProjectActivity(projectId)
       }).pipe(
         map((data) => ({
@@ -146,6 +149,7 @@ export class ProjectDetailPageComponent {
         this.memberForm.displayName = '';
         this.memberForm.email = '';
         this.memberForm.role = 'CONTRIBUTOR';
+        this.selectedMemberUsername = '';
         this.isSavingMember = false;
         this.refresh$.next();
       },
@@ -153,6 +157,21 @@ export class ProjectDetailPageComponent {
         this.isSavingMember = false;
       }
     });
+  }
+
+  protected selectMemberCandidate(users: IdentityUser[], username: string): void {
+    this.selectedMemberUsername = username;
+    const selectedUser = users.find((user) => user.username === username);
+    if (!selectedUser) {
+      this.memberForm.userId = '';
+      this.memberForm.displayName = '';
+      this.memberForm.email = '';
+      return;
+    }
+
+    this.memberForm.userId = selectedUser.username;
+    this.memberForm.displayName = selectedUser.displayName;
+    this.memberForm.email = selectedUser.email ?? '';
   }
 
   protected removeMember(projectId: number, memberId: number): void {

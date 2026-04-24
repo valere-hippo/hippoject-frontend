@@ -117,8 +117,8 @@
           <span>Zuständig</span>
           <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
             <option value="">Nicht zugewiesen</option>
-            @for (member of vm.members; track member.id) {
-              <option [value]="member.userId">{{ member.displayName }} · {{ projectRoleLabel(member.role) }}</option>
+            @for (user of vm.availableUsers; track user.id) {
+              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}</option>
             }
           </select>
         </label>
