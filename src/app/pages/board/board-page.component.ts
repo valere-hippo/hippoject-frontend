@@ -9,6 +9,7 @@ import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssueStatus } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
+import { issuePriorityLabel, projectRoleLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-board-page',
@@ -25,6 +26,8 @@ export class BoardPageComponent {
   protected draggedIssueId: number | null = null;
   protected dragOverColumn: IssueStatus | null = null;
   protected readonly selectedStatusByIssueId: Record<number, IssueStatus> = {};
+  protected readonly issuePriorityLabel = issuePriorityLabel;
+  protected readonly projectRoleLabel = projectRoleLabel;
 
   constructor() {
     this.realtimeService.events$.subscribe((event) => {
@@ -36,10 +39,10 @@ export class BoardPageComponent {
   }
 
   protected readonly columns: { key: IssueStatus; label: string }[] = [
-    { key: 'TODO', label: 'To do' },
-    { key: 'IN_PROGRESS', label: 'In progress' },
-    { key: 'IN_REVIEW', label: 'In review' },
-    { key: 'DONE', label: 'Done' }
+    { key: 'TODO', label: 'Offen' },
+    { key: 'IN_PROGRESS', label: 'In Arbeit' },
+    { key: 'IN_REVIEW', label: 'In Prüfung' },
+    { key: 'DONE', label: 'Erledigt' }
   ];
 
   protected readonly vm$ = combineLatest({
@@ -78,7 +81,7 @@ export class BoardPageComponent {
     const standaloneIssues = issues.filter((issue) => issue.issueType !== 'EPIC' && issue.epicId == null);
 
     return standaloneIssues.length
-      ? [...epicLanes, { key: 'ungrouped', title: 'Ungrouped work', issues: standaloneIssues }]
+      ? [...epicLanes, { key: 'ungrouped', title: 'Nicht zugeordnet', issues: standaloneIssues }]
       : epicLanes;
   }
 

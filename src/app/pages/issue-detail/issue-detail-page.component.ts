@@ -9,6 +9,7 @@ import { RealtimeService } from '../../core/services/realtime.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
+import { issuePriorityLabel, issueStatusLabel, issueTypeLabel, projectRoleLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-issue-detail-page',
@@ -26,6 +27,10 @@ export class IssueDetailPageComponent {
   protected readonly priorities: IssuePriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   protected readonly issueTypes: IssueType[] = ['STORY', 'TASK', 'BUG', 'EPIC'];
+  protected readonly issuePriorityLabel = issuePriorityLabel;
+  protected readonly issueStatusLabel = issueStatusLabel;
+  protected readonly issueTypeLabel = issueTypeLabel;
+  protected readonly projectRoleLabel = projectRoleLabel;
 
   protected readonly issueForm: UpdateIssueRequest = {
     title: '',
@@ -134,7 +139,7 @@ export class IssueDetailPageComponent {
   }
 
   protected deleteIssue(projectId: number, issueId: number): void {
-    if (!window.confirm('Issue wirklich löschen?')) {
+    if (!window.confirm('Vorgang wirklich archivieren?')) {
       return;
     }
     this.isDeletingIssue = true;

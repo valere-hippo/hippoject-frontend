@@ -1,14 +1,14 @@
 @if (vm$ | async; as vm) {
   <section class="page-card board-header">
     <div>
-      <p class="eyebrow">Kanban view</p>
-      <h3>{{ vm.project.name }} board</h3>
-      <p>Move issues between workflow states from the board itself.</p>
+      <p class="eyebrow">Kanban-Ansicht</p>
+      <h3>Board von {{ vm.project.name }}</h3>
+      <p>Vorgänge lassen sich hier direkt zwischen den Workflow-Status verschieben.</p>
     </div>
     <div class="filters">
-      <span>{{ vm.issues.length }} issues</span>
+      <span>{{ vm.issues.length }} Vorgänge</span>
       <span>{{ vm.project.key }}</span>
-      <span>{{ vm.permissions.role }}</span>
+      <span>{{ projectRoleLabel(vm.permissions.role) }}</span>
     </div>
   </section>
 
@@ -34,7 +34,7 @@
                         <p>{{ issue.description }}</p>
                       </a>
                       <footer>
-                        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
+                        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
                         <span>{{ issue.updatedAt | date: 'short' }}</span>
                       </footer>
                       @if (vm.permissions.canMoveBoard) {
@@ -51,7 +51,7 @@
                               <option [ngValue]="target.key">{{ target.label }}</option>
                             }
                           </select>
-                          <button type="button" [disabled]="selectedStatus(issue) === issue.status" (click)="moveIssueToSelected(vm.projectId, issue)">Move</button>
+                          <button type="button" [disabled]="selectedStatus(issue) === issue.status" (click)="moveIssueToSelected(vm.projectId, issue)">Verschieben</button>
                         </div>
                       }
                     </div>

@@ -7,6 +7,7 @@ import { AuthService } from '../core/auth/auth.service';
 import { RealtimeService } from '../core/services/realtime.service';
 import { WorkspaceService } from '../core/services/workspace.service';
 import { NotificationItem } from '../shared/models/notification.model';
+import { notificationTypeLabel } from '../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-shell',
@@ -21,25 +22,26 @@ export class AppShellComponent implements OnDestroy {
   private readonly realtimeService = inject(RealtimeService);
 
   protected readonly navItems = [
-    { label: 'Dashboard', icon: '◫', route: '/dashboard' },
-    { label: 'Projects', icon: '◪', route: '/projects' },
-    { label: 'Issues', icon: '◎', route: '/issues' },
-    { label: 'Settings', icon: '⚙', route: '/settings' }
+    { label: 'Übersicht', icon: '◫', route: '/dashboard' },
+    { label: 'Projekte', icon: '◪', route: '/projects' },
+    { label: 'Vorgänge', icon: '◎', route: '/issues' },
+    { label: 'Einstellungen', icon: '⚙', route: '/settings' }
   ];
 
-  protected readonly quickLinks = [{ label: 'Projects', route: '/projects' }, { label: 'Issue navigator', route: '/issues' }];
+  protected readonly quickLinks = [{ label: 'Projekte', route: '/projects' }, { label: 'Vorgangsübersicht', route: '/issues' }];
+  protected readonly notificationTypeLabel = notificationTypeLabel;
 
   protected currentUrl = this.router.url;
   protected notifications: NotificationItem[] = [];
   protected readonly pageTitle = computed(() => {
     if (this.currentUrl.includes('/board')) return 'Board';
     if (this.currentUrl.includes('/backlog')) return 'Backlog';
-    if (this.currentUrl.includes('/issues/')) return 'Issue Detail';
-    if (this.currentUrl.includes('/issues')) return 'Issues';
-    if (this.currentUrl.includes('/settings')) return 'Settings';
-    if (this.currentUrl === '/projects') return 'Projects';
-    if (this.currentUrl.includes('/projects/')) return 'Project Overview';
-    return 'Dashboard';
+    if (this.currentUrl.includes('/issues/')) return 'Vorgangsdetail';
+    if (this.currentUrl.includes('/issues')) return 'Vorgänge';
+    if (this.currentUrl.includes('/settings')) return 'Einstellungen';
+    if (this.currentUrl === '/projects') return 'Projekte';
+    if (this.currentUrl.includes('/projects/')) return 'Projektübersicht';
+    return 'Übersicht';
   });
 
   constructor() {

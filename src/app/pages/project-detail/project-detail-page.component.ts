@@ -9,6 +9,7 @@ import { WorkspaceService } from '../../core/services/workspace.service';
 import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
 import { CreateProjectMemberRequest, ProjectRole, UpdateProjectRequest } from '../../shared/models/project.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
+import { issuePriorityLabel, issueStatusLabel, issueTypeLabel, projectRoleLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -27,6 +28,10 @@ export class ProjectDetailPageComponent {
   protected readonly statuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   protected readonly issueTypes: IssueType[] = ['STORY', 'TASK', 'BUG', 'EPIC'];
   protected readonly projectRoles: ProjectRole[] = ['PROJECT_ADMIN', 'PROJECT_MANAGER', 'CONTRIBUTOR', 'VIEWER'];
+  protected readonly issuePriorityLabel = issuePriorityLabel;
+  protected readonly issueStatusLabel = issueStatusLabel;
+  protected readonly issueTypeLabel = issueTypeLabel;
+  protected readonly projectRoleLabel = projectRoleLabel;
 
   protected readonly issueForm: CreateIssueRequest = {
     title: '',

@@ -1,17 +1,17 @@
 @if (vm$ | async; as vm) {
   <section class="hero page-card">
     <div>
-      <p class="eyebrow">{{ vm.project.key }} project</p>
+      <p class="eyebrow">{{ vm.project.key }} Projekt</p>
       <h3>{{ vm.project.name }}</h3>
       <p>{{ vm.project.description }}</p>
     </div>
 
     <div class="hero__actions">
-      <a [routerLink]="['/projects', vm.project.id, 'board']">Open board</a>
-      <a [routerLink]="['/projects', vm.project.id, 'backlog']">View backlog</a>
+      <a [routerLink]="['/projects', vm.project.id, 'board']">Board öffnen</a>
+      <a [routerLink]="['/projects', vm.project.id, 'backlog']">Backlog öffnen</a>
       @if (vm.permissions.canEditProject) {
         <button type="button" class="danger-button" (click)="archiveProject(vm.project.id)" [disabled]="isArchivingProject">
-          {{ isArchivingProject ? 'Archiving…' : 'Archive project' }}
+          {{ isArchivingProject ? 'Archiviert…' : 'Projekt archivieren' }}
         </button>
       }
     </div>
@@ -19,35 +19,35 @@
 
   <section class="detail-grid">
     <article class="page-card stat-card">
-      <span>Owner</span>
+      <span>Verantwortlich</span>
       <strong>{{ vm.project.ownerId }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Created</span>
+      <span>Erstellt</span>
       <strong>{{ vm.project.createdAt | date: 'mediumDate' }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Open issues</span>
+      <span>Offene Vorgänge</span>
       <strong>{{ vm.issues.length }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Project key</span>
+      <span>Projektschlüssel</span>
       <strong>{{ vm.project.key }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Members</span>
+      <span>Mitglieder</span>
       <strong>{{ vm.members.length }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Your role</span>
-      <strong>{{ vm.permissions.role }}</strong>
+      <span>Deine Rolle</span>
+      <strong>{{ projectRoleLabel(vm.permissions.role) }}</strong>
     </article>
   </section>
 
   <section class="detail-grid two-columns">
     <article class="page-card">
-      <p class="eyebrow">Project settings</p>
-      <h3>Edit project</h3>
+      <p class="eyebrow">Projekteinstellungen</p>
+      <h3>Projekt bearbeiten</h3>
       @if (vm.permissions.canEditProject) {
         <form class="issue-form" (ngSubmit)="updateProject(vm.project.id)">
           <label>
@@ -55,42 +55,42 @@
             <input [(ngModel)]="projectForm.name" name="projectName" required maxlength="120" />
           </label>
           <label class="full-width">
-            <span>Description</span>
+            <span>Beschreibung</span>
             <textarea [(ngModel)]="projectForm.description" name="projectDescription" required maxlength="500"></textarea>
           </label>
-          <button type="submit" [disabled]="isSavingProject">{{ isSavingProject ? 'Saving…' : 'Save project' }}</button>
+          <button type="submit" [disabled]="isSavingProject">{{ isSavingProject ? 'Speichert…' : 'Projekt speichern' }}</button>
         </form>
       } @else {
-        <p>You currently have read-only access to project settings.</p>
+        <p>Du hast aktuell nur Lesezugriff auf die Projekteinstellungen.</p>
       }
     </article>
 
     <article class="page-card">
-      <p class="eyebrow">Create issue</p>
-      <h3>Add a ticket</h3>
+      <p class="eyebrow">Vorgang erstellen</p>
+      <h3>Ticket anlegen</h3>
       @if (vm.permissions.canCreateIssues) {
       <form class="issue-form" (ngSubmit)="createIssue(vm.project.id)">
         <label>
-          <span>Title</span>
+          <span>Titel</span>
           <input [(ngModel)]="issueForm.title" name="title" required maxlength="140" />
         </label>
         <label class="full-width">
-          <span>Description</span>
+          <span>Beschreibung</span>
           <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
         </label>
         <label>
-          <span>Type</span>
+          <span>Typ</span>
           <select [(ngModel)]="issueForm.issueType" name="issueType">
             @for (type of issueTypes; track type) {
-              <option [value]="type">{{ type }}</option>
+              <option [value]="type">{{ issueTypeLabel(type) }}</option>
             }
           </select>
         </label>
         <label>
-          <span>Priority</span>
+          <span>Priorität</span>
           <select [(ngModel)]="issueForm.priority" name="priority">
             @for (priority of priorities; track priority) {
-              <option [value]="priority">{{ priority }}</option>
+              <option [value]="priority">{{ issuePriorityLabel(priority) }}</option>
             }
           </select>
         </label>
@@ -98,7 +98,7 @@
           <span>Status</span>
           <select [(ngModel)]="issueForm.status" name="status">
             @for (status of statuses; track status) {
-              <option [value]="status">{{ status }}</option>
+              <option [value]="status">{{ issueStatusLabel(status) }}</option>
             }
           </select>
         </label>
@@ -114,29 +114,29 @@
         <label>
           <span>Epic</span>
           <select [(ngModel)]="issueForm.epicId" name="epicId">
-            <option [ngValue]="null">No epic</option>
+            <option [ngValue]="null">Kein Epic</option>
             @for (epic of vm.epics; track epic.id) {
               <option [ngValue]="epic.id">{{ epic.issueKey }} · {{ epic.title }}</option>
             }
           </select>
         </label>
         <label class="full-width">
-          <span>Labels</span>
+          <span>Schlagworte</span>
           <input [(ngModel)]="issueLabelsText" name="issueLabelsText" maxlength="200" placeholder="frontend, auth, sprint" />
         </label>
         <label class="full-width">
-          <span>Assignee</span>
+          <span>Zuständig</span>
           <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
-            <option value="">Unassigned</option>
+            <option value="">Nicht zugewiesen</option>
             @for (member of vm.members; track member.id) {
-              <option [value]="member.userId">{{ member.displayName }} · {{ member.role }}</option>
+              <option [value]="member.userId">{{ member.displayName }} · {{ projectRoleLabel(member.role) }}</option>
             }
           </select>
         </label>
-        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Create issue' }}</button>
+        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Speichert…' : 'Vorgang erstellen' }}</button>
       </form>
       } @else {
-        <p>You can view project issues here, but creating new ones is currently restricted for your role.</p>
+        <p>Du kannst Vorgänge hier sehen, aber deine Rolle darf aktuell keine neuen Vorgänge anlegen.</p>
       }
     </article>
   </section>
@@ -144,7 +144,7 @@
   <section class="detail-grid two-columns">
     <article class="page-card">
       <p class="eyebrow">Team</p>
-      <h3>Project members</h3>
+      <h3>Projektmitglieder</h3>
       <div class="member-list">
         @for (member of vm.members; track member.id) {
           <div class="member-row">
@@ -156,10 +156,10 @@
               }
             </div>
             <div class="issue-row__meta">
-              <span class="status">{{ member.role }}</span>
+              <span class="status">{{ projectRoleLabel(member.role) }}</span>
               @if (vm.permissions.canManageMembers) {
                 <button type="button" class="remove-button" (click)="removeMember(vm.project.id, member.id)" [disabled]="removingMemberId === member.id">
-                  {{ removingMemberId === member.id ? 'Removing…' : 'Remove' }}
+                  {{ removingMemberId === member.id ? 'Entfernt…' : 'Entfernen' }}
                 </button>
               }
             </div>
@@ -169,40 +169,40 @@
     </article>
 
     <article class="page-card">
-      <p class="eyebrow">Access</p>
-      <h3>Add member</h3>
+      <p class="eyebrow">Zugriff</p>
+      <h3>Mitglied hinzufügen</h3>
       @if (vm.permissions.canManageMembers) {
       <form class="issue-form" (ngSubmit)="addMember(vm.project.id)">
         <label>
-          <span>User id</span>
+          <span>Benutzerkennung</span>
           <input [(ngModel)]="memberForm.userId" name="memberUserId" required maxlength="120" />
         </label>
         <label>
-          <span>Display name</span>
+          <span>Anzeigename</span>
           <input [(ngModel)]="memberForm.displayName" name="memberDisplayName" required maxlength="120" />
         </label>
         <label>
-          <span>Email</span>
+          <span>E-Mail</span>
           <input [(ngModel)]="memberForm.email" name="memberEmail" type="email" maxlength="160" placeholder="optional" />
         </label>
         <label>
-          <span>Role</span>
+          <span>Rolle</span>
           <select [(ngModel)]="memberForm.role" name="memberRole">
             @for (role of projectRoles; track role) {
-              <option [value]="role">{{ role }}</option>
+              <option [value]="role">{{ projectRoleLabel(role) }}</option>
             }
           </select>
         </label>
-        <button type="submit" [disabled]="isSavingMember">{{ isSavingMember ? 'Saving…' : 'Add member' }}</button>
+        <button type="submit" [disabled]="isSavingMember">{{ isSavingMember ? 'Speichert…' : 'Mitglied hinzufügen' }}</button>
       </form>
       } @else {
-        <p>Only project admins can add or change project members.</p>
+        <p>Nur Projektadmins können Mitglieder hinzufügen oder ändern.</p>
       }
     </article>
   </section>
 
   <section class="page-card">
-    <p class="eyebrow">Activity</p>
+    <p class="eyebrow">Aktivität</p>
     <div class="member-list">
       @for (item of vm.activity; track item.occurredAt + item.type + item.title) {
         <div class="member-row">
@@ -217,7 +217,7 @@
   </section>
 
   <section class="page-card">
-    <p class="eyebrow">Recent work</p>
+    <p class="eyebrow">Letzte Arbeit</p>
     <div class="issue-list">
       @for (issue of vm.issues; track issue.id) {
         <a class="issue-row" [routerLink]="['/projects', vm.project.id, 'issues', issue.id]">
@@ -225,19 +225,19 @@
             <strong>{{ issue.issueKey }}</strong>
             <p>{{ issue.title }}</p>
             @if (issue.issueType === 'EPIC') {
-              <p>{{ issue.epicProgressDone }} / {{ issue.epicProgressTotal }} child issues done</p>
+              <p>{{ issue.epicProgressDone }} / {{ issue.epicProgressTotal }} untergeordnete Vorgänge erledigt</p>
             }
           </div>
-            <div class="issue-row__meta">
-              @if (issue.epicKey) {
-                <span class="status">{{ issue.epicKey }}</span>
-              }
-              <span class="status">{{ issue.issueType }}</span>
-              <span class="status">{{ issue.sprintName || 'Backlog' }}</span>
-              <span class="status">{{ issue.status }}</span>
-              <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-            </div>
-          </a>
+          <div class="issue-row__meta">
+            @if (issue.epicKey) {
+              <span class="status">{{ issue.epicKey }}</span>
+            }
+            <span class="status">{{ issueTypeLabel(issue.issueType) }}</span>
+            <span class="status">{{ issue.sprintName || 'Backlog' }}</span>
+            <span class="status">{{ issueStatusLabel(issue.status) }}</span>
+            <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
+          </div>
+        </a>
       }
     </div>
   </section>

@@ -1,26 +1,26 @@
 <section class="page-card intro split">
   <div>
-    <p class="eyebrow">Project portfolio</p>
-    <h3>Create the first real projects in Hippoject.</h3>
-    <p>The project list below is now backed by the Spring Boot API.</p>
+    <p class="eyebrow">Projektportfolio</p>
+    <h3>Erstelle echte Projekte in Hippoject.</h3>
+    <p>Die Projektliste ist jetzt vollständig an die Spring-Boot-API angebunden.</p>
   </div>
   <label class="archive-toggle">
     <input type="checkbox" [(ngModel)]="includeArchived" (ngModelChange)="toggleArchived()" />
-    <span>Show archived</span>
+    <span>Archivierte anzeigen</span>
   </label>
 </section>
 
 <section class="page-card form-card">
   <div class="section-heading">
     <div>
-      <p class="eyebrow">New project</p>
-      <h3>Add a project</h3>
+      <p class="eyebrow">Neues Projekt</p>
+      <h3>Projekt anlegen</h3>
     </div>
   </div>
 
   <form class="project-form" (ngSubmit)="createProject()">
     <label>
-      <span>Key</span>
+      <span>Schlüssel</span>
       <input [(ngModel)]="form.key" name="key" placeholder="HIP" required maxlength="10" />
     </label>
     <label>
@@ -28,10 +28,10 @@
       <input [(ngModel)]="form.name" name="name" placeholder="Hippoject Core" required maxlength="120" />
     </label>
     <label class="full-width">
-      <span>Description</span>
-      <textarea [(ngModel)]="form.description" name="description" placeholder="Describe the goal of this project" required maxlength="500"></textarea>
+      <span>Beschreibung</span>
+      <textarea [(ngModel)]="form.description" name="description" placeholder="Beschreibe das Ziel dieses Projekts" required maxlength="500"></textarea>
     </label>
-    <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving…' : 'Create project' }}</button>
+    <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Speichert…' : 'Projekt erstellen' }}</button>
   </form>
 </section>
 
@@ -43,37 +43,37 @@
           <p class="eyebrow">{{ project.key }}</p>
           <h3>{{ project.name }}</h3>
         </div>
-        <span class="health on-track">{{ project.issueCount }} issues</span>
+        <span class="health on-track">{{ project.issueCount }} Vorgänge</span>
       </div>
 
       <p class="description">{{ project.description }}</p>
 
       <dl>
         <div>
-          <dt>Owner</dt>
+          <dt>Verantwortlich</dt>
           <dd>{{ project.ownerId }}</dd>
         </div>
         <div>
-          <dt>Members</dt>
+          <dt>Mitglieder</dt>
           <dd>{{ project.memberCount }}</dd>
         </div>
         <div>
-          <dt>Created</dt>
+          <dt>Erstellt</dt>
           <dd>{{ project.createdAt | date: 'mediumDate' }}</dd>
         </div>
       </dl>
 
       <div class="actions">
-        <a [routerLink]="['/projects', project.id]">Overview</a>
+        <a [routerLink]="['/projects', project.id]">Überblick</a>
         <a [routerLink]="['/projects', project.id, 'board']">Board</a>
         <a [routerLink]="['/projects', project.id, 'backlog']">Backlog</a>
         @if (!project.deletedAt) {
           <button type="button" (click)="archiveProject(project.id)" [disabled]="archivingProjectId === project.id">
-            {{ archivingProjectId === project.id ? 'Archiving…' : 'Archive' }}
+            {{ archivingProjectId === project.id ? 'Archiviert…' : 'Archivieren' }}
           </button>
         } @else {
           <button type="button" (click)="restoreProject(project.id)" [disabled]="restoringProjectId === project.id">
-            {{ restoringProjectId === project.id ? 'Restoring…' : 'Restore' }}
+            {{ restoringProjectId === project.id ? 'Stellt wieder her…' : 'Wiederherstellen' }}
           </button>
         }
       </div>

@@ -9,45 +9,45 @@
       @if (vm.issue.epicKey) {
         <span class="status">{{ vm.issue.epicKey }}</span>
       }
-      <span class="status">{{ vm.issue.issueType }}</span>
-      <span class="status">{{ vm.issue.status }}</span>
-      <span class="priority {{ vm.issue.priority.toLowerCase() }}">{{ vm.issue.priority }}</span>
+      <span class="status">{{ issueTypeLabel(vm.issue.issueType) }}</span>
+      <span class="status">{{ issueStatusLabel(vm.issue.status) }}</span>
+      <span class="priority {{ vm.issue.priority.toLowerCase() }}">{{ issuePriorityLabel(vm.issue.priority) }}</span>
     </div>
   </section>
 
   @if (lastDeletedIssue) {
     <section class="page-card">
-      <p class="eyebrow">Undo</p>
-      <h3>{{ lastDeletedIssue.issueKey }} archived</h3>
-      <p>This issue was soft-deleted and can be restored.</p>
-      <button type="button" (click)="restoreIssue(vm.projectId)">Restore issue</button>
+      <p class="eyebrow">Rückgängig</p>
+      <h3>{{ lastDeletedIssue.issueKey }} archiviert</h3>
+      <p>Dieser Vorgang wurde weich gelöscht und kann wiederhergestellt werden.</p>
+      <button type="button" (click)="restoreIssue(vm.projectId)">Vorgang wiederherstellen</button>
     </section>
   }
 
   <section class="detail-grid">
     <article class="page-card stat-card">
-      <span>Reporter</span>
+      <span>Erstellt von</span>
       <strong>{{ vm.issue.reporterId }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Assignee</span>
-      <strong>{{ vm.issue.assigneeId || 'Unassigned' }}</strong>
+      <span>Zuständig</span>
+      <strong>{{ vm.issue.assigneeId || 'Nicht zugewiesen' }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Created</span>
+      <span>Erstellt</span>
       <strong>{{ vm.issue.createdAt | date: 'medium' }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Updated</span>
+      <span>Aktualisiert</span>
       <strong>{{ vm.issue.updatedAt | date: 'medium' }}</strong>
     </article>
     <article class="page-card stat-card">
-      <span>Your role</span>
-      <strong>{{ vm.permissions.role }}</strong>
+      <span>Deine Rolle</span>
+      <strong>{{ projectRoleLabel(vm.permissions.role) }}</strong>
     </article>
     @if (vm.issue.issueType === 'EPIC') {
       <article class="page-card stat-card">
-        <span>Epic progress</span>
+        <span>Epic-Fortschritt</span>
         <strong>{{ vm.issue.epicProgressDone }} / {{ vm.issue.epicProgressTotal }}</strong>
       </article>
     }
@@ -55,23 +55,23 @@
 
   <section class="detail-grid two-columns">
     <article class="page-card">
-      <p class="eyebrow">Edit issue</p>
+      <p class="eyebrow">Vorgang bearbeiten</p>
       <h3>Details</h3>
       @if (vm.permissions.canEditIssues && !lastDeletedIssue) {
       <form class="issue-form" (ngSubmit)="updateIssue(vm.projectId, vm.issue.id)">
         <label>
-          <span>Title</span>
+          <span>Titel</span>
           <input [(ngModel)]="issueForm.title" name="title" required maxlength="140" />
         </label>
         <label class="full-width">
-          <span>Description</span>
+          <span>Beschreibung</span>
           <textarea [(ngModel)]="issueForm.description" name="description" required maxlength="2000"></textarea>
         </label>
         <label>
-          <span>Type</span>
+          <span>Typ</span>
           <select [(ngModel)]="issueForm.issueType" name="issueType">
             @for (type of issueTypes; track type) {
-              <option [value]="type">{{ type }}</option>
+              <option [value]="type">{{ issueTypeLabel(type) }}</option>
             }
           </select>
         </label>
@@ -79,15 +79,15 @@
           <span>Status</span>
           <select [(ngModel)]="issueForm.status" name="status">
             @for (status of statuses; track status) {
-              <option [value]="status">{{ status }}</option>
+              <option [value]="status">{{ issueStatusLabel(status) }}</option>
             }
           </select>
         </label>
         <label>
-          <span>Priority</span>
+          <span>Priorität</span>
           <select [(ngModel)]="issueForm.priority" name="priority">
             @for (priority of priorities; track priority) {
-              <option [value]="priority">{{ priority }}</option>
+              <option [value]="priority">{{ issuePriorityLabel(priority) }}</option>
             }
           </select>
         </label>
@@ -103,67 +103,67 @@
         <label>
           <span>Epic</span>
           <select [(ngModel)]="issueForm.epicId" name="epicId">
-            <option [ngValue]="null">No epic</option>
+            <option [ngValue]="null">Kein Epic</option>
             @for (epic of vm.epics; track epic.id) {
               <option [ngValue]="epic.id">{{ epic.issueKey }} · {{ epic.title }}</option>
             }
           </select>
         </label>
         <label class="full-width">
-          <span>Labels</span>
+          <span>Schlagworte</span>
           <input [(ngModel)]="issueLabelsText" name="issueLabelsText" maxlength="200" placeholder="frontend, auth, sprint" />
         </label>
         <label class="full-width">
-          <span>Assignee</span>
+          <span>Zuständig</span>
           <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
-            <option value="">Unassigned</option>
+            <option value="">Nicht zugewiesen</option>
             @for (member of vm.members; track member.id) {
-              <option [value]="member.userId">{{ member.displayName }} · {{ member.role }}</option>
+              <option [value]="member.userId">{{ member.displayName }} · {{ projectRoleLabel(member.role) }}</option>
             }
           </select>
         </label>
-        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Saving…' : 'Save issue' }}</button>
+        <button type="submit" [disabled]="isSavingIssue">{{ isSavingIssue ? 'Speichert…' : 'Vorgang speichern' }}</button>
         <button type="button" class="danger-button" [disabled]="isDeletingIssue" (click)="deleteIssue(vm.projectId, vm.issue.id)">
-          {{ isDeletingIssue ? 'Removing…' : 'Delete issue' }}
+          {{ isDeletingIssue ? 'Archiviert…' : 'Vorgang archivieren' }}
         </button>
       </form>
       } @else {
-        <p>You currently have read-only access to this issue.</p>
+        <p>Du hast aktuell nur Lesezugriff auf diesen Vorgang.</p>
       }
     </article>
 
     <article class="page-card">
-      <p class="eyebrow">Add comment</p>
-      <h3>Conversation</h3>
+      <p class="eyebrow">Kommentar hinzufügen</p>
+      <h3>Verlauf</h3>
       @if (vm.permissions.canEditIssues && !lastDeletedIssue) {
       <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
         <label class="full-width">
-          <span>Comment</span>
+          <span>Kommentar</span>
           <textarea [(ngModel)]="commentBody" name="commentBody" required maxlength="2000"></textarea>
         </label>
-        <button type="submit" [disabled]="isSavingComment">{{ isSavingComment ? 'Saving…' : 'Post comment' }}</button>
+        <button type="submit" [disabled]="isSavingComment">{{ isSavingComment ? 'Speichert…' : 'Kommentar senden' }}</button>
       </form>
       } @else {
-        <p>Comments are restricted for your current project role.</p>
+        <p>Kommentare sind für deine aktuelle Projektrolle eingeschränkt.</p>
       }
     </article>
   </section>
 
   @if (vm.issue.issueType === 'EPIC') {
     <section class="page-card">
-      <p class="eyebrow">Epic progress</p>
-      <h3>Child issues</h3>
+      <p class="eyebrow">Epic-Fortschritt</p>
+      <h3>Untergeordnete Vorgänge</h3>
       <div class="progress-bar">
         <div class="progress-bar__fill" [style.width.%]="vm.issue.epicProgressTotal ? (vm.issue.epicProgressDone / vm.issue.epicProgressTotal) * 100 : 0"></div>
       </div>
-      <p class="progress-copy">{{ vm.issue.epicProgressDone }} of {{ vm.issue.epicProgressTotal }} linked issues are done.</p>
+      <p class="progress-copy">{{ vm.issue.epicProgressDone }} von {{ vm.issue.epicProgressTotal }} verknüpften Vorgängen sind erledigt.</p>
 
       <div class="issue-list">
         @for (child of vm.epicChildren; track child.id) {
           <div class="issue-row comment-row">
             <div>
               <strong>{{ child.issueKey }} · {{ child.title }}</strong>
-              <p>{{ child.status }} · {{ child.priority }}</p>
+              <p>{{ issueStatusLabel(child.status) }} · {{ issuePriorityLabel(child.priority) }}</p>
             </div>
             <span>{{ child.sprintName || 'Backlog' }}</span>
           </div>
@@ -173,7 +173,7 @@
   }
 
   <section class="page-card">
-    <p class="eyebrow">Activity</p>
+    <p class="eyebrow">Aktivität</p>
     @if (vm.issue.labels.length) {
       <div class="tag-list">
         @for (label of vm.issue.labels; track label) {

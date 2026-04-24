@@ -77,18 +77,18 @@ export class AuthService {
   private updateProfile(): void {
     const parsed = (this.keycloak?.tokenParsed ?? {}) as Record<string, unknown>;
     const firstName = String(parsed['given_name'] ?? parsed['preferred_username'] ?? 'Hippoject');
-    const lastName = String(parsed['family_name'] ?? 'User');
+    const lastName = String(parsed['family_name'] ?? 'Benutzer');
     const role = this.hasAnyRole('hippoject-admin')
-      ? 'Hippoject Admin'
+      ? 'Hippoject-Admin'
       : this.hasAnyRole('project-admin')
-        ? 'Project Admin'
+        ? 'Projektadmin'
         : this.hasAnyRole('project-manager')
-          ? 'Project Manager'
+          ? 'Projektmanager'
           : this.hasAnyRole('developer')
-            ? 'Developer'
+            ? 'Entwicklung'
             : this.hasAnyRole('reporter')
               ? 'Reporter'
-              : 'User';
+              : 'Benutzer';
 
     this.userId.set(String(parsed['preferred_username'] ?? parsed['sub'] ?? 'local-dev'));
     this.displayName.set(`${firstName} ${lastName}`.trim());

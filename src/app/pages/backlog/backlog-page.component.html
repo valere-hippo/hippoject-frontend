@@ -1,38 +1,38 @@
 @if (vm$ | async; as vm) {
   <section class="page-card header-card">
     <div>
-      <p class="eyebrow">Prioritization</p>
-      <h3>{{ vm.project.name }} backlog</h3>
-      <p>Create sprints, start them deliberately, close them cleanly, and assign issues from one place.</p>
+      <p class="eyebrow">Priorisierung</p>
+      <h3>Backlog von {{ vm.project.name }}</h3>
+      <p>Sprints anlegen, bewusst starten, sauber abschließen und Vorgänge zentral zuordnen.</p>
     </div>
     <div class="summary-grid">
       <div class="summary">
         <strong>{{ vm.activeSprints.length }}</strong>
-        <span>Total sprints</span>
+        <span>Gesamt</span>
       </div>
       <div class="summary">
         <strong>{{ vm.stats.active }}</strong>
-        <span>Active</span>
+        <span>Aktiv</span>
       </div>
       <div class="summary">
         <strong>{{ vm.stats.planned }}</strong>
-        <span>Planned</span>
+        <span>Geplant</span>
       </div>
       <div class="summary">
         <strong>{{ vm.stats.completed }}</strong>
-        <span>Completed</span>
+        <span>Abgeschlossen</span>
       </div>
       <div class="summary">
-        <strong>{{ vm.permissions.role }}</strong>
-        <span>Your role</span>
+        <strong>{{ projectRoleLabel(vm.permissions.role) }}</strong>
+        <span>Deine Rolle</span>
       </div>
     </div>
   </section>
 
   <section class="page-card sprint-form-card">
     <div>
-      <p class="eyebrow">Sprint planning</p>
-      <h3>Create sprint</h3>
+      <p class="eyebrow">Sprint-Planung</p>
+      <h3>Sprint erstellen</h3>
     </div>
     @if (vm.permissions.canManageSprints) {
     <form class="sprint-form" (ngSubmit)="createSprint(vm.projectId)">
@@ -45,30 +45,30 @@
         <input [(ngModel)]="sprintForm.startsAt" name="startsAt" type="date" required />
       </label>
       <label>
-        <span>End</span>
+        <span>Ende</span>
         <input [(ngModel)]="sprintForm.endsAt" name="endsAt" type="date" required />
       </label>
       <label class="full-width">
-        <span>Goal</span>
+        <span>Ziel</span>
         <textarea [(ngModel)]="sprintForm.goal" name="goal" required maxlength="1000"></textarea>
       </label>
       <label class="checkbox">
         <input [(ngModel)]="sprintForm.active" name="active" type="checkbox" />
-        <span>Mark as active sprint</span>
+        <span>Direkt als aktiven Sprint markieren</span>
       </label>
-      <button type="submit" [disabled]="isSavingSprint">{{ isSavingSprint ? 'Saving…' : 'Create sprint' }}</button>
+      <button type="submit" [disabled]="isSavingSprint">{{ isSavingSprint ? 'Speichert…' : 'Sprint erstellen' }}</button>
     </form>
     } @else {
-      <p>You can view sprint planning here, but only project managers or admins can change sprint setup.</p>
+      <p>Du kannst die Sprint-Planung sehen, aber nur Projektmanager oder Admins dürfen sie ändern.</p>
     }
   </section>
 
   @if (lastDeletedSprint) {
     <section class="page-card">
-      <p class="eyebrow">Undo</p>
-      <h3>{{ lastDeletedSprint.name }} archived</h3>
-      <p>You can restore this sprint if that delete was accidental.</p>
-      <button type="button" (click)="restoreSprint(vm.projectId)">Restore sprint</button>
+      <p class="eyebrow">Rückgängig</p>
+      <h3>{{ lastDeletedSprint.name }} archiviert</h3>
+      <p>Dieser Sprint kann wiederhergestellt werden, falls das Archivieren versehentlich war.</p>
+      <button type="button" (click)="restoreSprint(vm.projectId)">Sprint wiederherstellen</button>
     </section>
   }
 
@@ -76,28 +76,28 @@
     @for (sprint of vm.activeSprints; track sprint.id) {
       <article class="page-card sprint-card">
         <div>
-          <p class="eyebrow">Sprint lifecycle</p>
+          <p class="eyebrow">Sprint-Lebenszyklus</p>
           <h4>{{ sprint.name }}</h4>
           <p>{{ sprint.goal }}</p>
         </div>
         <div class="meta sprint-meta">
-          <span class="status {{ sprint.status.toLowerCase() }}">{{ sprint.status }}</span>
+          <span class="status {{ sprint.status.toLowerCase() }}">{{ sprintStatusLabel(sprint.status) }}</span>
           <span>{{ sprint.startsAt | date: 'mediumDate' }}</span>
           <span>{{ sprint.endsAt | date: 'mediumDate' }}</span>
           @if (sprint.completedAt) {
-            <span>Closed {{ sprint.completedAt | date: 'short' }}</span>
+            <span>Geschlossen {{ sprint.completedAt | date: 'short' }}</span>
           }
-          <span>{{ sprint.issueCount }} issues</span>
+          <span>{{ sprint.issueCount }} Vorgänge</span>
           @if (vm.permissions.canManageSprints) {
             <div class="actions">
               <button type="button" class="ghost" [disabled]="sprint.status === 'ACTIVE' || sprintActionId === sprint.id" (click)="startSprint(vm.projectId, sprint.id)">
-                {{ sprintActionId === sprint.id ? 'Saving…' : 'Start' }}
+                {{ sprintActionId === sprint.id ? 'Speichert…' : 'Starten' }}
               </button>
               <button type="button" [disabled]="sprint.status === 'COMPLETED' || sprintActionId === sprint.id" (click)="completeSprint(vm.projectId, sprint.id)">
-                {{ sprintActionId === sprint.id ? 'Saving…' : 'Complete' }}
+                {{ sprintActionId === sprint.id ? 'Speichert…' : 'Abschließen' }}
               </button>
               <button type="button" class="ghost" [disabled]="deletingSprintId === sprint.id" (click)="deleteSprint(vm.projectId, sprint.id)">
-                {{ deletingSprintId === sprint.id ? 'Removing…' : 'Remove' }}
+                {{ deletingSprintId === sprint.id ? 'Archiviert…' : 'Archivieren' }}
               </button>
             </div>
           }
@@ -116,8 +116,8 @@
         </div>
 
         <div class="meta backlog-meta">
-          <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-          <span>{{ issue.status }}</span>
+          <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
+          <span>{{ issueStatusLabel(issue.status) }}</span>
           <select [ngModel]="issue.sprintId" [disabled]="!vm.permissions.canManageSprints" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
             <option [ngValue]="null">Backlog</option>
             @for (sprint of vm.activeSprints; track sprint.id) {
@@ -133,27 +133,27 @@
     <section class="stack sprint-stack">
       <article class="page-card sprint-card">
         <div>
-          <p class="eyebrow">Archive</p>
-          <h4>Archived sprints</h4>
-          <p>Restore recently archived planning cycles if needed.</p>
+          <p class="eyebrow">Archiv</p>
+          <h4>Archivierte Sprints</h4>
+          <p>Bei Bedarf lassen sich kürzlich archivierte Planungszyklen wiederherstellen.</p>
         </div>
       </article>
 
       @for (sprint of vm.archivedSprints; track sprint.id) {
         <article class="page-card sprint-card">
           <div>
-            <p class="eyebrow">Archived</p>
+            <p class="eyebrow">Archiviert</p>
             <h4>{{ sprint.name }}</h4>
             <p>{{ sprint.goal }}</p>
           </div>
           <div class="meta sprint-meta">
             @if (sprint.deletedAt) {
-              <span>Archived {{ sprint.deletedAt | date: 'short' }}</span>
+              <span>Archiviert {{ sprint.deletedAt | date: 'short' }}</span>
             }
-            <span>{{ sprint.issueCount }} issues</span>
+            <span>{{ sprint.issueCount }} Vorgänge</span>
             @if (vm.permissions.canManageSprints) {
               <div class="actions">
-                <button type="button" (click)="restoreSprint(vm.projectId, sprint.id)">Restore</button>
+                <button type="button" (click)="restoreSprint(vm.projectId, sprint.id)">Wiederherstellen</button>
               </div>
             }
           </div>

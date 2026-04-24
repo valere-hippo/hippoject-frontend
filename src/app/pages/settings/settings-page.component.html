@@ -1,14 +1,14 @@
 @if (directory$ | async; as directory) {
   <section class="settings-grid">
     <article class="page-card wide">
-      <p class="eyebrow">Workspace settings</p>
-      <h3>Team directory and assignment surfaces</h3>
-      <p>Project members are now organized in one place so assignee selection and team visibility stay consistent.</p>
+      <p class="eyebrow">Arbeitsbereich-Einstellungen</p>
+      <h3>Teamverzeichnis und Zuweisungen</h3>
+      <p>Projektmitglieder sind jetzt zentral organisiert, damit Zuständigkeiten und Sichtbarkeit im ganzen Arbeitsbereich konsistent bleiben.</p>
     </article>
 
     <article class="page-card wide">
-      <p class="eyebrow">Directory</p>
-      <h3>People by project</h3>
+      <p class="eyebrow">Verzeichnis</p>
+      <h3>Personen nach Projekt</h3>
       <div class="directory-grid">
         @for (project of directory; track project.projectId) {
           <div class="directory-card">
@@ -23,7 +23,7 @@
                       <span>{{ member.email }}</span>
                     }
                   </div>
-                  <small>{{ member.role }}</small>
+                  <small>{{ projectRoleLabel(member.role) }}</small>
                 </div>
               }
             </div>

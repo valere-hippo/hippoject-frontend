@@ -3,13 +3,13 @@
     <div class="brand">
       <div class="brand__mark">H</div>
       <div>
-        <p class="eyebrow">Projektsmanagement</p>
+        <p class="eyebrow">Projektmanagement</p>
         <h1>Hippoject</h1>
       </div>
     </div>
 
     <nav class="nav-section">
-      <p class="section-label">Workspace</p>
+      <p class="section-label">Arbeitsbereich</p>
       @for (item of navItems; track item.route) {
         <a
           class="nav-link"
@@ -24,38 +24,38 @@
     </nav>
 
     <div class="nav-section quick-links">
-      <p class="section-label">Pinned</p>
+      <p class="section-label">Angepinnt</p>
       @for (link of quickLinks; track link.route) {
         <a class="mini-link" [routerLink]="link.route">{{ link.label }}</a>
       }
     </div>
 
     <div class="sidebar-card">
-      <p class="section-label">Sprint focus</p>
-      <h3>Planning experience</h3>
-      <p>Shell and placeholders are set up so real API data can slot in cleanly.</p>
-      <span>Backend handoff ready</span>
+      <p class="section-label">Sprint-Fokus</p>
+      <h3>Planung mit Struktur</h3>
+      <p>Toolbar, Inhalte und Navigationsflächen sind auf echte API-Daten und längere Arbeitssitzungen ausgelegt.</p>
+      <span>Bereit für produktive Arbeit</span>
     </div>
   </aside>
 
   <div class="workspace">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Product workspace</p>
+        <p class="eyebrow">Produkt-Arbeitsbereich</p>
         <h2>{{ pageTitle() }}</h2>
       </div>
 
       <div class="topbar__actions">
         <div class="notifications-panel">
-          <div class="notification-badge">{{ unreadNotifications() }} unread</div>
+          <div class="notification-badge">{{ unreadNotifications() }} ungelesen</div>
           @for (notification of notifications.slice(0, 4); track notification.id) {
             <button type="button" class="notification-item" [class.is-read]="notification.read" (click)="markNotificationRead(notification.id)">
-              <strong>{{ notification.type }}</strong>
+              <strong>{{ notificationTypeLabel(notification.type) }}</strong>
               <span>{{ notification.message }}</span>
             </button>
           }
         </div>
-        <button type="button" class="ghost-button" (click)="logout()">Logout</button>
+        <button type="button" class="ghost-button" (click)="logout()">Abmelden</button>
         <div class="profile-chip">
           <div class="avatar">{{ auth.initials() }}</div>
           <div>

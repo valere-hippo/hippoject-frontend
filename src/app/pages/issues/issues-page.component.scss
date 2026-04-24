@@ -1,5 +1,5 @@
 .page-card {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   border-radius: 1.5rem;
   border: 1px solid rgba(148, 163, 184, 0.18);
   box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
@@ -26,6 +26,14 @@
 
 .toolbar {
   grid-template-columns: repeat(3, auto);
+
+  span {
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(248, 250, 252, 0.92);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #475569;
+  }
 }
 
 .quick-filters {
@@ -41,6 +49,24 @@
   background: #fff5f5;
   color: var(--accent-dark);
   font: inherit;
+}
+
+.error-banner,
+.empty-state {
+  margin-top: 1rem;
+  border-radius: 1rem;
+  padding: 0.95rem 1rem;
+}
+
+.error-banner {
+  border: 1px solid rgba(185, 28, 28, 0.16);
+  background: #fff1f2;
+  color: #9f1239;
+}
+
+.empty-state {
+  background: #f8fafc;
+  color: #475569;
 }
 
 .filters {
@@ -101,7 +127,8 @@
   border: 1px solid rgba(173, 88, 88, 0.22);
 }
 
-.filters button.ghost {
+.filters button.ghost,
+.table__meta .ghost {
   background: #fff5f5;
   color: var(--accent-dark);
   border: 1px solid rgba(173, 88, 88, 0.22);
@@ -149,8 +176,12 @@ span {
   text-decoration: none;
 }
 
+.title-cell--disabled {
+  color: #64748b;
+}
+
 .table__row--archived {
-  opacity: 0.7;
+  opacity: 0.76;
 }
 
 .labels {
@@ -164,6 +195,12 @@ span {
   border-radius: 999px;
   background: #fff5f5;
   color: var(--accent-dark);
+}
+
+.table__meta {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
 }
 
 .priority {

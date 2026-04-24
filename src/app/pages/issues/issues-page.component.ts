@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +15,7 @@ import {
   IssueType,
   SavedIssueFilter
 } from '../../shared/models/issue.model';
+import { issuePriorityLabel, issueStatusLabel, issueTypeLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-issues-page',
@@ -28,6 +30,9 @@ export class IssuesPageComponent {
   protected readonly statusOptions: Array<IssueStatus | ''> = ['', 'TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE'];
   protected readonly priorityOptions: Array<IssuePriority | ''> = ['', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   protected readonly typeOptions: Array<IssueType | ''> = ['', 'STORY', 'TASK', 'BUG', 'EPIC'];
+  protected readonly issueStatusLabel = issueStatusLabel;
+  protected readonly issuePriorityLabel = issuePriorityLabel;
+  protected readonly issueTypeLabel = issueTypeLabel;
 
   protected filters: IssueFilters = {
     query: '',
@@ -45,6 +50,8 @@ export class IssuesPageComponent {
   protected isSavingFilter = false;
   protected deletingFilterId: number | null = null;
   protected restoringIssueId: number | null = null;
+  protected loadError = '';
+  protected actionError = '';
 
   constructor() {
     this.loadIssues();
@@ -62,6 +69,7 @@ export class IssuesPageComponent {
 
   protected clearFilters(): void {
     this.filters = { query: '', status: '', issueType: '', priority: '', assigneeId: '', label: '' };
+    this.actionError = '';
     this.loadIssues();
   }
 
@@ -82,6 +90,7 @@ export class IssuesPageComponent {
     if (kind === 'review') {
       this.filters = { query: '', status: 'IN_REVIEW', issueType: '', priority: '', assigneeId: '', label: '' };
     }
+    this.actionError = '';
     this.loadIssues();
   }
 
@@ -95,6 +104,7 @@ export class IssuesPageComponent {
       assigneeId: filter.assigneeId ?? '',
       label: filter.label ?? ''
     };
+    this.actionError = '';
     this.loadIssues();
   }
 
@@ -119,10 +129,12 @@ export class IssuesPageComponent {
       next: () => {
         this.savedFilterName = '';
         this.isSavingFilter = false;
+        this.actionError = '';
         this.loadSavedFilters();
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.isSavingFilter = false;
+        this.actionError = this.getErrorMessage(error, 'Der Filter konnte nicht gespeichert werden.');
       }
     });
   }
@@ -135,10 +147,12 @@ export class IssuesPageComponent {
     this.workspaceService.deleteSavedIssueFilter(filterId).subscribe({
       next: () => {
         this.deletingFilterId = null;
+        this.actionError = '';
         this.loadSavedFilters();
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.deletingFilterId = null;
+        this.actionError = this.getErrorMessage(error, 'Der Filter konnte nicht gelöscht werden.');
       }
     });
   }
@@ -148,23 +162,42 @@ export class IssuesPageComponent {
     this.workspaceService.restoreIssue(issue.projectId, issue.id).subscribe({
       next: () => {
         this.restoringIssueId = null;
+        this.actionError = '';
         this.loadIssues();
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
         this.restoringIssueId = null;
+        this.actionError = this.getErrorMessage(error, 'Der Vorgang konnte nicht wiederhergestellt werden.');
       }
     });
   }
 
   private loadIssues(): void {
-    this.workspaceService.getIssues({ ...this.filters, includeArchived: this.includeArchived }).subscribe((issues) => {
-      this.issues = issues;
+    this.workspaceService.getIssues({ ...this.filters, includeArchived: this.includeArchived }).subscribe({
+      next: (issues) => {
+        this.issues = issues;
+        this.loadError = '';
+      },
+      error: (error: HttpErrorResponse) => {
+        this.issues = [];
+        this.loadError = this.getErrorMessage(error, 'Die Vorgänge konnten nicht geladen werden.');
+      }
     });
   }
 
   private loadSavedFilters(): void {
-    this.workspaceService.getSavedIssueFilters().subscribe((savedFilters) => {
-      this.savedFilters = savedFilters;
+    this.workspaceService.getSavedIssueFilters().subscribe({
+      next: (savedFilters) => {
+        this.savedFilters = savedFilters;
+      },
+      error: () => {
+        this.savedFilters = [];
+      }
     });
+  }
+
+  private getErrorMessage(error: HttpErrorResponse, fallback: string): string {
+    const apiMessage = typeof error.error?.message === 'string' ? error.error.message : '';
+    return apiMessage || fallback;
   }
 }

@@ -1,58 +1,62 @@
 <section class="page-card table-shell">
   <div class="table-shell__header">
     <div>
-      <p class="eyebrow">Cross-project queue</p>
-      <h3>Issue navigator</h3>
+      <p class="eyebrow">Projektübergreifende Übersicht</p>
+      <h3>Vorgangsübersicht</h3>
     </div>
     <div class="toolbar">
-      <span>Searchable</span>
-      <span>Filterable</span>
-      <span>Saved views</span>
+      <span>Suche</span>
+      <span>Filter</span>
+      <span>Gespeicherte Ansichten</span>
     </div>
   </div>
 
   <div class="quick-filters">
-    <button type="button" (click)="applyQuickFilter('active')">Active work</button>
-    <button type="button" (click)="applyQuickFilter('review')">Needs review</button>
-    <button type="button" (click)="applyQuickFilter('critical-bugs')">Bug focus</button>
+    <button type="button" (click)="applyQuickFilter('active')">Aktive Arbeit</button>
+    <button type="button" (click)="applyQuickFilter('review')">Zur Prüfung</button>
+    <button type="button" (click)="applyQuickFilter('critical-bugs')">Kritische Bugs</button>
     <button type="button" (click)="applyQuickFilter('epics')">Epics</button>
   </div>
 
+  @if (loadError || actionError) {
+    <div class="error-banner">{{ actionError || loadError }}</div>
+  }
+
   <div class="filters">
-    <input type="search" [(ngModel)]="filters.query" placeholder="Search by key, title, description, project" />
+    <input type="search" [(ngModel)]="filters.query" placeholder="Nach Schlüssel, Titel, Beschreibung oder Projekt suchen" />
     <select [(ngModel)]="filters.status">
-      <option value="">All statuses</option>
+      <option value="">Alle Status</option>
       @for (status of statusOptions; track status) {
-        <option [value]="status">{{ status || 'All statuses' }}</option>
+        <option [value]="status">{{ issueStatusLabel(status) }}</option>
       }
     </select>
     <select [(ngModel)]="filters.issueType">
-      <option value="">All types</option>
+      <option value="">Alle Typen</option>
       @for (type of typeOptions; track type) {
-        <option [value]="type">{{ type || 'All types' }}</option>
+        <option [value]="type">{{ issueTypeLabel(type) }}</option>
       }
     </select>
     <select [(ngModel)]="filters.priority">
-      <option value="">All priorities</option>
+      <option value="">Alle Prioritäten</option>
       @for (priority of priorityOptions; track priority) {
-        <option [value]="priority">{{ priority || 'All priorities' }}</option>
+        <option [value]="priority">{{ issuePriorityLabel(priority) }}</option>
       }
     </select>
-    <input type="text" [(ngModel)]="filters.assigneeId" placeholder="Filter by assignee" />
-    <input type="text" [(ngModel)]="filters.label" placeholder="Filter by label" />
+    <input type="text" [(ngModel)]="filters.assigneeId" placeholder="Nach zuständiger Person filtern" />
+    <input type="text" [(ngModel)]="filters.label" placeholder="Nach Label filtern" />
     <label class="toggle-inline">
       <input type="checkbox" [(ngModel)]="includeArchived" (ngModelChange)="toggleArchived()" />
-      <span>Show archived</span>
+      <span>Archivierte anzeigen</span>
     </label>
-    <button type="button" (click)="applyFilters()">Apply</button>
-    <button type="button" class="ghost" (click)="clearFilters()">Reset</button>
+    <button type="button" (click)="applyFilters()">Anwenden</button>
+    <button type="button" class="ghost" (click)="clearFilters()">Zurücksetzen</button>
   </div>
 
   <div class="saved-filters">
     <div class="saved-filters__form">
-      <input type="text" [(ngModel)]="savedFilterName" placeholder="Save current filter as..." maxlength="120" />
+      <input type="text" [(ngModel)]="savedFilterName" placeholder="Aktuellen Filter speichern als..." maxlength="120" />
       <button type="button" (click)="saveCurrentFilter()" [disabled]="isSavingFilter">
-        {{ isSavingFilter ? 'Saving…' : 'Save filter' }}
+        {{ isSavingFilter ? 'Speichert…' : 'Filter speichern' }}
       </button>
     </div>
 
@@ -74,36 +78,52 @@
 
   <div class="table">
     <div class="table__head">
-      <span>Key</span>
-      <span>Title</span>
-      <span>Type</span>
+      <span>Schlüssel</span>
+      <span>Titel</span>
+      <span>Typ</span>
       <span>Status</span>
-      <span>Priority</span>
-      <span>Updated</span>
+      <span>Priorität</span>
+      <span>Aktualisiert</span>
     </div>
+
+    @if (!issues.length && !loadError) {
+      <div class="empty-state">Keine Vorgänge für den aktuellen Filter gefunden.</div>
+    }
 
     @for (issue of issues; track issue.id) {
       <div class="table__row" [class.table__row--archived]="!!issue.deletedAt">
         <strong>{{ issue.issueKey }}</strong>
-        <a class="title-cell" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
-          <span>{{ issue.title }}</span>
-          <div class="labels">
-            @if (issue.epicKey) {
-              <small>{{ issue.epicKey }}</small>
-            }
-            @for (label of issue.labels; track label) {
-              <small>{{ label }}</small>
-            }
+        @if (!issue.deletedAt) {
+          <a class="title-cell" [routerLink]="['/projects', issue.projectId, 'issues', issue.id]">
+            <span>{{ issue.title }}</span>
+            <div class="labels">
+              @if (issue.epicKey) {
+                <small>{{ issue.epicKey }}</small>
+              }
+              @for (label of issue.labels; track label) {
+                <small>{{ label }}</small>
+              }
+            </div>
+          </a>
+        } @else {
+          <div class="title-cell title-cell--disabled">
+            <span>{{ issue.title }}</span>
+            <div class="labels">
+              <small>Archiviert</small>
+              @for (label of issue.labels; track label) {
+                <small>{{ label }}</small>
+              }
+            </div>
           </div>
-        </a>
-        <span class="type">{{ issue.issueType }}</span>
-        <span class="status">{{ issue.status }}</span>
-        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issue.priority }}</span>
-        <div>
+        }
+        <span class="type">{{ issueTypeLabel(issue.issueType) }}</span>
+        <span class="status">{{ issueStatusLabel(issue.status) }}</span>
+        <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
+        <div class="table__meta">
           <span>{{ issue.updatedAt | date: 'short' }}</span>
           @if (issue.deletedAt) {
             <button type="button" class="ghost" (click)="restoreIssue(issue)" [disabled]="restoringIssueId === issue.id">
-              {{ restoringIssueId === issue.id ? 'Restoring…' : 'Restore' }}
+              {{ restoringIssueId === issue.id ? 'Stellt wieder her…' : 'Wiederherstellen' }}
             </button>
           }
         </div>

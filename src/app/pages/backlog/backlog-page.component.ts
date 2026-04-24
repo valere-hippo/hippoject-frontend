@@ -10,6 +10,7 @@ import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue } from '../../shared/models/issue.model';
 import { CreateSprintRequest, Sprint } from '../../shared/models/sprint.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
+import { issuePriorityLabel, issueStatusLabel, projectRoleLabel, sprintStatusLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-backlog-page',
@@ -36,6 +37,10 @@ export class BacklogPageComponent {
   protected sprintActionId: number | null = null;
   protected deletingSprintId: number | null = null;
   protected lastDeletedSprint: Sprint | null = null;
+  protected readonly issuePriorityLabel = issuePriorityLabel;
+  protected readonly issueStatusLabel = issueStatusLabel;
+  protected readonly projectRoleLabel = projectRoleLabel;
+  protected readonly sprintStatusLabel = sprintStatusLabel;
 
   constructor() {
     this.realtimeService.events$.subscribe((event) => {
@@ -122,7 +127,7 @@ export class BacklogPageComponent {
   }
 
   protected deleteSprint(projectId: number, sprintId: number): void {
-    if (!window.confirm('Sprint wirklich löschen? Zugeordnete Issues landen im Backlog.')) {
+    if (!window.confirm('Sprint wirklich archivieren? Zugeordnete Vorgänge landen im Backlog.')) {
       return;
     }
     this.deletingSprintId = sprintId;

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
 
 import { WorkspaceService } from '../../core/services/workspace.service';
+import { issueStatusLabel } from '../../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -12,6 +13,7 @@ import { WorkspaceService } from '../../core/services/workspace.service';
 })
 export class DashboardPageComponent {
   private readonly workspaceService = inject(WorkspaceService);
+  protected readonly issueStatusLabel = issueStatusLabel;
 
   protected readonly vm$ = combineLatest({
     projects: this.workspaceService.getProjects(),

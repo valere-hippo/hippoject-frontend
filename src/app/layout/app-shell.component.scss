@@ -7,9 +7,7 @@
   min-height: 100dvh;
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
-  background:
-    radial-gradient(circle at top left, rgba(173, 88, 88, 0.2), transparent 24%),
-    linear-gradient(180deg, #0f172a 0%, #111827 16%, #f3f6fb 16%, #f7f9fc 100%);
+  background: #0f172a;
 }
 
 .sidebar {
@@ -136,15 +134,22 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, #0f172a 0, #111827 11rem, #e9eef6 11rem, #f8fafd 100%);
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
   padding: 1.4rem 2rem;
   color: #fff;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82));
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
 
   h2 {
     margin: 0.2rem 0 0;
@@ -179,6 +184,11 @@
   padding: 0.85rem 1.1rem;
   color: #fff;
   cursor: pointer;
+  transition: 160ms ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
 }
 
 .notifications-panel {
@@ -186,6 +196,8 @@
   gap: 0.45rem;
   padding: 0.7rem;
   min-width: min(20rem, 90vw);
+  max-height: 20rem;
+  overflow: auto;
 }
 
 .notification-badge {
@@ -202,6 +214,12 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0.9rem;
   padding: 0.7rem 0.8rem;
+  cursor: pointer;
+  transition: 160ms ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .notification-item.is-read {
@@ -226,7 +244,17 @@
 
 .content {
   flex: 1;
-  padding: 0 2rem 2rem;
+  padding: 1.5rem 2rem 2.4rem;
+  overflow-x: hidden;
+}
+
+.content > * {
+  width: min(100%, 1500px);
+  margin-inline: auto;
+}
+
+.content > * + * {
+  margin-top: 1.5rem;
 }
 
 @media (max-width: 1100px) {
