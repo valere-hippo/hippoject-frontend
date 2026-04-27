@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
+import { appConfig } from '../config/app-config';
 
 export interface RealtimeEvent {
   type: string;
@@ -53,8 +53,8 @@ export class RealtimeService {
   }
 
   private resolveWebSocketUrl(token: string | null): string {
-    if (environment.apiBaseUrl.startsWith('http://') || environment.apiBaseUrl.startsWith('https://')) {
-      const url = new URL(environment.apiBaseUrl);
+    if (appConfig.apiBaseUrl.startsWith('http://') || appConfig.apiBaseUrl.startsWith('https://')) {
+      const url = new URL(appConfig.apiBaseUrl);
       url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
       url.pathname = '/ws/realtime';
       url.search = token ? `token=${encodeURIComponent(token)}` : '';

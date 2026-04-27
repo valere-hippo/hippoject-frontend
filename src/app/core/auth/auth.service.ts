@@ -1,18 +1,18 @@
 import { Injectable, signal } from '@angular/core';
 import Keycloak from 'keycloak-js';
 
-import { environment } from '../../../environments/environment';
+import { appConfig } from '../config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly enabled = environment.auth.enabled;
+  private readonly enabled = appConfig.auth.enabled;
   private readonly keycloak = this.enabled
     ? new Keycloak({
-        url: environment.auth.url,
-        realm: environment.auth.realm,
-        clientId: environment.auth.clientId
+        url: appConfig.auth.url,
+        realm: appConfig.auth.realm,
+        clientId: appConfig.auth.clientId
       })
     : null;
 

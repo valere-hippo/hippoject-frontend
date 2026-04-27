@@ -37,24 +37,60 @@ Build:
 npm run build
 ```
 
-## Environment
+## Runtime configuration
 
-The app expects `src/environments/environment.ts` and `environment.prod.ts` values for:
+The app now supports runtime configuration through `public/app-config.js`.
 
-- `apiBaseUrl`
-- Keycloak `url`
-- Keycloak `realm`
-- Keycloak `clientId`
+Local defaults are stored in:
 
-Current local defaults are aligned to:
+- `public/app-config.js`
+- `src/environments/environment.ts`
 
-- frontend: `http://localhost:4200`
-- backend API: `http://localhost:8080/api`
-- Keycloak: `http://localhost:8081`
-- backend realtime socket: `/ws/realtime`
+Container deployments render `public/app-config.template.js` at startup with:
+
+- `API_BASE_URL`
+- `AUTH_ENABLED`
+- `KEYCLOAK_URL`
+- `KEYCLOAK_REALM`
+- `KEYCLOAK_CLIENT_ID`
+
+Recommended production values:
+
+- frontend: `https://hippoject.hippocloud.de`
+- backend API: `https://hippoject-api.hippocloud.de/api`
+- Keycloak: `https://auth.hippocloud.de`
+- backend realtime socket: `wss://hippoject-api.hippocloud.de/ws/realtime`
+
+## Docker
+
+Build local image:
+
+```bash
+docker build -t hippoject-frontend:local .
+```
+
+Run local container:
+
+```bash
+docker run --rm -p 8080:80 \
+  -e API_BASE_URL=http://host.docker.internal:8080/api \
+  -e KEYCLOAK_URL=http://host.docker.internal:8081 \
+  hippoject-frontend:local
+```
+
+## CI/CD
+
+A GitHub Actions workflow is included in `.github/workflows/deploy.yml`.
+
+Expected repository secrets:
+
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_PATH` pointing to the checked-out `hippoject-infra` directory on the server
 
 ## Notes
 
 - The shell connects to realtime updates over WebSocket.
 - If auth is enabled, the frontend attaches a fresh Keycloak token to the realtime socket handshake.
-- Angular production builds were used throughout this project as the main frontend sanity check.
+- Runtime config keeps the same image reusable across dev, staging and production.
