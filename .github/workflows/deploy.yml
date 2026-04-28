@@ -62,4 +62,4 @@ jobs:
         run: |
           cd "${{ secrets.DEPLOY_PATH }}"
           docker compose --env-file .env.production -f compose.production.yml pull frontend
-          docker compose --env-file .env.production -f compose.production.yml up -d frontend
+          docker compose --env-file .env.production -f compose.production.yml up -d --no-deps frontend
