@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { IdentityUser } from '../../shared/models/identity.model';
 import { CreateIssueRequest, IssuePriority, IssueStatus, IssueType } from '../../shared/models/issue.model';
@@ -22,6 +23,7 @@ export class ProjectDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly uiFeedback = inject(UiFeedbackService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly refresh$ = new Subject<void>();
 
@@ -113,6 +115,7 @@ export class ProjectDetailPageComponent {
         this.issueForm.assigneeId = '';
         this.issueLabelsText = '';
         this.isSavingIssue = false;
+        this.uiFeedback.showSuccess('Der Vorgang wurde erstellt.');
         this.refresh$.next();
       },
       error: () => {
@@ -133,6 +136,7 @@ export class ProjectDetailPageComponent {
     this.workspaceService.updateProject(projectId, this.projectForm).subscribe({
       next: () => {
         this.isSavingProject = false;
+        this.uiFeedback.showSuccess('Das Projekt wurde gespeichert.');
         this.refresh$.next();
       },
       error: () => {
@@ -151,6 +155,7 @@ export class ProjectDetailPageComponent {
         this.memberForm.role = 'CONTRIBUTOR';
         this.selectedMemberUsername = '';
         this.isSavingMember = false;
+        this.uiFeedback.showSuccess('Das Mitglied wurde hinzugefügt.');
         this.refresh$.next();
       },
       error: () => {
@@ -182,6 +187,7 @@ export class ProjectDetailPageComponent {
     this.workspaceService.removeProjectMember(projectId, memberId).subscribe({
       next: () => {
         this.removingMemberId = null;
+        this.uiFeedback.showSuccess('Das Mitglied wurde entfernt.');
         this.refresh$.next();
       },
       error: () => {
@@ -198,6 +204,7 @@ export class ProjectDetailPageComponent {
     this.workspaceService.archiveProject(projectId).subscribe({
       next: () => {
         this.isArchivingProject = false;
+        this.uiFeedback.showSuccess('Das Projekt wurde archiviert.');
         void this.router.navigate(['/projects']);
       },
       error: () => {

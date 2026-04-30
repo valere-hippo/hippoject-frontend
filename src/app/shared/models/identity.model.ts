@@ -1,3 +1,13 @@
+export type IdentityRealmRole = 'hippoject-admin' | 'project-admin' | 'project-manager' | 'developer' | 'reporter';
+
+export const IDENTITY_REALM_ROLES: IdentityRealmRole[] = [
+  'hippoject-admin',
+  'project-admin',
+  'project-manager',
+  'developer',
+  'reporter'
+];
+
 export interface IdentityUser {
   id: string;
   username: string;
@@ -7,6 +17,7 @@ export interface IdentityUser {
   displayName: string;
   emailVerified: boolean;
   enabled: boolean;
+  realmRoles: IdentityRealmRole[];
 }
 
 export interface CreateIdentityUserRequest {
@@ -14,4 +25,9 @@ export interface CreateIdentityUserRequest {
   email: string;
   firstName: string;
   lastName: string;
+  realmRoles: IdentityRealmRole[];
+}
+
+export interface UpdateIdentityUserRolesRequest {
+  realmRoles: IdentityRealmRole[];
 }

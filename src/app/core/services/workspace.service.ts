@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { ApiService } from './api.service';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 import { DirectoryProject } from '../../shared/models/directory.model';
-import { CreateIdentityUserRequest, IdentityUser } from '../../shared/models/identity.model';
+import { CreateIdentityUserRequest, IdentityUser, UpdateIdentityUserRolesRequest } from '../../shared/models/identity.model';
 import {
   CreateCommentRequest,
   CreateSavedIssueFilterRequest,
@@ -57,6 +57,10 @@ export class WorkspaceService {
 
   inviteIdentityUser(request: CreateIdentityUserRequest): Observable<IdentityUser> {
     return this.api.post<IdentityUser>('identity/users', request);
+  }
+
+  updateIdentityUserRoles(userId: string, request: UpdateIdentityUserRolesRequest): Observable<IdentityUser> {
+    return this.api.put<IdentityUser>(`identity/users/${encodeURIComponent(userId)}/roles`, request);
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {

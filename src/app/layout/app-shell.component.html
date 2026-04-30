@@ -40,6 +40,10 @@
 
   <div class="workspace">
     <header class="topbar">
+      @if (loadingService.loading()) {
+        <div class="topbar-progress" aria-hidden="true"></div>
+      }
+
       <div>
         <p class="eyebrow">Produkt-Arbeitsbereich</p>
         <h2>{{ pageTitle() }}</h2>
@@ -101,4 +105,16 @@
       </section>
     </div>
   }
+
+  <div class="toast-stack" aria-live="polite" aria-atomic="true">
+    @for (toast of uiFeedback.messages(); track toast.id) {
+      <div class="toast" [class.toast--success]="toast.kind === 'success'" [class.toast--error]="toast.kind === 'error'">
+        <div>
+          <strong>{{ toast.kind === 'success' ? 'Erfolgreich' : 'Hinweis' }}</strong>
+          <p>{{ toast.message }}</p>
+        </div>
+        <button type="button" class="toast__close" (click)="dismissToast(toast.id)">×</button>
+      </div>
+    }
+  </div>
 </div>

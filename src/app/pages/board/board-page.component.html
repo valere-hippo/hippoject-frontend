@@ -40,18 +40,20 @@
                       @if (vm.permissions.canMoveBoard) {
                         <div class="board-actions board-actions--desktop">
                           @for (target of columns; track target.key) {
-                            <button type="button" [disabled]="target.key === issue.status" (click)="moveIssue(vm.projectId, issue, target.key)">
-                              {{ target.label }}
+                            <button type="button" [disabled]="target.key === issue.status || movingIssueId === issue.id" (click)="moveIssue(vm.projectId, issue, target.key)">
+                              {{ movingIssueId === issue.id && target.key !== issue.status ? 'Speichert…' : target.label }}
                             </button>
                           }
                         </div>
                         <div class="board-actions-mobile">
-                          <select [ngModel]="selectedStatus(issue)" (ngModelChange)="setSelectedStatus(issue.id, $event)">
+                          <select [ngModel]="selectedStatus(issue)" [disabled]="movingIssueId === issue.id" (ngModelChange)="setSelectedStatus(issue.id, $event)">
                             @for (target of columns; track target.key) {
                               <option [ngValue]="target.key">{{ target.label }}</option>
                             }
                           </select>
-                          <button type="button" [disabled]="selectedStatus(issue) === issue.status" (click)="moveIssueToSelected(vm.projectId, issue)">Verschieben</button>
+                          <button type="button" [disabled]="selectedStatus(issue) === issue.status || movingIssueId === issue.id" (click)="moveIssueToSelected(vm.projectId, issue)">
+                            {{ movingIssueId === issue.id ? 'Speichert…' : 'Verschieben' }}
+                          </button>
                         </div>
                       }
                     </div>

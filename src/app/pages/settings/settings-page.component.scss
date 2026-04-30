@@ -39,12 +39,68 @@
   gap: 0.45rem;
 }
 
+.full-width {
+  grid-column: 1 / -1;
+}
+
 .settings-form input {
   width: 100%;
   border: 1px solid #cbd5e1;
   border-radius: 1rem;
   padding: 0.85rem 1rem;
   font: inherit;
+}
+
+.role-fieldset {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+}
+
+.role-fieldset legend {
+  padding: 0 0.35rem;
+  color: #475569;
+}
+
+.role-fieldset--compact {
+  margin-top: 0.9rem;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #334155;
+}
+
+.role-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.status--role {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.secondary-button {
+  margin-top: 0.9rem;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 0.9rem;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  cursor: pointer;
 }
 
 .directory-grid,

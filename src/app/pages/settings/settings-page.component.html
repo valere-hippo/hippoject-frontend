@@ -38,7 +38,22 @@
           <span>Nachname</span>
           <input [(ngModel)]="inviteForm.lastName" name="lastName" required maxlength="120" />
         </label>
-        <button type="submit" [disabled]="isInviting">{{ isInviting ? 'Lädt ein…' : 'Benutzer einladen' }}</button>
+        <fieldset class="full-width role-fieldset">
+          <legend>Rollen</legend>
+          <div class="role-grid">
+            @for (role of realmRoles; track role) {
+              <label class="role-option">
+                <input
+                  type="checkbox"
+                  [checked]="inviteForm.realmRoles.includes(role)"
+                  (change)="toggleInviteRole(role, $any($event.target).checked)"
+                />
+                <span>{{ identityRealmRoleLabel(role) }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+        <button type="submit" [disabled]="isInviting || inviteForm.realmRoles.length === 0">{{ isInviting ? 'Lädt ein…' : 'Benutzer einladen' }}</button>
       </form>
     </article>
 
@@ -54,6 +69,29 @@
               @if (user.email) {
                 <p>{{ user.email }}</p>
               }
+              <div class="role-badges">
+                @for (role of user.realmRoles; track role) {
+                  <span class="status status--role">{{ identityRealmRoleLabel(role) }}</span>
+                }
+              </div>
+              <fieldset class="role-fieldset role-fieldset--compact">
+                <legend>Rollen bearbeiten</legend>
+                <div class="role-grid">
+                  @for (role of realmRoles; track role) {
+                    <label class="role-option">
+                      <input
+                        type="checkbox"
+                        [checked]="roleDraftFor(user).includes(role)"
+                        (change)="toggleUserRole(user, role, $any($event.target).checked)"
+                      />
+                      <span>{{ identityRealmRoleLabel(role) }}</span>
+                    </label>
+                  }
+                </div>
+              </fieldset>
+              <button type="button" class="secondary-button" [disabled]="savingRolesUserId === user.id || roleDraftFor(user).length === 0" (click)="saveUserRoles(user)">
+                {{ savingRolesUserId === user.id ? 'Speichert…' : 'Rollen speichern' }}
+              </button>
             </div>
             <span class="status" [class.status--verified]="user.emailVerified">
               {{ user.emailVerified ? 'E-Mail bestätigt' : 'E-Mail offen' }}

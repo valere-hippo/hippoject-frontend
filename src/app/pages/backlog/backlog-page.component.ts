@@ -6,6 +6,7 @@ import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { RealtimeService } from '../../core/services/realtime.service';
+import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue } from '../../shared/models/issue.model';
 import { CreateSprintRequest, Sprint } from '../../shared/models/sprint.model';
@@ -22,6 +23,7 @@ export class BacklogPageComponent {
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly realtimeService = inject(RealtimeService);
+  private readonly uiFeedback = inject(UiFeedbackService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
 
@@ -36,6 +38,7 @@ export class BacklogPageComponent {
   protected isSavingSprint = false;
   protected sprintActionId: number | null = null;
   protected deletingSprintId: number | null = null;
+  protected assigningIssueId: number | null = null;
   protected lastDeletedSprint: Sprint | null = null;
   protected readonly issuePriorityLabel = issuePriorityLabel;
   protected readonly issueStatusLabel = issueStatusLabel;
@@ -92,6 +95,7 @@ export class BacklogPageComponent {
         this.sprintForm.endsAt = '';
         this.sprintForm.active = true;
         this.isSavingSprint = false;
+        this.uiFeedback.showSuccess('Der Sprint wurde erstellt.');
         this.refresh$.next();
       },
       error: () => {
@@ -105,6 +109,7 @@ export class BacklogPageComponent {
     this.workspaceService.startSprint(projectId, sprintId).subscribe({
       next: () => {
         this.sprintActionId = null;
+        this.uiFeedback.showSuccess('Der Sprint wurde gestartet.');
         this.refresh$.next();
       },
       error: () => {
@@ -118,6 +123,7 @@ export class BacklogPageComponent {
     this.workspaceService.completeSprint(projectId, sprintId).subscribe({
       next: () => {
         this.sprintActionId = null;
+        this.uiFeedback.showSuccess('Der Sprint wurde abgeschlossen.');
         this.refresh$.next();
       },
       error: () => {
@@ -135,6 +141,7 @@ export class BacklogPageComponent {
       next: (sprint) => {
         this.lastDeletedSprint = sprint;
         this.deletingSprintId = null;
+        this.uiFeedback.showSuccess('Der Sprint wurde archiviert.');
         this.refresh$.next();
       },
       error: () => {
@@ -150,11 +157,13 @@ export class BacklogPageComponent {
     }
     this.workspaceService.restoreSprint(projectId, targetSprintId).subscribe(() => {
       this.lastDeletedSprint = null;
+      this.uiFeedback.showSuccess('Der Sprint wurde wiederhergestellt.');
       this.refresh$.next();
     });
   }
 
   protected assignSprint(projectId: number, issue: Issue, sprintId: number | null): void {
+    this.assigningIssueId = issue.id;
     this.workspaceService
       .updateIssue(projectId, issue.id, {
         title: issue.title,
@@ -167,6 +176,15 @@ export class BacklogPageComponent {
         epicId: issue.epicId,
         assigneeId: issue.assigneeId ?? ''
       })
-      .subscribe(() => this.refresh$.next());
+      .subscribe({
+        next: () => {
+          this.assigningIssueId = null;
+          this.uiFeedback.showSuccess('Der Vorgang wurde neu zugeordnet.');
+          this.refresh$.next();
+        },
+        error: () => {
+          this.assigningIssueId = null;
+        }
+      });
   }
 }

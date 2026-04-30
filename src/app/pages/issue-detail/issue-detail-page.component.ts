@@ -6,6 +6,7 @@ import { Subject, combineLatest, map, startWith, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { RealtimeService } from '../../core/services/realtime.service';
+import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
@@ -21,6 +22,7 @@ export class IssueDetailPageComponent {
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly realtimeService = inject(RealtimeService);
+  private readonly uiFeedback = inject(UiFeedbackService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
 
@@ -116,6 +118,7 @@ export class IssueDetailPageComponent {
       next: () => {
         this.commentBody = '';
         this.isSavingComment = false;
+        this.uiFeedback.showSuccess('Der Kommentar wurde gespeichert.');
         this.refresh$.next();
       },
       error: () => {
@@ -131,6 +134,7 @@ export class IssueDetailPageComponent {
       .subscribe({
       next: () => {
         this.isSavingIssue = false;
+        this.uiFeedback.showSuccess('Der Vorgang wurde gespeichert.');
         this.refresh$.next();
       },
       error: () => {
@@ -148,6 +152,7 @@ export class IssueDetailPageComponent {
       next: (issue) => {
         this.lastDeletedIssue = issue;
         this.isDeletingIssue = false;
+        this.uiFeedback.showSuccess('Der Vorgang wurde archiviert.');
       },
       error: () => {
         this.isDeletingIssue = false;
@@ -161,6 +166,7 @@ export class IssueDetailPageComponent {
     }
     this.workspaceService.restoreIssue(projectId, this.lastDeletedIssue.id).subscribe(() => {
       this.lastDeletedIssue = null;
+      this.uiFeedback.showSuccess('Der Vorgang wurde wiederhergestellt.');
       this.refresh$.next();
     });
   }

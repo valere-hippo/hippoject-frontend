@@ -1,3 +1,4 @@
+import { IdentityRealmRole } from '../models/identity.model';
 import { IssuePriority, IssueStatus, IssueType } from '../models/issue.model';
 import { ProjectRole } from '../models/project.model';
 import { SprintStatus } from '../models/sprint.model';
@@ -64,4 +65,16 @@ export const notificationTypeLabel = (type: string): string => {
   };
 
   return labels[type] ?? type;
+};
+
+export const identityRealmRoleLabel = (role: IdentityRealmRole | string): string => {
+  const labels: Record<IdentityRealmRole, string> = {
+    'hippoject-admin': 'Hippoject-Admin',
+    'project-admin': 'Projektadmin',
+    'project-manager': 'Projektmanager',
+    developer: 'Entwicklung',
+    reporter: 'Reporter'
+  };
+
+  return labels[role as IdentityRealmRole] ?? role;
 };

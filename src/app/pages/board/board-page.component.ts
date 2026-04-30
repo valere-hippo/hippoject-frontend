@@ -6,6 +6,7 @@ import { Subject, combineLatest, map, startWith, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { RealtimeService } from '../../core/services/realtime.service';
+import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssueStatus } from '../../shared/models/issue.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
@@ -21,10 +22,12 @@ export class BoardPageComponent {
   private readonly auth = inject(AuthService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly realtimeService = inject(RealtimeService);
+  private readonly uiFeedback = inject(UiFeedbackService);
   private readonly route = inject(ActivatedRoute);
   private readonly refresh$ = new Subject<void>();
   protected draggedIssueId: number | null = null;
   protected dragOverColumn: IssueStatus | null = null;
+  protected movingIssueId: number | null = null;
   protected readonly selectedStatusByIssueId: Record<number, IssueStatus> = {};
   protected readonly issuePriorityLabel = issuePriorityLabel;
   protected readonly projectRoleLabel = projectRoleLabel;
@@ -86,6 +89,7 @@ export class BoardPageComponent {
   }
 
   protected moveIssue(projectId: number, issue: Issue, status: IssueStatus): void {
+    this.movingIssueId = issue.id;
     this.workspaceService
       .updateIssue(projectId, issue.id, {
         title: issue.title,
@@ -98,7 +102,16 @@ export class BoardPageComponent {
         epicId: issue.epicId,
         assigneeId: issue.assigneeId ?? ''
       })
-      .subscribe(() => this.refresh$.next());
+      .subscribe({
+        next: () => {
+          this.movingIssueId = null;
+          this.uiFeedback.showSuccess(`Der Vorgang wurde nach ${this.columns.find((column) => column.key === status)?.label ?? status} verschoben.`);
+          this.refresh$.next();
+        },
+        error: () => {
+          this.movingIssueId = null;
+        }
+      });
   }
 
   protected startDrag(issueId: number): void {

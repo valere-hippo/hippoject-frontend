@@ -118,12 +118,15 @@
         <div class="meta backlog-meta">
           <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
           <span>{{ issueStatusLabel(issue.status) }}</span>
-          <select [ngModel]="issue.sprintId" [disabled]="!vm.permissions.canManageSprints" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
+          <select [ngModel]="issue.sprintId" [disabled]="!vm.permissions.canManageSprints || assigningIssueId === issue.id" (ngModelChange)="assignSprint(vm.projectId, issue, $event)">
             <option [ngValue]="null">Backlog</option>
             @for (sprint of vm.activeSprints; track sprint.id) {
               <option [ngValue]="sprint.id">{{ sprint.name }}</option>
             }
           </select>
+          @if (assigningIssueId === issue.id) {
+            <span>Speichert…</span>
+          }
         </div>
       </article>
     }

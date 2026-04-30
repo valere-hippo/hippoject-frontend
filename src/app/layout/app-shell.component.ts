@@ -4,7 +4,9 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
+import { LoadingService } from '../core/services/loading.service';
 import { RealtimeService } from '../core/services/realtime.service';
+import { UiFeedbackService } from '../core/services/ui-feedback.service';
 import { WorkspaceService } from '../core/services/workspace.service';
 import { NotificationItem } from '../shared/models/notification.model';
 import { notificationTypeLabel } from '../shared/utils/ui-labels';
@@ -18,6 +20,8 @@ import { notificationTypeLabel } from '../shared/utils/ui-labels';
 export class AppShellComponent implements OnDestroy {
   private readonly router = inject(Router);
   protected readonly auth = inject(AuthService);
+  protected readonly loadingService = inject(LoadingService);
+  protected readonly uiFeedback = inject(UiFeedbackService);
   private readonly workspaceService = inject(WorkspaceService);
   private readonly realtimeService = inject(RealtimeService);
 
@@ -85,6 +89,10 @@ export class AppShellComponent implements OnDestroy {
 
   protected logout(): void {
     void this.auth.logout();
+  }
+
+  protected dismissToast(id: number): void {
+    this.uiFeedback.dismiss(id);
   }
 
   ngOnDestroy(): void {
