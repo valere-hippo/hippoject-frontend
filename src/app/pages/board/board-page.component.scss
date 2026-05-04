@@ -124,6 +124,12 @@ span {
   margin-top: 0.8rem;
 }
 
+.issue-card__updated {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
 .board-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

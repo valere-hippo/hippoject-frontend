@@ -9,6 +9,7 @@ import { RealtimeService } from '../../core/services/realtime.service';
 import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssueStatus } from '../../shared/models/issue.model';
+import { ProjectMember } from '../../shared/models/project.model';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 import { issuePriorityLabel, projectRoleLabel } from '../../shared/utils/ui-labels';
 
@@ -148,5 +149,13 @@ export class BoardPageComponent {
       this.moveIssue(projectId, issue, status);
     }
     this.clearDrag();
+  }
+
+  protected assigneeName(issue: Issue, members: ProjectMember[]): string {
+    if (!issue.assigneeId) {
+      return 'Nicht zugeordnet';
+    }
+    const member = members.find((candidate) => candidate.userId.toLowerCase() === issue.assigneeId?.toLowerCase());
+    return member?.displayName || issue.assigneeId;
   }
 }

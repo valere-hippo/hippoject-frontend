@@ -96,6 +96,44 @@ strong {
   font: inherit;
 }
 
+.mention-box {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(173, 88, 88, 0.18);
+  border-radius: 1rem;
+  background: #fffafa;
+}
+
+.mention-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.mention-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid #ead1d1;
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.4rem 0.65rem;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.mention-chip img {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 0.55rem;
+  object-fit: cover;
+}
+
+.mention-chip small {
+  color: #64748b;
+}
+
 .danger-button {
   border: 1px solid rgba(185, 28, 28, 0.18);
   border-radius: 1rem;

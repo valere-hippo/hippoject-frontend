@@ -46,6 +46,11 @@
   font-weight: 700;
   background: linear-gradient(135deg, #ad5858, #d79b9b);
   color: #081120;
+  object-fit: cover;
+}
+
+.avatar--image {
+  display: block;
 }
 
 .eyebrow,

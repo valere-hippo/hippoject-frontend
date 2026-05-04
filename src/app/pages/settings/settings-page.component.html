@@ -8,6 +8,27 @@
       </div>
     </article>
 
+    <article class="page-card wide profile-card">
+      <p class="eyebrow">Mein Profil</p>
+      <h3>Profilbild und Standard-Avatar</h3>
+      <p>Jeder Benutzer erhält automatisch einen Standard-Avatar. Optional kann hier ein eigenes Profilbild hochgeladen werden.</p>
+
+      <div class="profile-card__content">
+        <img class="profile-avatar" [src]="avatarUrlFor(vm.currentUser)" [alt]="vm.currentUser.displayName" />
+        <div class="profile-card__actions">
+          <strong>{{ vm.currentUser.displayName }}</strong>
+          <span>{{ vm.currentUser.username }}</span>
+          <div class="profile-card__buttons">
+            <label class="secondary-button profile-upload-button">
+              <input type="file" accept="image/*" [disabled]="isSavingProfile" (change)="updateOwnAvatar($event)" />
+              {{ isSavingProfile ? 'Speichert…' : 'Profilbild hochladen' }}
+            </label>
+            <button type="button" class="secondary-button" [disabled]="isSavingProfile" (click)="resetOwnAvatar()">Standard-Avatar nutzen</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
     <article class="page-card wide">
       <p class="eyebrow">Benutzer einladen</p>
       <h3>Keycloak-Einladung mit Verifizierung</h3>
@@ -48,7 +69,10 @@
                   [checked]="inviteForm.realmRoles.includes(role)"
                   (change)="toggleInviteRole(role, $any($event.target).checked)"
                 />
-                <span>{{ identityRealmRoleLabel(role) }}</span>
+                <span>
+                  <strong>{{ identityRealmRoleLabel(role) }}</strong>
+                  <small>{{ identityRealmRoleDescription(role) }}</small>
+                </span>
               </label>
             }
           </div>
@@ -63,7 +87,9 @@
       <div class="user-grid">
         @for (user of vm.users; track user.id) {
           <div class="user-card">
-            <div>
+            <div class="user-card__main">
+              <img class="user-avatar" [src]="avatarUrlFor(user)" [alt]="user.displayName" />
+              <div>
               <strong>{{ user.displayName }}</strong>
               <p>{{ user.username }}</p>
               @if (user.email) {
@@ -84,7 +110,10 @@
                         [checked]="roleDraftFor(user).includes(role)"
                         (change)="toggleUserRole(user, role, $any($event.target).checked)"
                       />
-                      <span>{{ identityRealmRoleLabel(role) }}</span>
+                      <span>
+                        <strong>{{ identityRealmRoleLabel(role) }}</strong>
+                        <small>{{ identityRealmRoleDescription(role) }}</small>
+                      </span>
                     </label>
                   }
                 </div>
@@ -92,6 +121,7 @@
               <button type="button" class="secondary-button" [disabled]="savingRolesUserId === user.id || roleDraftFor(user).length === 0" (click)="saveUserRoles(user)">
                 {{ savingRolesUserId === user.id ? 'Speichert…' : 'Rollen speichern' }}
               </button>
+              </div>
             </div>
             <span class="status" [class.status--verified]="user.emailVerified">
               {{ user.emailVerified ? 'E-Mail bestätigt' : 'E-Mail offen' }}

@@ -27,11 +27,11 @@
   <section class="detail-grid">
     <article class="page-card stat-card">
       <span>Erstellt von</span>
-      <strong>{{ vm.issue.reporterId }}</strong>
+      <strong>{{ vm.reporterName }}</strong>
     </article>
     <article class="page-card stat-card">
       <span>Zuständig</span>
-      <strong>{{ vm.issue.assigneeId || 'Nicht zugewiesen' }}</strong>
+      <strong>{{ vm.assigneeName }}</strong>
     </article>
     <article class="page-card stat-card">
       <span>Erstellt</span>
@@ -117,8 +117,8 @@
           <span>Zuständig</span>
           <select [(ngModel)]="issueForm.assigneeId" name="assigneeId">
             <option value="">Nicht zugewiesen</option>
-            @for (user of vm.availableUsers; track user.id) {
-              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}</option>
+            @for (member of vm.members; track member.id) {
+              <option [value]="member.userId">{{ member.displayName }} · {{ member.userId }}</option>
             }
           </select>
         </label>
@@ -139,8 +139,23 @@
       <form class="issue-form" (ngSubmit)="addComment(vm.projectId, vm.issue.id)">
         <label class="full-width">
           <span>Kommentar</span>
-          <textarea [(ngModel)]="commentBody" name="commentBody" required maxlength="2000"></textarea>
+          <textarea [(ngModel)]="commentBody" name="commentBody" required maxlength="2000" placeholder="Schreibe @benutzername, um jemanden aus dem Projekt zu erwähnen."></textarea>
         </label>
+        <div class="mention-box full-width">
+          <label>
+            <span>@ Benutzer aus diesem Projekt erwähnen</span>
+            <input [(ngModel)]="mentionQuery" name="mentionQuery" maxlength="120" placeholder="Name, Benutzername oder E-Mail suchen" />
+          </label>
+          <div class="mention-list">
+            @for (member of mentionCandidates(vm.members); track member.id) {
+              <button type="button" class="mention-chip" (click)="addMention(member)">
+                <img [src]="memberAvatar(member.userId, vm.members)" [alt]="member.displayName" />
+                <span>{{ member.displayName }}</span>
+                <small>@{{ member.userId }}</small>
+              </button>
+            }
+          </div>
+        </div>
         <button type="submit" [disabled]="isSavingComment">{{ isSavingComment ? 'Speichert…' : 'Kommentar senden' }}</button>
       </form>
       } @else {
@@ -185,7 +200,7 @@
       @for (comment of vm.comments; track comment.id) {
         <div class="issue-row comment-row">
           <div>
-            <strong>{{ comment.authorId }}</strong>
+            <strong>{{ memberName(comment.authorId, vm.members) }}</strong>
             <p>{{ comment.body }}</p>
           </div>
           <span>{{ comment.createdAt | date: 'short' }}</span>

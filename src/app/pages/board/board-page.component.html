@@ -35,8 +35,9 @@
                       </a>
                       <footer>
                         <span class="priority {{ issue.priority.toLowerCase() }}">{{ issuePriorityLabel(issue.priority) }}</span>
-                        <span>{{ issue.updatedAt | date: 'short' }}</span>
+                        <span>Zuständig: {{ assigneeName(issue, vm.members) }}</span>
                       </footer>
+                      <p class="issue-card__updated">Aktualisiert: {{ issue.updatedAt | date: 'short' }}</p>
                       @if (vm.permissions.canMoveBoard) {
                         <div class="board-actions board-actions--desktop">
                           @for (target of columns; track target.key) {

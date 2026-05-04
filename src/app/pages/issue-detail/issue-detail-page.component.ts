@@ -9,6 +9,8 @@ import { RealtimeService } from '../../core/services/realtime.service';
 import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Issue, IssuePriority, IssueStatus, IssueType, UpdateIssueRequest } from '../../shared/models/issue.model';
+import { ProjectMember } from '../../shared/models/project.model';
+import { resolveAvatarUrl } from '../../shared/utils/avatar';
 import { resolveProjectPermissions } from '../../shared/utils/project-permissions';
 import { issuePriorityLabel, issueStatusLabel, issueTypeLabel, projectRoleLabel } from '../../shared/utils/ui-labels';
 
@@ -48,6 +50,7 @@ export class IssueDetailPageComponent {
   protected issueLabelsText = '';
 
   protected commentBody = '';
+  protected mentionQuery = '';
   protected isSavingComment = false;
   protected isSavingIssue = false;
   protected isDeletingIssue = false;
@@ -84,6 +87,8 @@ export class IssueDetailPageComponent {
           ...data,
           epicChildren: data.projectIssues.filter((candidate) => candidate.epicId === data.issue.id),
           epics: data.projectIssues.filter((candidate) => candidate.issueType === 'EPIC' && candidate.id !== params.issueId),
+          assigneeName: this.memberName(data.issue.assigneeId, data.members),
+          reporterName: this.memberName(data.issue.reporterId, data.members),
           permissions: resolveProjectPermissions(this.auth.userId(), data.members, {
             workspaceAdmin: this.auth.hasAnyRole('hippoject-admin'),
             projectAdmin: this.auth.hasAnyRole('project-admin'),
@@ -125,6 +130,33 @@ export class IssueDetailPageComponent {
         this.isSavingComment = false;
       }
     });
+  }
+
+  protected mentionCandidates(members: ProjectMember[]): ProjectMember[] {
+    const query = this.mentionQuery.trim().toLowerCase();
+    return members.filter((member) =>
+      !query || member.displayName.toLowerCase().includes(query) || member.userId.toLowerCase().includes(query) || member.email?.toLowerCase().includes(query)
+    );
+  }
+
+  protected addMention(member: ProjectMember): void {
+    const mention = `@${member.userId}`;
+    this.commentBody = this.commentBody.trimEnd();
+    this.commentBody = `${this.commentBody}${this.commentBody ? ' ' : ''}${mention} `;
+    this.mentionQuery = '';
+  }
+
+  protected memberName(userId: string | null | undefined, members: ProjectMember[]): string {
+    if (!userId) {
+      return 'Nicht zugewiesen';
+    }
+    const member = members.find((candidate) => candidate.userId.toLowerCase() === userId.toLowerCase());
+    return member?.displayName || userId;
+  }
+
+  protected memberAvatar(userId: string | null | undefined, members: ProjectMember[]): string {
+    const label = this.memberName(userId, members);
+    return resolveAvatarUrl(null, userId || label, label);
   }
 
   protected updateIssue(projectId: number, issueId: number): void {

@@ -78,3 +78,15 @@ export const identityRealmRoleLabel = (role: IdentityRealmRole | string): string
 
   return labels[role as IdentityRealmRole] ?? role;
 };
+
+export const identityRealmRoleDescription = (role: IdentityRealmRole | string): string => {
+  const descriptions: Record<IdentityRealmRole, string> = {
+    'hippoject-admin': 'Voller Zugriff auf die gesamte Plattform: Benutzerverwaltung, Projekte, Rollen, Konfiguration und organisatorische Steuerung.',
+    'project-admin': 'Verwaltet Projekte und Projektzugriffe, darf Mitglieder organisieren und administrative Entscheidungen im Projektkontext treffen.',
+    'project-manager': 'Plant und priorisiert Arbeit, pflegt Backlog, Board, Sprints und Zuständigkeiten innerhalb der betreuten Projekte.',
+    developer: 'Bearbeitet fachliche und technische Aufgaben, kommentiert Vorgänge, aktualisiert Status und liefert Umsetzung im Projekt.',
+    reporter: 'Hat primär Lese- und Meldezugriff, kann Inhalte einsehen und Rückmeldungen geben, aber keine Projektadministration übernehmen.'
+  };
+
+  return descriptions[role as IdentityRealmRole] ?? role;
+};

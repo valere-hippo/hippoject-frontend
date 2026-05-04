@@ -59,7 +59,7 @@
         </button>
         <button type="button" class="ghost-button" (click)="logout()">Abmelden</button>
         <div class="profile-chip">
-          <div class="avatar">{{ auth.initials() }}</div>
+          <img class="avatar avatar--image" [src]="resolvedCurrentAvatarUrl()" [alt]="auth.displayName()" />
           <div>
             <strong>{{ auth.displayName() }}</strong>
             <span>{{ auth.roleLabel() }}</span>

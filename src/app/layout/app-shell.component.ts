@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, computed, inject } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -9,6 +9,7 @@ import { RealtimeService } from '../core/services/realtime.service';
 import { UiFeedbackService } from '../core/services/ui-feedback.service';
 import { WorkspaceService } from '../core/services/workspace.service';
 import { NotificationItem } from '../shared/models/notification.model';
+import { resolveAvatarUrl } from '../shared/utils/avatar';
 import { notificationTypeLabel } from '../shared/utils/ui-labels';
 
 @Component({
@@ -34,6 +35,10 @@ export class AppShellComponent implements OnDestroy {
 
   protected readonly quickLinks = [{ label: 'Projekte', route: '/projects' }, { label: 'Vorgangsübersicht', route: '/issues' }];
   protected readonly notificationTypeLabel = notificationTypeLabel;
+  protected readonly currentAvatarUrl = signal<string | null>(null);
+  protected readonly resolvedCurrentAvatarUrl = computed(() =>
+    resolveAvatarUrl(this.currentAvatarUrl(), this.auth.userId(), this.auth.displayName())
+  );
 
   protected currentUrl = this.router.url;
   protected notifications: NotificationItem[] = [];
@@ -52,6 +57,7 @@ export class AppShellComponent implements OnDestroy {
   constructor() {
     void this.realtimeService.connect();
     this.loadNotifications();
+    this.loadCurrentProfile();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.currentUrl = this.router.url;
     });
@@ -85,6 +91,15 @@ export class AppShellComponent implements OnDestroy {
     if (!notification.read) {
       this.markNotificationRead(notification.id);
     }
+    this.notificationsOpen = false;
+    if (notification.issueId && notification.issueId > 0) {
+      void this.router.navigate(['/projects', notification.projectId, 'issues', notification.issueId]);
+      return;
+    }
+
+    if (notification.projectId && notification.type === 'SPRINT') {
+      void this.router.navigate(['/projects', notification.projectId, 'backlog']);
+    }
   }
 
   protected logout(): void {
@@ -102,6 +117,13 @@ export class AppShellComponent implements OnDestroy {
   private loadNotifications(): void {
     this.workspaceService.getNotifications().subscribe((notifications) => {
       this.notifications = notifications;
+    });
+  }
+
+  private loadCurrentProfile(): void {
+    this.workspaceService.getMyIdentityUser().subscribe({
+      next: (user) => this.currentAvatarUrl.set(user.avatarUrl),
+      error: () => this.currentAvatarUrl.set(null)
     });
   }
 }

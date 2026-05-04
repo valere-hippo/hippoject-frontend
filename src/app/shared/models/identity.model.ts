@@ -15,6 +15,7 @@ export interface IdentityUser {
   firstName: string | null;
   lastName: string | null;
   displayName: string;
+  avatarUrl: string | null;
   emailVerified: boolean;
   enabled: boolean;
   realmRoles: IdentityRealmRole[];
@@ -30,4 +31,8 @@ export interface CreateIdentityUserRequest {
 
 export interface UpdateIdentityUserRolesRequest {
   realmRoles: IdentityRealmRole[];
+}
+
+export interface UpdateIdentityProfileRequest {
+  avatarUrl: string | null;
 }
