@@ -8,9 +8,10 @@ import { LoadingService } from '../core/services/loading.service';
 import { RealtimeService } from '../core/services/realtime.service';
 import { UiFeedbackService } from '../core/services/ui-feedback.service';
 import { WorkspaceService } from '../core/services/workspace.service';
+import { IDENTITY_REALM_ROLES } from '../shared/models/identity.model';
 import { NotificationItem } from '../shared/models/notification.model';
 import { resolveAvatarUrl } from '../shared/utils/avatar';
-import { notificationTypeLabel } from '../shared/utils/ui-labels';
+import { identityRealmRoleDescription, identityRealmRoleLabel, notificationTypeLabel } from '../shared/utils/ui-labels';
 
 @Component({
   selector: 'app-shell',
@@ -35,6 +36,11 @@ export class AppShellComponent implements OnDestroy {
 
   protected readonly quickLinks = [{ label: 'Projekte', route: '/projects' }, { label: 'Vorgangsübersicht', route: '/issues' }];
   protected readonly notificationTypeLabel = notificationTypeLabel;
+  protected readonly roleInfo = IDENTITY_REALM_ROLES.map((role) => ({
+    role,
+    label: identityRealmRoleLabel(role),
+    description: identityRealmRoleDescription(role)
+  }));
   protected readonly currentAvatarUrl = signal<string | null>(null);
   protected readonly resolvedCurrentAvatarUrl = computed(() =>
     resolveAvatarUrl(this.currentAvatarUrl(), this.auth.userId(), this.auth.displayName())

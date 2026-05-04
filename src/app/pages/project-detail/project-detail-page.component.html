@@ -9,6 +9,7 @@
     <div class="hero__actions">
       <a [routerLink]="['/projects', vm.project.id, 'board']">Board öffnen</a>
       <a [routerLink]="['/projects', vm.project.id, 'backlog']">Backlog öffnen</a>
+      <a [routerLink]="['/projects', vm.project.id, 'chat']">Chat öffnen</a>
       @if (vm.permissions.canEditProject) {
         <button type="button" class="danger-button" (click)="archiveProject(vm.project.id)" [disabled]="isArchivingProject">
           {{ isArchivingProject ? 'Archiviert…' : 'Projekt archivieren' }}

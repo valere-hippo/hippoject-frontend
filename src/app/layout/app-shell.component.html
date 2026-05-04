@@ -31,10 +31,16 @@
     </div>
 
     <div class="sidebar-card">
-      <p class="section-label">Sprint-Fokus</p>
-      <h3>Planung mit Struktur</h3>
-      <p>Toolbar, Inhalte und Navigationsflächen sind auf echte API-Daten und längere Arbeitssitzungen ausgelegt.</p>
-      <span>Bereit für produktive Arbeit</span>
+      <p class="section-label">Rollen</p>
+      <h3>Was darf welche Rolle?</h3>
+      <div class="role-info-list">
+        @for (role of roleInfo; track role.role) {
+          <article class="role-info-item">
+            <strong>{{ role.label }}</strong>
+            <p>{{ role.description }}</p>
+          </article>
+        }
+      </div>
     </div>
   </aside>
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { ApiService } from './api.service';
+import { CreateProjectChatMessageRequest, ProjectChatMessage } from '../../shared/models/chat.model';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 import { DirectoryProject } from '../../shared/models/directory.model';
 import { CreateIdentityUserRequest, IdentityUser, UpdateIdentityProfileRequest, UpdateIdentityUserRolesRequest } from '../../shared/models/identity.model';
@@ -201,5 +202,13 @@ export class WorkspaceService {
 
   createComment(projectId: number, issueId: number, request: CreateCommentRequest): Observable<IssueComment> {
     return this.api.post<IssueComment>(`projects/${projectId}/issues/${issueId}/comments`, request);
+  }
+
+  getProjectChatMessages(projectId: number): Observable<ProjectChatMessage[]> {
+    return this.api.get<ProjectChatMessage[]>(`projects/${projectId}/chat/messages`);
+  }
+
+  createProjectChatMessage(projectId: number, request: CreateProjectChatMessageRequest): Observable<ProjectChatMessage> {
+    return this.api.post<ProjectChatMessage>(`projects/${projectId}/chat/messages`, request);
   }
 }

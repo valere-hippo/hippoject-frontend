@@ -1,0 +1,65 @@
+@if (vm$ | async; as vm) {
+  <section class="chat-hero page-card">
+    <div>
+      <p class="eyebrow">Projektchat</p>
+      <h3>{{ vm.project.name }}</h3>
+      <p>Interner Chat für alle Mitglieder dieses Projekts.</p>
+    </div>
+    <a [routerLink]="['/projects', vm.projectId]">Zurück zum Projekt</a>
+  </section>
+
+  <section class="chat-layout">
+    <article class="page-card chat-panel">
+      <div class="chat-panel__header">
+        <div>
+          <p class="eyebrow">Nachrichten</p>
+          <h3>Teamgespräch</h3>
+        </div>
+        <span>{{ vm.messages.length }} Nachrichten</span>
+      </div>
+
+      <div class="message-list">
+        @if (vm.messages.length) {
+          @for (message of vm.messages; track message.id) {
+            <article class="message-row" [class.message-row--mine]="isMine(message)">
+              <img [src]="memberAvatar(message, vm.members)" [alt]="message.authorDisplayName" />
+              <div class="message-bubble">
+                <header>
+                  <strong>{{ message.authorDisplayName }}</strong>
+                  <span>{{ message.createdAt | date: 'EEEE, d. MMMM y, HH:mm' }}</span>
+                </header>
+                <p>{{ message.body }}</p>
+              </div>
+            </article>
+          }
+        } @else {
+          <div class="chat-empty">
+            <strong>Noch keine Nachrichten</strong>
+            <p>Starte die Unterhaltung mit deinem Projektteam.</p>
+          </div>
+        }
+      </div>
+
+      <form class="chat-form" (ngSubmit)="sendMessage(vm.projectId)">
+        <textarea [(ngModel)]="messageBody" name="messageBody" required maxlength="2000" placeholder="Nachricht an das Projektteam schreiben…"></textarea>
+        <button type="submit" [disabled]="isSending || !messageBody.trim()">{{ isSending ? 'Sendet…' : 'Senden' }}</button>
+      </form>
+    </article>
+
+    <aside class="page-card member-panel">
+      <p class="eyebrow">Teilnehmer</p>
+      <h3>Projektmitglieder</h3>
+      <div class="member-list">
+        @for (member of vm.members; track member.id) {
+          <div class="member-chip">
+            <img [src]="avatarForMember(member)" [alt]="member.displayName" />
+            <div>
+              <strong>{{ member.displayName }}</strong>
+              <span>@{{ member.userId }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </aside>
+  </section>
+}
