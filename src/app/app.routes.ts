@@ -4,6 +4,7 @@ import { authGuard } from './core/auth/auth.guard';
 import { AppShellComponent } from './layout/app-shell.component';
 import { BacklogPageComponent } from './pages/backlog/backlog-page.component';
 import { BoardPageComponent } from './pages/board/board-page.component';
+import { ChatPageComponent } from './pages/chat/chat-page.component';
 import { DashboardPageComponent } from './pages/dashboard/dashboard-page.component';
 import { IssueDetailPageComponent } from './pages/issue-detail/issue-detail-page.component';
 import { IssuesPageComponent } from './pages/issues/issues-page.component';
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', component: DashboardPageComponent },
       { path: 'projects', component: ProjectsPageComponent },
+      { path: 'chat', component: ChatPageComponent },
       { path: 'projects/:projectId', component: ProjectDetailPageComponent },
       { path: 'projects/:projectId/chat', component: ProjectChatPageComponent },
       { path: 'projects/:projectId/issues/:issueId', component: IssueDetailPageComponent },

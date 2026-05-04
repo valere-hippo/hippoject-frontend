@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject, combineLatest, startWith, switchMap } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { UiFeedbackService } from '../../core/services/ui-feedback.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { CreateIdentityUserRequest, IDENTITY_REALM_ROLES, IdentityRealmRole, IdentityUser } from '../../shared/models/identity.model';
@@ -18,6 +19,7 @@ import { identityRealmRoleDescription, identityRealmRoleLabel, projectRoleLabel 
 export class SettingsPageComponent {
   private readonly workspaceService = inject(WorkspaceService);
   private readonly uiFeedback = inject(UiFeedbackService);
+  private readonly auth = inject(AuthService);
   private readonly refresh$ = new Subject<void>();
   protected readonly projectRoleLabel = projectRoleLabel;
   protected readonly identityRealmRoleLabel = identityRealmRoleLabel;
@@ -124,8 +126,8 @@ export class SettingsPageComponent {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      this.uiFeedback.showError('Das Profilbild darf maximal 2 MB groß sein.');
+    if (file.size > 220 * 1024) {
+      this.uiFeedback.showError('Das Profilbild darf maximal 220 KB groß sein.');
       input.value = '';
       return;
     }
@@ -134,7 +136,8 @@ export class SettingsPageComponent {
     reader.onload = () => {
       this.isSavingProfile = true;
       this.workspaceService.updateMyIdentityProfile({ avatarUrl: typeof reader.result === 'string' ? reader.result : null }).subscribe({
-        next: () => {
+        next: (user) => {
+          this.auth.setAvatarUrl(user.avatarUrl);
           this.isSavingProfile = false;
           this.uiFeedback.showSuccess('Dein Profilbild wurde gespeichert.');
           this.refresh$.next();
@@ -156,7 +159,8 @@ export class SettingsPageComponent {
   protected resetOwnAvatar(): void {
     this.isSavingProfile = true;
     this.workspaceService.updateMyIdentityProfile({ avatarUrl: null }).subscribe({
-      next: () => {
+      next: (user) => {
+        this.auth.setAvatarUrl(user.avatarUrl);
         this.isSavingProfile = false;
         this.uiFeedback.showSuccess('Dein Profilbild wurde auf den Standard-Avatar zurückgesetzt.');
         this.refresh$.next();

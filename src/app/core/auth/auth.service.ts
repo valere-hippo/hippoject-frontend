@@ -22,6 +22,7 @@ export class AuthService {
   readonly displayName = signal('Valere');
   readonly roleLabel = signal('Administrator');
   readonly initials = signal('VA');
+  readonly avatarUrl = signal<string | null>(null);
 
   async init(): Promise<void> {
     if (!this.keycloak) {
@@ -73,6 +74,10 @@ export class AuthService {
       | undefined;
     const userRoles = realmAccess?.roles ?? [];
     return roles.some((role) => userRoles.includes(role));
+  }
+
+  setAvatarUrl(avatarUrl: string | null): void {
+    this.avatarUrl.set(avatarUrl);
   }
 
   private updateProfile(): void {

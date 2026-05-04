@@ -1,0 +1,127 @@
+@if (vm$ | async; as vm) {
+  @if (ensureSelectedConversation(vm.conversations); as activeConversation) {
+    <section class="chat-shell">
+      <aside class="page-card conversation-panel">
+        <div>
+          <p class="eyebrow">Chat</p>
+          <h3>Konversationen</h3>
+        </div>
+
+        <div class="conversation-list">
+          @for (conversation of vm.conversations; track conversation.id) {
+            <button type="button" class="conversation-item" [class.is-active]="conversation.id === activeConversation.id" (click)="selectConversation(conversation)">
+              <img [src]="conversationAvatar(conversation)" [alt]="conversation.title" />
+              <span>
+                <strong>{{ conversation.title }}</strong>
+                <small>{{ conversation.groupChat ? 'Gruppe' : 'Direkt' }} · {{ conversation.lastMessageAt ? (conversation.lastMessageAt | date: 'short') : 'Neu' }}</small>
+                @if (conversation.lastMessage) {
+                  <small>{{ conversation.lastMessage }}</small>
+                }
+              </span>
+            </button>
+          } @empty {
+            <div class="empty-box">
+              <strong>Noch keine Chats</strong>
+              <p>Starte rechts einen direkten Chat oder eine Gruppe.</p>
+            </div>
+          }
+        </div>
+      </aside>
+
+      <main class="page-card messages-panel">
+        <header class="messages-header">
+          <div>
+            <p class="eyebrow">{{ activeConversation.groupChat ? 'Gruppenchat' : 'Direkter Chat' }}</p>
+            <h3>{{ activeConversation.title }}</h3>
+          </div>
+          <div class="participant-stack">
+            @for (participant of activeConversation.participants; track participant.userId) {
+              <img [src]="avatarForParticipant(participant)" [alt]="participant.displayName" [title]="participant.displayName" />
+            }
+          </div>
+        </header>
+
+        @if (messages$ | async; as messages) {
+          <div class="message-list">
+            @for (message of messages; track message.id) {
+              <article class="message-row" [class.message-row--mine]="isMine(message)">
+                <div class="message-bubble">
+                  <header>
+                    <strong>{{ message.authorDisplayName }}</strong>
+                    <span>{{ message.createdAt | date: 'EEEE, d. MMMM y, HH:mm' }}</span>
+                  </header>
+                  <p>{{ message.body }}</p>
+                </div>
+              </article>
+            } @empty {
+              <div class="empty-box">
+                <strong>Noch keine Nachrichten</strong>
+                <p>Schreibe die erste Nachricht.</p>
+              </div>
+            }
+          </div>
+        }
+
+        <form class="message-form" (ngSubmit)="sendMessage(activeConversation.id)">
+          <textarea [(ngModel)]="messageBody" name="messageBody" required maxlength="2000" placeholder="Nachricht schreiben…"></textarea>
+          <button type="submit" [disabled]="isSending || !messageBody.trim()">{{ isSending ? 'Sendet…' : 'Senden' }}</button>
+        </form>
+      </main>
+
+      <aside class="page-card composer-panel">
+        <div>
+          <p class="eyebrow">Neuer Chat</p>
+          <h3>Direkt</h3>
+        </div>
+        <form class="mini-form" (ngSubmit)="startDirectChat()">
+          <select [(ngModel)]="directUserId" name="directUserId" required>
+            <option value="">Benutzer auswählen</option>
+            @for (user of otherUsers(vm.users); track user.id) {
+              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}</option>
+            }
+          </select>
+          <button type="submit" [disabled]="isCreatingConversation || !directUserId">Direkten Chat öffnen</button>
+        </form>
+
+        <div class="divider"></div>
+
+        <div>
+          <p class="eyebrow">Neue Gruppe</p>
+          <h3>Gruppenchat</h3>
+        </div>
+        <form class="mini-form" (ngSubmit)="createGroupChat()">
+          <input [(ngModel)]="groupTitle" name="groupTitle" maxlength="160" placeholder="Gruppenname" />
+          <div class="user-pick-list">
+            @for (user of otherUsers(vm.users); track user.id) {
+              <label class="user-pick">
+                <input type="checkbox" [checked]="groupParticipantIds.includes(user.username)" (change)="toggleGroupParticipant(user.username, $any($event.target).checked)" />
+                <img [src]="avatarForUser(user)" [alt]="user.displayName" />
+                <span>
+                  <strong>{{ user.displayName }}</strong>
+                  <small>@{{ user.username }}</small>
+                </span>
+              </label>
+            }
+          </div>
+          <button type="submit" [disabled]="isCreatingConversation || groupParticipantIds.length === 0">Gruppe erstellen</button>
+        </form>
+      </aside>
+    </section>
+  } @else {
+    <section class="chat-shell chat-shell--empty">
+      <aside class="page-card composer-panel">
+        <p class="eyebrow">Chat</p>
+        <h3>Ersten Chat starten</h3>
+        <form class="mini-form" (ngSubmit)="startDirectChat()">
+          <select [(ngModel)]="directUserId" name="firstDirectUserId" required>
+            <option value="">Benutzer auswählen</option>
+            @for (user of otherUsers(vm.users); track user.id) {
+              <option [value]="user.username">{{ user.displayName }} · {{ user.username }}</option>
+            }
+          </select>
+          <button type="submit" [disabled]="isCreatingConversation || !directUserId">Direkten Chat öffnen</button>
+        </form>
+      </aside>
+    </section>
+  }
+}

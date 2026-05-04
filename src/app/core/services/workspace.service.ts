@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { ApiService } from './api.service';
-import { CreateProjectChatMessageRequest, ProjectChatMessage } from '../../shared/models/chat.model';
+import {
+  ChatConversation,
+  ChatMessage,
+  CreateChatConversationRequest,
+  CreateChatMessageRequest,
+  CreateProjectChatMessageRequest,
+  ProjectChatMessage
+} from '../../shared/models/chat.model';
 import { DashboardSummary } from '../../shared/models/dashboard.model';
 import { DirectoryProject } from '../../shared/models/directory.model';
 import { CreateIdentityUserRequest, IdentityUser, UpdateIdentityProfileRequest, UpdateIdentityUserRolesRequest } from '../../shared/models/identity.model';
@@ -210,5 +217,21 @@ export class WorkspaceService {
 
   createProjectChatMessage(projectId: number, request: CreateProjectChatMessageRequest): Observable<ProjectChatMessage> {
     return this.api.post<ProjectChatMessage>(`projects/${projectId}/chat/messages`, request);
+  }
+
+  getChatConversations(): Observable<ChatConversation[]> {
+    return this.api.get<ChatConversation[]>('chat/conversations');
+  }
+
+  createChatConversation(request: CreateChatConversationRequest): Observable<ChatConversation> {
+    return this.api.post<ChatConversation>('chat/conversations', request);
+  }
+
+  getChatMessages(conversationId: number): Observable<ChatMessage[]> {
+    return this.api.get<ChatMessage[]>(`chat/conversations/${conversationId}/messages`);
+  }
+
+  createChatMessage(conversationId: number, request: CreateChatMessageRequest): Observable<ChatMessage> {
+    return this.api.post<ChatMessage>(`chat/conversations/${conversationId}/messages`, request);
   }
 }

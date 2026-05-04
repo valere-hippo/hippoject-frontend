@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -31,6 +31,7 @@ export class AppShellComponent implements OnDestroy {
     { label: 'Übersicht', icon: '◫', route: '/dashboard' },
     { label: 'Projekte', icon: '◪', route: '/projects' },
     { label: 'Vorgänge', icon: '◎', route: '/issues' },
+    { label: 'Chat', icon: '✉', route: '/chat' },
     { label: 'Einstellungen', icon: '⚙', route: '/settings' }
   ];
 
@@ -41,9 +42,8 @@ export class AppShellComponent implements OnDestroy {
     label: identityRealmRoleLabel(role),
     description: identityRealmRoleDescription(role)
   }));
-  protected readonly currentAvatarUrl = signal<string | null>(null);
   protected readonly resolvedCurrentAvatarUrl = computed(() =>
-    resolveAvatarUrl(this.currentAvatarUrl(), this.auth.userId(), this.auth.displayName())
+    resolveAvatarUrl(this.auth.avatarUrl(), this.auth.userId(), this.auth.displayName())
   );
 
   protected currentUrl = this.router.url;
@@ -54,6 +54,7 @@ export class AppShellComponent implements OnDestroy {
     if (this.currentUrl.includes('/backlog')) return 'Backlog';
     if (this.currentUrl.includes('/issues/')) return 'Vorgangsdetail';
     if (this.currentUrl.includes('/issues')) return 'Vorgänge';
+    if (this.currentUrl.includes('/chat')) return 'Chat';
     if (this.currentUrl.includes('/settings')) return 'Einstellungen';
     if (this.currentUrl === '/projects') return 'Projekte';
     if (this.currentUrl.includes('/projects/')) return 'Projektübersicht';
@@ -128,8 +129,8 @@ export class AppShellComponent implements OnDestroy {
 
   private loadCurrentProfile(): void {
     this.workspaceService.getMyIdentityUser().subscribe({
-      next: (user) => this.currentAvatarUrl.set(user.avatarUrl),
-      error: () => this.currentAvatarUrl.set(null)
+      next: (user) => this.auth.setAvatarUrl(user.avatarUrl),
+      error: () => this.auth.setAvatarUrl(null)
     });
   }
 }
