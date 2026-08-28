@@ -56,10 +56,10 @@ Container deployments render `public/app-config.template.js` at startup with:
 
 Recommended production values:
 
-- frontend: `https://hippoject.hippocloud.de`
-- backend API: `https://hippoject-api.hippocloud.de/api`
-- Keycloak: `https://auth.hippocloud.de`
-- backend realtime socket: `wss://hippoject-api.hippocloud.de/ws/realtime`
+- frontend: `https://hippoject.hipposideros-cloud.de`
+- backend API: `https://hippoject-api.hipposideros-cloud.de/api`
+- Keycloak: `https://auth.hipposideros-cloud.de`
+- backend realtime socket: `wss://hippoject-api.hipposideros-cloud.de/ws/realtime`
 
 ## Docker
 
